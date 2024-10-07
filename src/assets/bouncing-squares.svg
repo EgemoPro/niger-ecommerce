@@ -1,0 +1,14 @@
+﻿<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
+    <rect fill='#2563eb' stroke='#2563eb' stroke-width='21' width='30' height='30' x='25' y='50'>
+        <animate attributeName='x' calcMode='spline' dur='2' values='25;145;25;' keySplines='.5 0 .5 1;.5 0 .5 1'
+            repeatCount='indefinite' begin='0'></animate>
+    </rect>
+    <rect fill='#2563eb' stroke='#2563eb' stroke-width='21' width='30' height='30' x='85' y='50'>
+        <animate attributeName='x' calcMode='spline' dur='2' values='85;25;85;145;85;' keySplines='.5 0 .5 1;.5 0 .5 1;.5 0 .5 1;.5 0 .5 1'
+            repeatCount='indefinite' begin='0'></animate>
+    </rect>
+    <rect fill='#2563eb' stroke='#2563eb' stroke-width='21' width='30' height='30' x='145' y='50'>
+        <animate attributeName='x' calcMode='spline' dur='2' values='145;25;145;' keySplines='.5 0 .5 1;.5 0 .5 1'
+            repeatCount='indefinite' begin='0'></animate>
+    </rect>
+</svg>
