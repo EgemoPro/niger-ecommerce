@@ -89,48 +89,57 @@ const ImageCarousel = ({
 
       {/* ScrollArea des miniatures - Apparait seulement en plein écran */}
       {isFullScreen && (
-        <div
-          className={`absolute p-1 h-24 w-[calc(100%-10px)] md:top-0 top-2 left-0 transition-transform duration-500 ease-in-out ${
-            isFullScreen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
-          }`}
-        >
-          <ScrollArea className="flex flex-row items-center justify-center h-full  p-0">
-            <div className="flex flex-row items-center h-full w-full mt space-x-3 p-1" ref={(ref) => {
-              if (ref) {
-                const activeThumb = ref.children[currentImageIndex]
-                if (activeThumb) {
-                  activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
-                }
-              }
-            }}>
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-20 h-20 flex-shrink-0 cursor-pointer rounded-lg transition-transform ${
-                    index === currentImageIndex
-                      ? "border-2 border-gray-300 scale-110"
-                      : "border border-gray-300/20 opacity-30"
-                  }`}
-                >
-                  {loadedImages.includes(image) ? (
-                    <img
-                      src={image}
-                      alt={`Miniature ${index + 1}`}
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <img src={loader} alt="Loading..." className="w-8 h-8" />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
-      )}
+  <div
+    className={`absolute p-1 h-24 w-[calc(100%-10px)] md:top-0 top-2 left-0 transition-transform duration-500 ease-in-out ${
+      isFullScreen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
+    }`}
+  >
+    <ScrollArea className="flex flex-row items-center justify-center h-full p-0">
+      <div
+        className="flex flex-row items-center h-full w-full mt space-x-3 p-1"
+        ref={(ref) => {
+          if (ref) {
+            const activeThumb = ref.children[currentImageIndex];
+            if (activeThumb) {
+              activeThumb.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+            }
+          }
+        }}
+      >
+        {images.map((image, index) => (
+          <div
+            key={index}
+            onClick={() => setCurrentImageIndex(index)}
+            className={`w-20 h-20 flex-shrink-0 cursor-pointer rounded-lg transition-transform duration-300 ease-in-out transform ${
+              index === currentImageIndex
+                ? "border-2 border-gray-300 scale-110 z-10" // Zoom and bring the active thumbnail to front
+                : `border border-gray-300/20 opacity-30 ${
+                    index < currentImageIndex ? "translate-x-[-10px]" : "translate-x-[10px]"
+                  }` // Add a small offset to the left and right thumbnails
+            }`}
+            style={{
+              zIndex: index === currentImageIndex ? 10 : index, // Ensure the active thumbnail is on top
+            }}
+          >
+            {loadedImages.includes(image) ? (
+              <img
+                src={image}
+                alt={`Miniature ${index + 1}`}
+                className="w-full h-full object-cover rounded-md"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <img src={loader} alt="Loading..." className="w-8 h-8" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
+  </div>
+)}
+
     </div>
   );
 };

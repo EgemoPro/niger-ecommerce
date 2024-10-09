@@ -1,12 +1,8 @@
-import React from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Card } from "../components/ui/card";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { Plus, Minus } from "lucide-react";
+
 export const sizes = [
   { id: 1, name: "S" },
   { id: 2, name: "M" },
@@ -23,74 +19,105 @@ const ProductDetails = ({
   setQuantity,
   colorSelected,
   setColorSelected,
-}) => (
-  <div className="w-full  md:pl-4">
-    <p className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-gray-800">
-      {product.price} FCFA
-    </p>
+}) => {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
+  const fullDescription = product.description;
+  const truncatedDescription = fullDescription.slice(0, Math.floor(fullDescription.length / 4));
 
-    <p className="text-sm text-gray-600 mb-4 md:mb-6">{product.description}</p>
+  useEffect(() => {
+    if (product.colors.length > 0 && !colorSelected) {
+      setColorSelected(product.colors[0]);
+    }
+  }, [product.colors, colorSelected, setColorSelected]);
 
-    <div className="flex md:flex-row flex-col item-center gap-2">
-      <div className="md:w-1/2">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Taille
-        </label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start">
-              {selectedSize.name || "Sélectionner une taille"}
+  return (
+    <ScrollArea className="w-full h-[230px] sm:h-[300px] md:h-full mt-8 sm:mt-10 md:mt-0 md:pl-4 p-2 sm:p-4 rounded-lg shadow-sm border bg-white">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-baseline mb-3 sm:mb-4">
+          <span className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900">
+            {'FCFA '}
+            {product.price.toString().split('.')[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+          </span>
+          <span className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-500">
+            .{product.price.toString().split('.')[1] || '00'}
+          </span>
+        </div>
+        <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
+          <p 
+            className="text-xs sm:text-sm text-gray-700 leading-relaxed cursor-pointer"
+            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+          >
+            {isDescriptionExpanded ? fullDescription : truncatedDescription}
+            {!isDescriptionExpanded && (
+              <span className="text-blue-600 hover:text-blue-800 font-semibold ml-1">
+                ...plus
+              </span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-4 sm:space-y-6">
+        <div className="">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Couleur</h3>
+          <div className="flex flex-wrap gap-2 sm:gap-3 p-2">
+            {product.colors.map((color, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="icon"
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg border-2 transition-all duration-200 ease-in-out hover:scale-110 ${
+                  colorSelected === color ? "ring-2 ring-offset-2 ring-black scale-110" : ""
+                }`}
+                style={{ backgroundColor: color }}
+                onClick={() => setColorSelected(color)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Taille</h3>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            {sizes.map((size) => (
+              <Button
+                key={size.id}
+                variant={selectedSize.id === size.id ? "default" : "outline"}
+                className="w-10 h-10 sm:w-12 sm:h-12 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out"
+                onClick={() => setSelectedSize(size)}
+              >
+                {size.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Quantité</h3>
+          <div className="flex items-center">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="w-10 h-10 sm:w-12 sm:h-12 transition-all duration-200 ease-in-out"
+            >
+              <Minus size={14} className="sm:w-4 sm:h-4" />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="p-2">
-            <div className="grid">
-              {sizes.map((size) => (
-                <Button
-                  key={size.id}
-                  variant="ghost"
-                  className="justify-start w-full hover:bg-slate-400/10"
-                  onClick={() => setSelectedSize(size)}
-                >
-                  {size.name}
-                </Button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+            <span className="mx-3 sm:mx-4 text-base sm:text-lg font-medium">{quantity}</span>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setQuantity(quantity + 1)}
+              className="w-10 h-10 sm:w-12 sm:h-12 transition-all duration-200 ease-in-out"
+            >
+              <Plus size={14} className="sm:w-4 sm:h-4" />
+            </Button>
+          </div>
+        </div>
       </div>
-
-      <div className="md:w-1/2">
-        <label
-          htmlFor="quantity"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Quantité
-        </label>
-        <input
-          id="quantity"
-          type="number"
-          min="1"
-          value={quantity}
-          onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value)))}
-          className="w-full border rounded-lg p-2 text-sm"
-        />
-      </div>
-    </div>
-    <div className="flex flex-start items-center space-x-2 mt-3 mb-3">
-      {product.colors.map((color, index) => (
-        <Button
-          key={index}
-          variant="outline"
-          size="icon"
-          className={`w-8 h-8 rounded-full mx-1 shadow-lg border ${
-            colorSelected === color ? "ring-2 ring-offset-2 ring-black" : ""
-          }`}
-          style={{ backgroundColor: color }}
-          onClick={() => setColorSelected(color)}
-        />
-      ))}
-    </div>
-  </div>
-);
+      <ScrollBar orientation="vertical" />
+    </ScrollArea>
+  );
+};
 
 export default ProductDetails;
