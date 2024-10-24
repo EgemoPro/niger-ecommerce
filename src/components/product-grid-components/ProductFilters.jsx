@@ -14,7 +14,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
     searchTerm: "",
 
   });
-  const backetState = useSelector((state) => state.backet);
+  const backetState = useSelector((state) => state.basket);
   // console.log(backetState);
   
   const updateFilters = useCallback(
@@ -51,7 +51,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
 
   return (
     <div className="flex flex-col  space-y-2">
-      <div className="flex flex-col sm:flex-row  sm:-mb-10 sm:space-x-4 mt-2 ">
+      <div className="flex flex-col sm:flex-row  sm:-mb-10 sm:space-x-4 mt-2 h-20 ">
         <div className="grid grid-cols-4 w-full sm:w-1/3 sm:mb-0 ">
           <div className="relative col-span-3">
             <Search className="absolute left-2 md:top-1/4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -76,7 +76,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
           </Button>
         </div>
 
-        <ScrollArea className="w-full sm:w-2/3 h-20 mt-3 md:mt-0">
+        <ScrollArea className="w-full h-12 sm:w-2/3 mt-3 md:mt-0">
           <div className="flex gap-2">
             <Button
               variant={filters.category === "all" ? "default" : "outline"}

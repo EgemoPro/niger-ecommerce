@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import { OrderTableBody, ActionButtons, OrderTableHeader, Pagination, SearchBar, StatusFilter } from "../../components/order-table-components.jsx";
 
 const OrderTable = () => {
-  const initialOrders = useSelector(state => state.backet);
+  const initialOrders = useSelector(state => state.basket);
+  
   const [orders, setOrders] = useState(initialOrders);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");

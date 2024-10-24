@@ -234,7 +234,8 @@ const initialState = [
   {
     id: "#46657",
     title: "Bibliothèque en Bois Rustique",
-    description: "Bibliothèque spacieuse avec un charme rustique pour vos livres",
+    description:
+      "Bibliothèque spacieuse avec un charme rustique pour vos livres",
     rating: 4.7,
     reviews: 190,
     price: 299.99,
@@ -300,7 +301,8 @@ const initialState = [
   {
     id: "#46660",
     title: "Chandelier en Cristal Luxueux",
-    description: "Magnifique chandelier en cristal pour une ambiance somptueuse",
+    description:
+      "Magnifique chandelier en cristal pour une ambiance somptueuse",
     rating: 4.9,
     reviews: 80,
     price: 12999.99,
@@ -322,7 +324,8 @@ const initialState = [
   {
     id: "#46661",
     title: "Canapé en Cuir Italien",
-    description: "Canapé haut de gamme en cuir italien avec finitions luxueuses",
+    description:
+      "Canapé haut de gamme en cuir italien avec finitions luxueuses",
     rating: 4.8,
     reviews: 95,
     price: 8499.99,
@@ -344,7 +347,8 @@ const initialState = [
   {
     id: "#46662",
     title: "Table de Salle à Manger en Bois Précieux",
-    description: "Table de salle à manger en bois exotique avec incrustation de nacre",
+    description:
+      "Table de salle à manger en bois exotique avec incrustation de nacre",
     rating: 4.7,
     reviews: 60,
     price: 18999.99,
@@ -366,7 +370,8 @@ const initialState = [
   {
     id: "#46663",
     title: "Lit à Baldaquin Royal",
-    description: "Lit à baldaquin somptueux avec des détails dorés et des rideaux en soie",
+    description:
+      "Lit à baldaquin somptueux avec des détails dorés et des rideaux en soie",
     rating: 4.9,
     reviews: 40,
     price: 24999.99,
@@ -388,7 +393,8 @@ const initialState = [
   {
     id: "#46664",
     title: "Tapis Persan Antique",
-    description: "Tapis persan fait main avec des motifs complexes et des matériaux précieux",
+    description:
+      "Tapis persan fait main avec des motifs complexes et des matériaux précieux",
     rating: 4.8,
     reviews: 55,
     price: 35999.99,
@@ -410,7 +416,8 @@ const initialState = [
   {
     id: "#46665",
     title: "Réfrigérateur Intelligent",
-    description: "Réfrigérateur connecté avec écran tactile et gestion des aliments",
+    description:
+      "Réfrigérateur connecté avec écran tactile et gestion des aliments",
     rating: 4.7,
     reviews: 120,
     price: 3999.99,
@@ -432,7 +439,8 @@ const initialState = [
   {
     id: "#46666",
     title: "Machine à Laver Écologique",
-    description: "Machine à laver économe en eau et en énergie avec programmes intelligents",
+    description:
+      "Machine à laver économe en eau et en énergie avec programmes intelligents",
     rating: 4.6,
     reviews: 85,
     price: 1299.99,
@@ -454,7 +462,8 @@ const initialState = [
   {
     id: "#46667",
     title: "Four à Vapeur Professionnel",
-    description: "Four combiné vapeur avec fonctions avancées pour une cuisson parfaite",
+    description:
+      "Four combiné vapeur avec fonctions avancées pour une cuisson parfaite",
     rating: 4.9,
     reviews: 70,
     price: 2799.99,
@@ -476,7 +485,8 @@ const initialState = [
   {
     id: "#46668",
     title: "Robot Culinaire Multifonction",
-    description: "Robot de cuisine polyvalent avec nombreux accessoires et recettes intégrées",
+    description:
+      "Robot de cuisine polyvalent avec nombreux accessoires et recettes intégrées",
     rating: 4.8,
     reviews: 150,
     price: 899.99,
@@ -498,7 +508,8 @@ const initialState = [
   {
     id: "#46669",
     title: "Lave-Vaisselle Silencieux",
-    description: "Lave-vaisselle ultra-silencieux avec système de séchage avancé",
+    description:
+      "Lave-vaisselle ultra-silencieux avec système de séchage avancé",
     rating: 4.7,
     reviews: 95,
     price: 1099.99,
@@ -522,7 +533,15 @@ const initialState = [
 const dataSlice = createSlice({
   name: "data",
   initialState,
-  reducers: {},
+  reducers: {
+    setQuantity: function (state, action) {
+      state.forEach((product) =>
+        product.id == action.payload.id
+          ? (product.quantity = action.payload.quantity)
+          : product
+      );
+    },
+  },
 });
 
 // const { addProduct, delProduct } = backetSlice.actions;

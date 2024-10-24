@@ -39,12 +39,7 @@ const PageProduitSweater = () => {
   };
 
   const handleAddToCart = () => {
-    /*if (selectedSize) {
-      console.log(`Added to cart: ${quantity} ${product.title} in size ${selectedSize}`);
-      // Here you would typically dispatch an action to add the item to the cart
-      } else {
-        alert("Please select a size before adding to cart");
-    }*/
+    
     setIsOpen(true);
   };
 

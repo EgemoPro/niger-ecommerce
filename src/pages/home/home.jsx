@@ -14,7 +14,7 @@ const compagnies = [
 ];
 
 const Home = () => {
-  const backet = useSelector(state => console.log(state))
+  const basket = useSelector(state => console.log(state))
   
   return (
     <div

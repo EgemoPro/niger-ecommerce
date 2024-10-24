@@ -11,7 +11,7 @@ enableMapSet()
 
 export const store = configureStore({
     reducer:{
-        backet: backetSlice.reducer,
+        basket: backetSlice.reducer,
         data : dataSlice.reducer,
         favoris: favoriSlice.reducer
     },

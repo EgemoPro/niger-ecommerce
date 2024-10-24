@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { Plus, Minus } from "lucide-react";
-
+import { Separator } from "../components/ui/separator";
+import { Star } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { handleBacketAction } from "../redux/method";
 export const sizes = [
   { id: 1, name: "S" },
   { id: 2, name: "M" },
@@ -15,14 +18,19 @@ const ProductDetails = ({
   product,
   selectedSize,
   setSelectedSize,
-  quantity,
-  setQuantity,
   colorSelected,
   setColorSelected,
 }) => {
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = React.useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
+
+
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const fullDescription = product.description;
-  const truncatedDescription = fullDescription.slice(0, Math.floor(fullDescription.length / 4));
+  const truncatedDescription = fullDescription.slice(
+    0,
+    Math.floor(fullDescription.length / 4)
+  );
 
   useEffect(() => {
     if (product.colors.length > 0 && !colorSelected) {
@@ -30,20 +38,72 @@ const ProductDetails = ({
     }
   }, [product.colors, colorSelected, setColorSelected]);
 
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const partialStar = rating % 1;
+    const stars = [];
+    // console.log(stars);
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(
+          <Star key={i} className="text-yellow-400" fill="currentColor" />
+        );
+      } else if (i === fullStars && partialStar > 0) {
+        const percentage = partialStar * 100;
+        stars.push(
+          <div key={i} className="relative inline-block">
+            <Star className="text-yellow-400" />
+            <div
+              className="absolute top-0 left-0 overflow-hidden"
+              style={{ width: `${percentage}%` }}
+            >
+              <Star className="text-yellow-400" fill="currentColor" />
+            </div>
+          </div>
+        );
+      } else {
+        stars.push(<Star key={i} className="text-yellow-400" />);
+      }
+    }
+
+    return stars;
+  };
+
+  const handleReduceQuantity = () => {
+    setQuantity(Math.max(1, quantity - 1));
+    dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
+
+  };
+
+  const handleAddQuantity = () =>{
+     setQuantity(quantity + 1)
+     dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
+  }
+
   return (
-    <ScrollArea className="w-full h-[230px] sm:h-[300px] md:h-full mt-8 sm:mt-10 md:mt-0 md:pl-4 p-2 sm:p-4 rounded-lg shadow-sm border bg-white">
-      <div className="mb-6 sm:mb-8">
+    <div className="bg-white h-auto  md:h-full w-full  md:pl-4 p-2 rounded-lg shadow-sm  sm:mt-0  sm:p-4">
+      <div className="">
         <div className="flex items-baseline mb-3 sm:mb-4">
-          <span className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-            {'FCFA '}
-            {product.price.toString().split('.')[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+          <span className="text-xl md:text-2xl font-bold text-gray-900">
+            {"FCFA "}
+            {product.price
+              .toString()
+              .split(".")[0]
+              .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
           </span>
-          <span className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-500">
-            .{product.price.toString().split('.')[1] || '00'}
+          <span className="text-sm font-semibold text-gray-500 relative -top-2 left-1">
+            .{product.price.toString().split(".")[1] || "00"}
           </span>
         </div>
+        {/* les etoiles des produits */}
+        <div className="flex items-center w-auto pb-2">
+          <div className="flex items-center gap-2 ">
+            {renderStars(product.rating)} ({product.rating})
+          </div>
+        </div>
         <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
-          <p 
+          <p
             className="text-xs sm:text-sm text-gray-700 leading-relaxed cursor-pointer"
             onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
           >
@@ -59,7 +119,9 @@ const ProductDetails = ({
 
       <div className="space-y-4 sm:space-y-6">
         <div className="">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Couleur</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
+            Couleur
+          </h3>
           <div className="flex flex-wrap gap-2 sm:gap-3 p-2">
             {product.colors.map((color, index) => (
               <Button
@@ -67,7 +129,9 @@ const ProductDetails = ({
                 variant="outline"
                 size="icon"
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg border-2 transition-all duration-200 ease-in-out hover:scale-110 ${
-                  colorSelected === color ? "ring-2 ring-offset-2 ring-black scale-110" : ""
+                  colorSelected === color
+                    ? "ring-2 ring-offset-2 ring-black scale-110"
+                    : ""
                 }`}
                 style={{ backgroundColor: color }}
                 onClick={() => setColorSelected(color)}
@@ -75,9 +139,11 @@ const ProductDetails = ({
             ))}
           </div>
         </div>
-
+        <Separator />
         <div>
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Taille</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
+            Taille
+          </h3>
           <div className="flex flex-wrap gap-2 sm:gap-3">
             {sizes.map((size) => (
               <Button
@@ -91,23 +157,28 @@ const ProductDetails = ({
             ))}
           </div>
         </div>
+        <Separator />
 
         <div>
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Quantité</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
+            Quantité
+          </h3>
           <div className="flex items-center">
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              onClick={handleReduceQuantity}
               className="w-10 h-10 sm:w-12 sm:h-12 transition-all duration-200 ease-in-out"
             >
               <Minus size={14} className="sm:w-4 sm:h-4" />
             </Button>
-            <span className="mx-3 sm:mx-4 text-base sm:text-lg font-medium">{quantity}</span>
+            <span className="mx-3 sm:mx-4 text-base sm:text-lg font-medium">
+              {quantity}
+            </span>
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setQuantity(quantity + 1)}
+              onClick={handleAddQuantity}
               className="w-10 h-10 sm:w-12 sm:h-12 transition-all duration-200 ease-in-out"
             >
               <Plus size={14} className="sm:w-4 sm:h-4" />
@@ -116,7 +187,7 @@ const ProductDetails = ({
         </div>
       </div>
       <ScrollBar orientation="vertical" />
-    </ScrollArea>
+    </div>
   );
 };
 

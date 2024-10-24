@@ -7,10 +7,11 @@ import ActionButtons from "./ActionButtons";
 import { useDispatch } from "react-redux";
 import SharePopover from "./SharePopover";
 import { handleBacketAction } from "../redux/method";
+import { ScrollArea } from "./ui/scroll-area";
+
 
 const PhoneProductCard = ({ product, onClose }) => {
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
-  const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -36,9 +37,8 @@ const PhoneProductCard = ({ product, onClose }) => {
     );
   };
 
-  const handleAddToCart = () => {
+  const handleBasket = () => {
     dispatch(handleBacketAction("addProduct", product));
-    console.log(product);
   };
 
   useEffect(() => {
@@ -85,8 +85,11 @@ const PhoneProductCard = ({ product, onClose }) => {
         </div>
 
         {/* Contenu principal : Carousel et détails produit */}
-        <div className="flex flex-col md:flex-row justify-between">
-          <div className="md:w-1/2 md:h-full h-[calc(50%-100px)]  ">
+        <ScrollArea className="w-full max-middle:p-4">
+          <div className="flex w-full max-middle:flex-col flex-row justify-between gap-4">
+
+          
+          <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]  ">
             <ImageCarousel
               images={product.images}
               currentImageIndex={currentImageIndex}
@@ -96,18 +99,17 @@ const PhoneProductCard = ({ product, onClose }) => {
               isFullScreen={isFullScreen}
             />
           </div>
-          <div className="md:w-1/2 md:h-full w-full h-1/2 p-1">
+          <div className="w-1/2 md:h-full max-middle:w-full h-1/2 p-1">
             <ProductDetails
               product={product}
               selectedSize={selectedSize}
               setSelectedSize={setSelectedSize}
               colorSelected={colorSelected}
               setColorSelected={setColorSelected}
-              quantity={quantity}
-              setQuantity={setQuantity}
             />
           </div>
-        </div>
+          </div>
+        </ScrollArea>
 
         {/* Boutons d'action: Favoris, Ajouter au panier, etc. */}
         <div className="w-full">
@@ -115,7 +117,7 @@ const PhoneProductCard = ({ product, onClose }) => {
             isFavorite={isFavorite}
             toggleFavorite={toggleFavorite}
             product={product}
-            onAddToCart={handleAddToCart}
+            onAddToCart={handleBasket}
           />
         </div>
       </DrawerContent>
