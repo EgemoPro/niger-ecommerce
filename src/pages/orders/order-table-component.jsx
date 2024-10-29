@@ -87,15 +87,15 @@ const OrderTable = () => {
   );
 
   return (
-    <div className="container mx-auto p-4 sm:p-1">
+    <div className="container mx-auto ">
       {isEcommerceDashboardPopupOpen && (
         <OrderPopup 
           onClose={() => setIsEcommerceDashboardPopupOpen(false)} 
           isOpen={isEcommerceDashboardPopupOpen}
         />
       )}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-1">
-        <h1 className="flex flex-row items-center justify-between gap-2 h-10 sm:text-xl text-[#2563eb] text-lg mb-2 sm:mb-0 p-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center">
+        <h1 className="flex flex-row items-center gap-3 p-2 h-10 w-full sm:text-xl text-[#2563eb] text-lg font-semibold sm:mb-0">
           <Link className="cursor-pointer text-xl mt-1 bg-black/5 rounded-sm hover:bg-black/10 ease-in-out duration-75" to="/product">
             <ChevronLeft />
           </Link>
@@ -104,7 +104,7 @@ const OrderTable = () => {
         </h1>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 space-y-2 sm:space-y-0 sm:space-x-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center p-2 mb-4 sm:mb-6 space-y-2 sm:space-y-0 sm:space-x-2">
         <SearchBar searchTerm={searchTerm} handleSearch={(e) => setSearchTerm(e.target.value)} />
         <StatusFilter
           statusFilter={statusFilter}

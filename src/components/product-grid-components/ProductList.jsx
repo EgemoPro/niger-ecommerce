@@ -9,11 +9,11 @@ const ProductList = ({
   onOpen,
 }) => (
   <ScrollArea
-    className="h-[calc(100vh-245px)] md:h-[calc(100vh-120px)] snap-y snap-mandatory p-4 overflow-y-auto"
+    className="h-[calc(100vh-145px)] max-md:h-[calc(100vh-210px)] snap-y snap-mandatory p-4 overflow-y-auto"
   >
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {visibleProducts.map((product) => (
-        <div key={product.id} className="snap-start scroll-mt-4">
+        <div key={product.id} className="snap-start scroll-mt-4 snap-always">
           <ProductCard
             product={product}
             isFavorite={favorites[product.id]}

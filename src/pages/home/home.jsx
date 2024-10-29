@@ -1,6 +1,6 @@
-import NavBare from "../../components/NavBare";
-import { Facebook, Linkedin, Instagram } from "lucide-react";
+import NavBare from "../../components/quickshop-navbar-autocomplete";
 import { motion } from "framer-motion";
+import { Facebook, Linkedin, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import Baniere from "../../assets/Baniere.png";
 import { useSelector } from "react-redux";
@@ -14,7 +14,8 @@ const compagnies = [
 ];
 
 const Home = () => {
-  const basket = useSelector(state => console.log(state))
+  const data = useSelector(state => state.data)
+  console.log(data);
   
   return (
     <div
@@ -26,7 +27,9 @@ const Home = () => {
         backgroundPosition: "20px -20px",
       }}
     >
-      <NavBare />
+      {/* Navbar, vous pouvez le supprimer si vous n'en avez pas besoin */}
+      <NavBare data={data} />
+
       <main className="container mt-10 mx-auto px-4 py-8 sm:py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

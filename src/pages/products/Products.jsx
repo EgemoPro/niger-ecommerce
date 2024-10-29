@@ -1,5 +1,5 @@
 import React from "react";
-import ProductCard from "../../components/ProductCard.jsx";
+// import ProductCard from "../../components/ProductCard.jsx";
 import ProductGrid from "../../components/product-grid-component.jsx";
 import PhoneProductCard from "../../components/PhoneProductCarde.jsx";
 
@@ -15,7 +15,7 @@ function Products() {
   }
 
   return (
-    <div className="h-screen flex justify-center items-center  bg-gray-100 overflow-hidden">
+    <div className="h-screen flex justify-center items-center overflow-hidden">
       {isProductCardOpen && (
         <PhoneProductCard product={selectedProduct} onClose={() => setIsProductCardOpen(false)} />
       )}

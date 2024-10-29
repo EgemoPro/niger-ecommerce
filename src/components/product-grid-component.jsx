@@ -67,9 +67,9 @@ const ProductGrid = ({ onOpen }) => {
   }, []);
 
   return (
-    <Card className="h-full w-full mx-auto">
+    <Card className="h-full w-full rounded-none">
       <ProductGridHeader />
-      <CardContent>
+      <CardContent className="px-1" >
         <ProductFilters
           categories={categories}
           onFilterChange={handleFilterChange}

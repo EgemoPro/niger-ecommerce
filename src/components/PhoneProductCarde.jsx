@@ -17,7 +17,7 @@ const PhoneProductCard = ({ product, onClose }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [colorSelected, setColorSelected] = useState("");
-
+  const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
 
   const toggleFavorite = () => {
@@ -38,7 +38,7 @@ const PhoneProductCard = ({ product, onClose }) => {
   };
 
   const handleBasket = () => {
-    dispatch(handleBacketAction("addProduct", product));
+    dispatch(handleBacketAction("addProduct", {...product, quantity}));
   };
 
   useEffect(() => {
@@ -53,14 +53,14 @@ const PhoneProductCard = ({ product, onClose }) => {
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerContent
         side="bottom"
-        className={`flex flex-col justify-between bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300 ${
+        className={`flex flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${
           isFullScreen
             ? "h-[calc(100%-20px)]"
             : "h-[95%]"
         } `}
       >
         {/* Header du produit */}
-        <div className="flex flew-row justify-between items-center ">
+        <div className="flex flew-row justify-between items-center mb-2">
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight leading-tight">{product.title}</h2>
           <div className="flex items-center justify-center gap-4 h-10 w-24">
             <SharePopover />
@@ -106,6 +106,8 @@ const PhoneProductCard = ({ product, onClose }) => {
               setSelectedSize={setSelectedSize}
               colorSelected={colorSelected}
               setColorSelected={setColorSelected}
+              quantity={quantity}
+              setQuantity={setQuantity}
             />
           </div>
           </div>

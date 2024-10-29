@@ -50,11 +50,11 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
   );
 
   return (
-    <div className="flex flex-col  space-y-2">
-      <div className="flex flex-col sm:flex-row  sm:-mb-10 sm:space-x-4 mt-2 h-20 ">
-        <div className="grid grid-cols-4 w-full sm:w-1/3 sm:mb-0 ">
-          <div className="relative col-span-3">
-            <Search className="absolute left-2 md:top-1/4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+    <div className="flex flex-col max-md:gap-3 w-full">
+      <div className="flex max-md:flex-col flex-row gap-2 mt-2 h-auto">
+        <div className="max-md:grid max-md:grid-cols-4 max-md:w-full flex w-1/3 gap-2 p-2">
+          <div className="relative max-md:col-span-3 md:w-2/3 ">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4" />
             <Input
               type="text"
               placeholder="Search products..."
@@ -63,20 +63,23 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
               className="pl-8"
             />
           </div>
-          <Button className="ml-2 flex w-30">
+          <Button className="flex max-md:col-span-1 md:w-auto bg-transparent hover:bg-slate-400/10 border">
             <Link
-              className="h-full w-full flex items-center gap-5 text-inherit"
+              className="h-full w-full flex items-center justify-around gap-5 text-inherit"
               to={`/orders`}
             >
-              <span className="h-6 w-6 p-2 bg-white/20 rounded-full flex justify-center items-center">
+              <span className="h-6 w-6 p-2 text-gray-500 rounded-full flex justify-center items-center">
                 {backetState.length}
               </span>
-              <ShoppingCart className="h-5 w-5" />
+              <span className="h-6 w-6 p-2 max-md:hidden text-gray-500 rounded-full flex justify-center items-center">
+                Panier
+              </span>
+              <ShoppingCart className="h-5 w-5 text-gray-500" />
             </Link>
           </Button>
         </div>
 
-        <ScrollArea className="w-full h-12 sm:w-2/3 mt-3 md:mt-0">
+        <ScrollArea className="max-md:w-full md:w-2/3 h-auto p-2">
           <div className="flex gap-2">
             <Button
               variant={filters.category === "all" ? "default" : "outline"}

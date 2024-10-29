@@ -20,8 +20,10 @@ const ProductDetails = ({
   setSelectedSize,
   colorSelected,
   setColorSelected,
+  quantity,
+  setQuantity
 }) => {
-  const [quantity, setQuantity] = useState(1);
+  
   const dispatch = useDispatch();
 
 
@@ -72,13 +74,13 @@ const ProductDetails = ({
 
   const handleReduceQuantity = () => {
     setQuantity(Math.max(1, quantity - 1));
-    dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
+    // dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
 
   };
 
   const handleAddQuantity = () =>{
      setQuantity(quantity + 1)
-     dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
+    //  dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
   }
 
   return (

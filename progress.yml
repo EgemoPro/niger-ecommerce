@@ -1,0 +1,9 @@
+
+[product sweater]:
+  1. Exporter le tableau contenant les produits
+    1. au format PDF, CSV
+  2. Finaliser le btn commander 
+    1. Mettre en place un mecanisme de qui gere les commandes de l'achat à la livraison
+    2. Mettre en place la seconde etape de la commande decrivant à l'acheteur les étapes de la commande
+  3. Mettre en place le btn de reinitialisation du tableau du panier
+    1. vider le panier via le state "dispacher"
