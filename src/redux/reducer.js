@@ -1,5 +1,5 @@
 import { applyMiddleware, configureStore} from '@reduxjs/toolkit'
-import { backetSlice } from './Slices/backetSlice'
+import { backetSlice } from './Slices/basketSlice'
 import { dataSlice } from './Slices/initialData'
 import { favoriSlice } from './Slices/favorisSlice'
 import {enableMapSet} from 'immer'

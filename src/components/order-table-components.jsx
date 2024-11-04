@@ -97,7 +97,7 @@ export const ActionButtons = React.memo(
         onClick={handleBuyNow}
       >
         <ShoppingBag className="h-4 w-4" />
-        Commender
+        Commander
       </Button>
       <Button
         className="bg-transparent hover:text-red-700 hover:bg-transparent text-red-500  flex items-center w-full gap-3 sm:w-auto"
@@ -131,7 +131,7 @@ export const OrderTableHeader = React.memo(
             <TableHead>QUANTITE</TableHead>
             <TableHead>EMPLACEMENT</TableHead>
             {/* <TableHead>DATE</TableHead> */}
-            <TableHead>TOTAL</TableHead>
+            <TableHead>PRIX</TableHead>
             <TableHead className="">ACTION</TableHead>
           </TableRow>
         </TableHeader>
@@ -176,7 +176,7 @@ export const OrderTableBody = React.memo(
               <TableCell >{order.quantity}</TableCell>
               <TableCell className="">{order.location}</TableCell>
               {/* <TableCell className="">{order.date}</TableCell> */}
-              <TableCell className="">{order.total}</TableCell>
+              <TableCell className="">{order.total.replace('$',"FCFA ")}</TableCell>
               <TableCell className="">
                 <Popover>
                   <PopoverTrigger asChild>

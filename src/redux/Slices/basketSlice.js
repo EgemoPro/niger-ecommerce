@@ -16,13 +16,9 @@ export const backetSlice = createSlice({
             }
             console.log("add product to basket", state);
         },
-        setQuantity: (state, action) => {
-            console.log("set quantity from basketSlice", action);
-            state.forEach((product) =>
-                product.id === action.payload.id
-                    ? (product.quantity = action.payload.quantity)
-                    : product
-            );
+        reset: (state, action) => {
+            state.splice(0, state.length);
+            
         },
         delProduct: (state, action) => {
             return state.filter((product) => product.id !== action.payload);

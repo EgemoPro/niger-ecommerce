@@ -88,7 +88,8 @@ const PageProduitSweater = () => {
       <OrderPopup isOpen={isOpen} onClose={setIsOpen} product={product} />
       <ResizablePanelGroup
         direction="horizontal"
-        className="min-h-[200px] w-full flex flex-col md:flex-row"
+
+        className="max-h-[450px] w-full flex flex-col md:flex-row shadow-md rounded-md overflow-hidden p-2"
       >
         <ResizablePanel defaultSize={50} className="mb-4 md:mb-0">
           <img

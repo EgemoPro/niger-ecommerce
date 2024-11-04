@@ -25,7 +25,7 @@ const ImageCarousel = ({
   }, [images]);
 
   return (
-    <div className="w-full relative overflow-hidden">
+    <div className="w-full relative overflow-hidden ">
       {/* Image principale */}
       <div className="relative w-full md:h-[510px] h-[300px] p-2">
         {images.map((image, index) => (
@@ -34,7 +34,7 @@ const ImageCarousel = ({
               <img
                 src={image}
                 alt={`Image ${index + 1}`}
-                className={`absolute top-0 left-0 w-full rounded-lg object-cover transition-opacity duration-300 ${
+                className={`absolute top-0 left-0 w-full rounded-lg object-contain transition-opacity duration-300 ${
                   index === currentImageIndex ? "opacity-100" : "opacity-0"
                 }`}
                 style={{

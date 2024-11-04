@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import OrderPopup from "../../components/order-popup.jsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { OrderTableBody, ActionButtons, OrderTableHeader, Pagination, SearchBar, StatusFilter } from "../../components/order-table-components.jsx";
+import { handleBacketAction } from "../../redux/method.js";
 
 const OrderTable = () => {
   const initialOrders = useSelector(state => state.basket);
-  
+  const dispatch = useDispatch();
+
   const [orders, setOrders] = useState(initialOrders);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -48,9 +50,13 @@ const OrderTable = () => {
   };
 
   const handleCleanBacket = () => {
-    window.confirm("voulez-vous videz votre panier ?")
+   dispatch(handleBacketAction('reset'))
   };
 
+  const handleDeleteOrder = (orderId) => {
+    dispatch(handleBacketAction('delProduct',  orderId))
+    // setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+  };
   const handleBuyNow = () => {
     console.log("Buy Now clicked...");
     setIsEcommerceDashboardPopupOpen(true);
@@ -95,7 +101,7 @@ const OrderTable = () => {
         />
       )}
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="flex flex-row items-center gap-3 p-2 h-10 w-full sm:text-xl text-[#2563eb] text-lg font-semibold sm:mb-0">
+        <h1 className="flex flex-row items-center gap-3 p-2 h-10 w-full sm:text-xl  text-[#2563eb] text-lg font-semibold sm:mb-0">
           <Link className="cursor-pointer text-xl mt-1 bg-black/5 rounded-sm hover:bg-black/10 ease-in-out duration-75" to="/product">
             <ChevronLeft />
           </Link>
@@ -129,6 +135,7 @@ const OrderTable = () => {
           paginatedOrders={paginatedOrders}
           selectedOrders={selectedOrders}
           handleSelectOrder={handleSelectOrder}
+          handleDeleteOrder={handleDeleteOrder}
         />
       </div>
 

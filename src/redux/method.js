@@ -1,6 +1,6 @@
 
 
-export const handleBacketAction = (type, payload, quantity = 1)=>{
+export const handleBacketAction = (type, payload)=>{
     console.log(payload);
     // payload.quantity = quantity
     switch (type) {
@@ -15,10 +15,9 @@ export const handleBacketAction = (type, payload, quantity = 1)=>{
                 type: 'basket/delProduct',
                 payload: payload
             }
-        case 'setQuantity':
+        case 'reset':
             return{
-                type: 'basket/setQuantity',
-                payload: payload
+                type: 'basket/reset'
             }
         default:
             throw new Error("Backet Slice Probleme")

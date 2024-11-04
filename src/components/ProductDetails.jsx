@@ -4,8 +4,8 @@ import { Button } from "../components/ui/button";
 import { Plus, Minus } from "lucide-react";
 import { Separator } from "../components/ui/separator";
 import { Star } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { handleBacketAction } from "../redux/method";
+// import { useDispatch } from "react-redux";
+// import { handleBacketAction } from "../redux/method";
 export const sizes = [
   { id: 1, name: "S" },
   { id: 2, name: "M" },
@@ -21,11 +21,9 @@ const ProductDetails = ({
   colorSelected,
   setColorSelected,
   quantity,
-  setQuantity
+  setQuantity,
 }) => {
-  
-  const dispatch = useDispatch();
-
+  // const dispatch = useDispatch();
 
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const fullDescription = product.description;
@@ -75,13 +73,12 @@ const ProductDetails = ({
   const handleReduceQuantity = () => {
     setQuantity(Math.max(1, quantity - 1));
     // dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
-
   };
 
-  const handleAddQuantity = () =>{
-     setQuantity(quantity + 1)
+  const handleAddQuantity = () => {
+    setQuantity(quantity + 1);
     //  dispatch(handleBacketAction("setQuantity", {quantity,id: product.id}));
-  }
+  };
 
   return (
     <div className="bg-white h-auto  md:h-full w-full  md:pl-4 p-2 rounded-lg shadow-sm  sm:mt-0  sm:p-4">
@@ -120,47 +117,60 @@ const ProductDetails = ({
       </div>
 
       <div className="space-y-4 sm:space-y-6">
-        <div className="">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
-            Couleur
-          </h3>
-          <div className="flex flex-wrap gap-2 sm:gap-3 p-2">
-            {product.colors.map((color, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="icon"
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg border-2 transition-all duration-200 ease-in-out hover:scale-110 ${
-                  colorSelected === color
-                    ? "ring-2 ring-offset-2 ring-black scale-110"
-                    : ""
-                }`}
-                style={{ backgroundColor: color }}
-                onClick={() => setColorSelected(color)}
-              />
-            ))}
-          </div>
-        </div>
-        <Separator />
-        <div>
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
-            Taille
-          </h3>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
-            {sizes.map((size) => (
-              <Button
-                key={size.id}
-                variant={selectedSize.id === size.id ? "default" : "outline"}
-                className="w-10 h-10 sm:w-12 sm:h-12 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out"
-                onClick={() => setSelectedSize(size)}
-              >
-                {size.name}
-              </Button>
-            ))}
-          </div>
-        </div>
-        <Separator />
+        {/* couleurs */}
+        {product.colors.length > 0 && (
+          <>
+            <div className="">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
+                Couleur
+              </h3>
+              <div className="flex flex-wrap gap-2 sm:gap-3 p-2">
+                {product.colors.map((color, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="icon"
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg border-2 transition-all duration-200 ease-in-out hover:scale-110 ${
+                      colorSelected === color
+                        ? "ring-2 ring-offset-2 ring-black scale-110"
+                        : ""
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setColorSelected(color)}
+                  />
+                ))}
+              </div>
+            </div>
+            <Separator />
+          </>
+        )}
 
+        {/* taille */}
+        {product.sizes.length > 0 && (
+          <>
+            <div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
+                Taille
+              </h3>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {product.sizes.map((size) => (
+                  <Button
+                    key={size.id}
+                    variant={
+                      selectedSize.id === size.id ? "default" : "outline"
+                    }
+                    className="min-w-12 h-10  sm:h-12 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out p-1"
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <Separator />
+          </>
+        )}
+        {/* quantité */}
         <div>
           <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
             Quantité

@@ -25,7 +25,7 @@ const ProductRating = ({ rating, reviews }) => (
       ))}
     </div>
     <span className="text-xs text-gray-600 ml-1">
-      {rating.toFixed(1)} ({reviews} Sell)
+      {rating.toFixed(1)} ({reviews} Vendus)
     </span>
   </div>
 );

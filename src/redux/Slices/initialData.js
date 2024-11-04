@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
+
 const initialState = [
   {
     id: "#46647",
@@ -25,6 +27,11 @@ const initialState = [
     date: "12 Feb 2024",
     total: "$56.99",
     colors: ["#FFFFFF", "#F0F0F0", "#E0E0E0"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "45x45x90cm" },
+      { id: 2, name: "Medium", dimensions: "50x50x95cm" },
+      { id: 3, name: "Large", dimensions: "55x55x100cm" }
+    ]
   },
   {
     id: "#46648",
@@ -48,7 +55,12 @@ const initialState = [
     date: "15 Mar 2024",
     total: "$89.99",
     colors: ["#000000", "#1A1A1A", "#333333"],
-  },
+    sizes: [
+      { id: 1, name: "Small", dimensions: "160x90x85cm" },
+      { id: 2, name: "Medium", dimensions: "200x90x85cm" },
+      { id: 3, name: "Large", dimensions: "240x90x85cm" }
+    ]
+  },  
   {
     id: "#46649",
     title: "Canapé Sombre Moelleux",
@@ -73,6 +85,11 @@ const initialState = [
     date: "5 Apr 2024",
     total: "$129.99",
     colors: ["#4A4A4A", "#3A3A3A", "#2A2A2A"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "160x90x85cm" },
+      { id: 2, name: "Medium", dimensions: "200x90x85cm" },
+      { id: 3, name: "Large", dimensions: "240x90x85cm" }
+    ]
   },
   {
     id: "#46650",
@@ -96,7 +113,12 @@ const initialState = [
     date: "20 May 2024",
     total: "$39.99",
     colors: ["#FFA500", "#FF8C00", "#FF7F50"],
-  },
+    sizes: [
+      { id: 1, name: "Small", dimensions: "45x45x90cm" },
+      { id: 2, name: "Medium", dimensions: "50x50x95cm" },
+      { id: 3, name: "Large", dimensions: "55x55x100cm" }
+    ]
+  },  
   {
     id: "#46651",
     title: "Canapé Orange Confortable",
@@ -118,6 +140,11 @@ const initialState = [
     date: "8 Jun 2024",
     total: "$159.99",
     colors: ["#FFA500", "#FF8C00", "#FF7F50"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "160x90x85cm" },
+      { id: 2, name: "Medium", dimensions: "200x90x85cm" },
+      { id: 3, name: "Large", dimensions: "240x90x85cm" }
+    ]
   },
   {
     id: "#46652",
@@ -140,6 +167,11 @@ const initialState = [
     date: "17 Jul 2024",
     total: "$79.99",
     colors: ["#FFFF00", "#FFD700", "#FFA500"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "45x45x90cm" },
+      { id: 2, name: "Medium", dimensions: "50x50x95cm" },
+      { id: 3, name: "Large", dimensions: "55x55x100cm" }
+    ]
   },
   {
     id: "#46653",
@@ -163,7 +195,12 @@ const initialState = [
     date: "3 Aug 2024",
     total: "$199.99",
     colors: ["#000000", "#1A1A1A", "#333333"],
-  },
+    sizes: [
+      { id: 1, name: "Small", dimensions: "120x60x75cm" },
+      { id: 2, name: "Medium", dimensions: "140x70x75cm" },
+      { id: 3, name: "Large", dimensions: "160x80x75cm" }
+    ]
+  }, 
   {
     id: "#46654",
     title: "Armoire Verte Polyvalente",
@@ -186,6 +223,11 @@ const initialState = [
     date: "22 Sep 2024",
     total: "$109.99",
     colors: ["#008000", "#006400", "#228B22"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "80x40x180cm" },
+      { id: 2, name: "Medium", dimensions: "100x50x200cm" },
+      { id: 3, name: "Large", dimensions: "120x60x220cm" }
+    ]
   },
   {
     id: "#46655",
@@ -208,6 +250,11 @@ const initialState = [
     date: "10 Oct 2024",
     total: "$79.99",
     colors: ["#FFFFFF", "#F5F5F5", "#DCDCDC"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "20x20x35cm" },
+      { id: 2, name: "Medium", dimensions: "25x25x45cm" },
+      { id: 3, name: "Large", dimensions: "30x30x55cm" }
+    ]
   },
   {
     id: "#46656",
@@ -230,6 +277,11 @@ const initialState = [
     date: "15 Nov 2024",
     total: "$149.99",
     colors: ["#808080", "#A9A9A9", "#D3D3D3"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "120x180cm" },
+      { id: 2, name: "Medium", dimensions: "160x230cm" },
+      { id: 3, name: "Large", dimensions: "200x290cm" }
+    ]
   },
   {
     id: "#46657",
@@ -253,6 +305,11 @@ const initialState = [
     date: "5 Dec 2024",
     total: "$299.99",
     colors: ["#8B4513", "#A0522D", "#CD853F"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "80x30x180cm" },
+      { id: 2, name: "Medium", dimensions: "100x35x200cm" },
+      { id: 3, name: "Large", dimensions: "120x40x220cm" }
+    ]
   },
   {
     id: "#46658",
@@ -275,6 +332,11 @@ const initialState = [
     date: "20 Jan 2025",
     total: "$249.99",
     colors: ["#4169E1", "#1E90FF", "#87CEEB"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "60x65x85cm" },
+      { id: 2, name: "Medium", dimensions: "65x70x90cm" },
+      { id: 3, name: "Large", dimensions: "70x75x95cm" }
+    ]
   },
   {
     id: "#46659",
@@ -297,6 +359,11 @@ const initialState = [
     date: "8 Feb 2025",
     total: "$399.99",
     colors: ["#FFFFFF", "#FFD700", "#B8860B"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "80x50x45cm" },
+      { id: 2, name: "Medium", dimensions: "100x60x45cm" },
+      { id: 3, name: "Large", dimensions: "120x70x45cm" }
+    ]
   },
   {
     id: "#46660",
@@ -320,6 +387,11 @@ const initialState = [
     date: "15 Mar 2025",
     total: "$12999.99",
     colors: ["#FFD700", "#FFFAFA", "#E6E6FA"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "50x50x60cm" },
+      { id: 2, name: "Medium", dimensions: "70x70x80cm" },
+      { id: 3, name: "Large", dimensions: "90x90x100cm" }
+    ]
   },
   {
     id: "#46661",
@@ -343,6 +415,11 @@ const initialState = [
     date: "22 Apr 2025",
     total: "$8499.99",
     colors: ["#8B4513", "#A52A2A", "#D2691E"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "180x85x90cm" },
+      { id: 2, name: "Medium", dimensions: "220x85x90cm" },
+      { id: 3, name: "Large", dimensions: "260x85x90cm" }
+    ]
   },
   {
     id: "#46662",
@@ -366,6 +443,11 @@ const initialState = [
     date: "10 May 2025",
     total: "$18999.99",
     colors: ["#8B4513", "#D2691E", "#CD853F"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "160x90x75cm" },
+      { id: 2, name: "Medium", dimensions: "200x100x75cm" },
+      { id: 3, name: "Large", dimensions: "240x110x75cm" }
+    ]
   },
   {
     id: "#46663",
@@ -389,6 +471,11 @@ const initialState = [
     date: "18 Jun 2025",
     total: "$24999.99",
     colors: ["#FFD700", "#8B0000", "#FFFAFA"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "140x190x220cm" },
+      { id: 2, name: "Medium", dimensions: "160x200x220cm" },
+      { id: 3, name: "Large", dimensions: "180x200x220cm" }
+    ]
   },
   {
     id: "#46664",
@@ -412,6 +499,11 @@ const initialState = [
     date: "5 Jul 2025",
     total: "$35999.99",
     colors: ["#8B0000", "#DAA520", "#4B0082"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "170x240cm" },
+      { id: 2, name: "Medium", dimensions: "200x300cm" },
+      { id: 3, name: "Large", dimensions: "250x350cm" }
+    ]
   },
   {
     id: "#46665",
@@ -435,6 +527,11 @@ const initialState = [
     date: "20 Jul 2025",
     total: "$3999.99",
     colors: ["#C0C0C0", "#FFFFFF", "#000000"],
+    sizes: [
+      { id: 1, name: "Small", dimensions: "60x65x170cm" },
+      { id: 2, name: "Medium", dimensions: "70x70x180cm" },
+      { id: 3, name: "Large", dimensions: "90x75x180cm" }
+    ]
   },
   {
     id: "#46666",
@@ -458,81 +555,37 @@ const initialState = [
     date: "2 Aug 2025",
     total: "$1299.99",
     colors: ["#FFFFFF", "#F5F5F5", "#DCDCDC"],
-  },
-  {
-    id: "#46667",
-    title: "Four à Vapeur Professionnel",
-    description:
-      "Four combiné vapeur avec fonctions avancées pour une cuisson parfaite",
-    rating: 4.9,
-    reviews: 70,
-    price: 2799.99,
-    originalPrice: 3199.99,
-    discount: 12,
-    images: [
-      "https://picsum.photos/600/400?random=45",
-      "https://picsum.photos/600/400?random=46",
-    ],
-    category: "Appliances",
-    customer: "Maria Garcia",
-    status: "Delivered",
-    quantity: 2,
-    location: "Barcelona (ES)",
-    date: "15 Aug 2025",
-    total: "$2799.99",
-    colors: ["#2F4F4F", "#708090", "#778899"],
-  },
-  {
-    id: "#46668",
-    title: "Robot Culinaire Multifonction",
-    description:
-      "Robot de cuisine polyvalent avec nombreux accessoires et recettes intégrées",
-    rating: 4.8,
-    reviews: 150,
-    price: 899.99,
-    originalPrice: 999.99,
-    discount: 10,
-    images: [
-      "https://picsum.photos/600/400?random=47",
-      "https://picsum.photos/600/400?random=48",
-    ],
-    category: "Appliances",
-    customer: "Emma Schmidt",
-    status: "Processing",
-    quantity: 8,
-    location: "Berlin (DE)",
-    date: "28 Aug 2025",
-    total: "$899.99",
-    colors: ["#FF4500", "#FFA500", "#FFD700"],
-  },
-  {
-    id: "#46669",
-    title: "Lave-Vaisselle Silencieux",
-    description:
-      "Lave-vaisselle ultra-silencieux avec système de séchage avancé",
-    rating: 4.7,
-    reviews: 95,
-    price: 1099.99,
-    originalPrice: 1299.99,
-    discount: 15,
-    images: [
-      "https://picsum.photos/600/400?random=49",
-      "https://picsum.photos/600/400?random=50",
-    ],
-    category: "Appliances",
-    customer: "Luca Bianchi",
-    status: "Shipped",
-    quantity: 4,
-    location: "Milan (IT)",
-    date: "10 Sep 2025",
-    total: "$1099.99",
-    colors: ["#A9A9A9", "#D3D3D3", "#DCDCDC"],
-  },
-];
+    sizes: [
+      { id: 1, name: "Small", dimensions: "60x55x85cm" },
+      { id: 2, name: "Medium", dimensions: "60x60x85cm" },
+      { id: 3, name: "Large", dimensions: "65x60x85cm" }
+    ]
+  }];
+
+const initialUpdatedState = () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `https://fakestoreapi.com/products?limit=${initialState.length}`, false);
+  xhr.send();
+  
+  if (xhr.status === 200) {
+    const response = JSON.parse(xhr.responseText);
+    for(let i = 0; i < response.length; i++) {
+      initialState[i].title = response[i].title;
+      initialState[i].originalPrice = response[i].price;
+      initialState[i].images = [response[i].image];
+      initialState[i].description = response[i].description;
+      initialState[i].category = response[i].category;
+    }
+  }
+  return initialState;
+}
+
+// console.log(await initialUpdatedState(initialState.length));
+
 
 const dataSlice = createSlice({
   name: "data",
-  initialState,
+  initialState:  initialUpdatedState(),
   reducers: {
     setQuantity: function (state, action) {
       state.forEach((product) =>

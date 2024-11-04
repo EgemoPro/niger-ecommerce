@@ -39,14 +39,8 @@ const SearchResults = ({
   flattenedProducts,
   setSelectedIndex,
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+ 
 
-  const handleSlectedProduct = (product) => {
-    setSearchQuery(product.name);
-    setSearchParams({ query: product.name });
-    setSelectedIndex(-1);
-  };
 
   return (
     <>
@@ -66,6 +60,7 @@ const SearchResults = ({
                   selectedIndex === index ? "bg-blue-50" : "hover:bg-gray-50"
                 }`}
                 onClick={() => selectProduct(product)}
+                
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div className="flex items-center gap-2">
@@ -98,6 +93,7 @@ const SearchBar = ({
         setSearchQuery(e.target.value);
         setIsOpen(true);
       }}
+      
       onFocus={() => setIsOpen(true)}
       onKeyDown={handleKeyDown}
       placeholder="Rechercher des produits..."

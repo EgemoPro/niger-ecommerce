@@ -61,7 +61,6 @@ const PhoneProductCard = ({ product, onClose }) => {
       >
         {/* Header du produit */}
         <div className="flex flew-row justify-between items-center mb-2">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight leading-tight">{product.title}</h2>
           <div className="flex items-center justify-center gap-4 h-10 w-24">
             <SharePopover />
             <button
@@ -89,7 +88,7 @@ const PhoneProductCard = ({ product, onClose }) => {
           <div className="flex w-full max-middle:flex-col flex-row justify-between gap-4">
 
           
-          <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]  ">
+          <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]">
             <ImageCarousel
               images={product.images}
               currentImageIndex={currentImageIndex}
@@ -98,6 +97,7 @@ const PhoneProductCard = ({ product, onClose }) => {
               prevImage={prevImage}
               isFullScreen={isFullScreen}
             />
+            <h2 className="text-xl md:text-2xl font-semibold uppercase text-gray-800 tracking-tight leading-tight px-1 max-md:text-center">{product.title}</h2>
           </div>
           <div className="w-1/2 md:h-full max-middle:w-full h-1/2 p-1">
             <ProductDetails

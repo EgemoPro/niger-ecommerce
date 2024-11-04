@@ -12,11 +12,10 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
     category: "all",
     priceRange: [...pricesRange],
     searchTerm: "",
-
   });
   const backetState = useSelector((state) => state.basket);
   // console.log(backetState);
-  
+
   const updateFilters = useCallback(
     (newFilters) => {
       setFilters((prevFilters) => {
@@ -106,7 +105,10 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
         </ScrollArea>
       </div>
 
-      <div className="flex md:justify-between items-center gap-3">
+      <div className="flex md:justify-between  items-center gap-3 p-1">
+        <span className="text-green-600 text-sm font-semibold text-center w-1/4 ">
+          {filters.priceRange[0]} FCFA
+        </span>
         <Slider
           min={pricesRange[0]}
           max={pricesRange[1]}
@@ -115,14 +117,9 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
           onValueChange={handlePriceChange}
           className="md:w-4/6 w-1/2"
         />
-        <div className="flex gap-1  md:w-72 w-1/2 items-center justify-around text-sm bg-gray-100 rounded-lg p-2 shadow-sm">
-          <span className="text-green-600">
-            {filters.priceRange[0]} FCFA
-          </span>
-          <span className="text-green-600">
-            {filters.priceRange[1]} FCFA
-          </span>
-        </div>
+        <span className="text-green-600 text-sm font-semibold  text-center  w-1/4">
+          {filters.priceRange[1]} FCFA
+        </span>
       </div>
     </div>
   );

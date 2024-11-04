@@ -9,7 +9,7 @@ const ProductList = ({
   onOpen,
 }) => (
   <ScrollArea
-    className="h-[calc(100vh-145px)] max-md:h-[calc(100vh-210px)] snap-y snap-mandatory p-4 overflow-y-auto"
+    className="h-[calc(100vh-125px)] max-md:h-[calc(100vh-210px)] snap-y snap-mandatory p-4 overflow-y-auto"
   >
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {visibleProducts.map((product) => (

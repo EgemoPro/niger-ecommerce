@@ -44,7 +44,7 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
     <img
       src={product.images[0]}
       alt={product.title}
-      className={`w-full h-52 object-cover hover:scale-110 transition-transform duration-300 ease-in-out ${
+      className={`w-full h-52 object-cover object-left-top scale-90 hover:scale-100 transition-transform duration-300 ease-in-out ${
         imageLoaded ? "" : "hidden"
       }`}
       onLoad={() => setImageLoaded(true)}
