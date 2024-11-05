@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 import { sizes } from "./ProductDetails";
 import { useParams } from "react-router-dom";
 import OrderPopup from "./order-express-popup";
-import loader from '../assets/bouncing-squares.svg'
+import loader from "../assets/bouncing-squares.svg";
 
 const PageProduitSweater = () => {
   const { id } = useParams();
@@ -39,7 +39,6 @@ const PageProduitSweater = () => {
   };
 
   const handleAddToCart = () => {
-    
     setIsOpen(true);
   };
 
@@ -77,37 +76,34 @@ const PageProduitSweater = () => {
     loadImages();
   }, [product.images]);
 
- 
-
-  return !imagesLoaded ?  (
+  return !imagesLoaded ? (
     <div className="flex justify-center items-center h-screen">
       <img src={loader} className="h-32 w-32" alt="Loading..." />
     </div>
   ) : (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-8 bg-white">
       <OrderPopup isOpen={isOpen} onClose={setIsOpen} product={product} />
       <ResizablePanelGroup
         direction="horizontal"
-
-        className="max-h-[450px] w-full flex flex-col md:flex-row shadow-md rounded-md overflow-hidden p-2"
+        className="max-h-[600px] w-full flex flex-col md:flex-row shadow-lg rounded-xl overflow-hidden p-4 bg-gray-50"
       >
         <ResizablePanel defaultSize={50} className="mb-4 md:mb-0">
           <img
             src={product.images[mainImage]}
             alt={product.title}
-            className="w-full h-auto object-cover p-1"
+            className="w-full h-full object-cover rounded-lg shadow-sm transition-transform hover:scale-105"
           />
         </ResizablePanel>
         <ResizableHandle className="hidden md:block" />
-        <ResizablePanel defaultSize={50}>
-          <div className="grid grid-cols-3 gap-2">
+        <ResizablePanel defaultSize={50} className='max-md:ml-4'>
+          <div className="grid grid-cols-3 gap-4">
             {product.images.map((image, index) => (
               <img
                 key={index}
                 src={image}
                 alt={`${product.title} - Vue ${index + 1}`}
-                className={`w-full h-auto object-cover p-0.5 cursor-pointer ${
-                  index === mainImage ? "border-2 border-blue-500" : ""
+                className={`w-full h-auto object-cover rounded-sm cursor-pointer transition-all duration-200 hover:shadow-md ${
+                  index === mainImage ? "ring-4 ring-blue-50" : "hover:ring-2 ring-blue-300"
                 }`}
                 onClick={() => handleImageClick(index)}
               />
@@ -116,81 +112,56 @@ const PageProduitSweater = () => {
         </ResizablePanel>
       </ResizablePanelGroup>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
-          <div className="flex items-center mb-4">
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{product.title}</h1>
+          <div className="flex items-center space-x-4">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className="h-5 w-5 text-yellow-400 fill-current"
+                  className="h-6 w-6 text-yellow-400 fill-current"
                 />
               ))}
             </div>
-            <span className="ml-2 text-sm text-gray-600">
+            <span className="text-base text-gray-600 font-medium">
               {product.rating} ({product.reviews} Avis)
             </span>
           </div>
-          <p className="text-gray-700 mb-4">{product.description}</p>
-          <h2 className="font-bold mb-2">Où Acheter</h2>
+          <p className="text-gray-700 text-lg leading-relaxed">{product.description}</p>
+          <h2 className="text-xl font-bold text-gray-900">Où Acheter</h2>
         </div>
         <div>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-              <div className="mb-4 sm:mb-0">
-                <h2 className="font-bold">Prix</h2>
-                {/* <div className="flex flex-wrap gap-2 mt-2">
-                  {sizes.slice(1,-1).map((size) => (
-                    <button
-                      key={size.id}
-                      className={`w-10 h-10 border rounded-full flex items-center justify-center hover:bg-gray-200 ${
-                        selectedSize === size.name ? 'bg-gray-300' : ''
-                      }`}
-                      onClick={() => handleSizeSelect(size.name)}
-                    >
-                      {size.name}
-                    </button>
-                  ))}
-                </div> */}
+          <div className="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+              <div className="md:mb-4">
+                <h2 className="text-xl font-bold text-gray-900">Prix</h2>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center">
-              <span className="text-2xl text-start w-full font-bold mb-2 sm:mb-0">
+            <div className="flex flex-col sm:flex-row items-center mb-8">
+              <span className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
                 {product.price} fcfa
               </span>
-              {/* <div className="flex items-center">
-                <button
-                  className="w-8 h-8 border rounded-full flex items-center justify-center"
-                  onClick={() => handleQuantityChange(-1)}
-                >
-                  -
-                </button>
-                <span className="mx-4">{quantity}</span>
-                <button
-                  className="w-8 h-8 border rounded-full flex items-center justify-center"
-                  onClick={() => handleQuantityChange(1)}
-                >
-                  +
-                </button>
-              </div> */}
             </div>
             <button
-              className="w-1/2 bg-green-500 text-white py-3 rounded-lg flex items-center gap-4 hover:bg-green-600 transition-colors p-4"
+              className="w-full bg-green-500 text-white rounded-xl flex items-center justify-center gap-4 font-semibold hover:bg-green-600 transition-all duration-300 py-4 px-6 shadow-sm hover:shadow-md"
               onClick={handleAddToCart}
             >
-              <PhoneCall className="h-full" />
+              <PhoneCall className="h-6 w-6" />
               En savoir plus
             </button>
-            <Link to={"/product"} className="flex items-center gap-4 mt-4">
-              {" "}
-              <ArrowLeftCircleIcon /> visiter le site
+            <Link 
+              to={"/product"} 
+              className="flex items-center gap-4 mt-6 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            >
+              <ArrowLeftCircleIcon className="h-6 w-6" /> 
+              <span className="font-medium">Visiter le site</span>
             </Link>
           </div>
         </div>
       </div>
     </div>
-  ) ;
+  );
 };
 
 export default PageProduitSweater;
