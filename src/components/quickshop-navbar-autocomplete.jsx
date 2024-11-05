@@ -45,7 +45,7 @@ const SearchResults = ({
   return (
     <>
       {Object.entries(groupedProducts).map(([category, items]) => (
-        <div key={category}>
+        <div key={category}  >
           <div className="px-4 py-2 text-sm font-semibold text-gray-500 bg-gray-50">
             {category}
           </div>
@@ -116,7 +116,7 @@ const AutocompleteDropdown = ({
   isOpen && (
     <Card
       ref={dropdownRef}
-      className="absolute z-50 md:w-full md:mt-10 max-h-[400px] overflow-auto shadow-lg"
+      className="absolute z-50 md:w-full max-md:w-[92%] md:mt-10 max-h-[400px] overflow-auto shadow-lg"
     >
       {filteredProducts.length > 0 ? (
         <SearchResults
