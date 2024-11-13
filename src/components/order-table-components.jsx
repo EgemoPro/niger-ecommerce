@@ -35,6 +35,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Link } from "react-router-dom";
+import { ExportPDF } from "./quickExportPDF.jsx";
 
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
@@ -83,14 +84,7 @@ export const StatusFilter = React.memo(
 export const ActionButtons = React.memo(
   ({ handleExport, handleCleanBacket, handleBuyNow }) => (
     <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-      <Button
-        variant="outline"
-        className="flex items-center gap-3 w-full sm:w-auto"
-        onClick={handleExport}
-      >
-        <FileDown className="h-4 w-4" />
-        Exporter
-      </Button>
+      <ExportPDF />
       <Button
         variant="outline"
         className="bg-transparent hover:bg-gray-600/10 text-gray-950 flex items-center gap-3 w-full sm:w-auto"

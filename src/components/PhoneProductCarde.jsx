@@ -19,7 +19,7 @@ const PhoneProductCard = ({ product, onClose }) => {
   const [colorSelected, setColorSelected] = useState("");
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
-
+  console.log(product)
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };

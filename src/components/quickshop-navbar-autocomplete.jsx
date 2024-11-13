@@ -2,9 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ShoppingCart, ShoppingBag, Search, Package, Menu } from "lucide-react";
+import {
+  ShoppingCart,
+  ShoppingBag,
+  Search,
+  Package,
+  Menu,
+  UserPlus,
+  User2
+} from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 /**
  * Mettre en place le lien vers le produits dans les parametres de recherche
  * mettre en place une gestion des requetes de type de contenu via redux-toolkit
@@ -39,13 +47,10 @@ const SearchResults = ({
   flattenedProducts,
   setSelectedIndex,
 }) => {
- 
-
-
   return (
     <>
       {Object.entries(groupedProducts).map(([category, items]) => (
-        <div key={category}  >
+        <div key={category}>
           <div className="px-4 py-2 text-sm font-semibold text-gray-500 bg-gray-50">
             {category}
           </div>
@@ -60,12 +65,16 @@ const SearchResults = ({
                   selectedIndex === index ? "bg-blue-50" : "hover:bg-gray-50"
                 }`}
                 onClick={() => selectProduct(product)}
-                
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-gray-400" />
-                  <Link to={`/product/${product.id.replace("#","")}`} className="w-full h-full">{product.title}</Link>
+                  <Link
+                    to={`/product/${product.id.replace("#", "")}`}
+                    className="w-full h-full"
+                  >
+                    {product.title}
+                  </Link>
                 </div>
                 <span className="text-sm text-gray-500">{product.price}</span>
               </div>
@@ -93,7 +102,6 @@ const SearchBar = ({
         setSearchQuery(e.target.value);
         setIsOpen(true);
       }}
-      
       onFocus={() => setIsOpen(true)}
       onKeyDown={handleKeyDown}
       placeholder="Rechercher des produits..."
@@ -234,14 +242,14 @@ const Navbar = ({ data }) => {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setIsOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <div className="w-full px-4 py-3 bg-white shadow-sm">
+    <div className="absolute z-50 w-full px-4 py-3 bg-white shadow-sm">
       <div className="flex items-center justify-between">
         <Logo />
 
@@ -267,13 +275,24 @@ const Navbar = ({ data }) => {
         </div>
 
         <NavigationItems />
-
-        <button
-          className="md:hidden text-gray-600 hover:text-gray-800"
-          onClick={toggleMenu}
-        >
-          <Menu size={24} />
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Fonctionnalités de login */}
+          {/* <Button variant="ghost" className="flex items-center gap-3 font-semibold">
+            <Avatar>
+              <AvatarFallback>
+                <User2 className="w-5 h-5" />
+              </AvatarFallback>
+              <AvatarImage src="https://github.com/shadcn.png" />
+            </Avatar>
+              Login
+          </Button> */}
+          <button
+            className="md:hidden text-gray-600 hover:text-gray-800"
+            onClick={toggleMenu}
+          >
+            <Menu size={24} />
+          </button>
+        </div>
       </div>
 
       {isMenuOpen && (
@@ -309,7 +328,7 @@ const Navbar = ({ data }) => {
               variant="ghost"
               className="text-gray-600 w-full justify-start"
             >
-              Tarifs
+              Créer un compte
             </Button>
             <Button
               variant="ghost"

@@ -4,6 +4,7 @@ import { Facebook, Linkedin, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import Baniere from "../../assets/Baniere.png";
 import { useSelector } from "react-redux";
+import { FadeText } from "@/components/ui/fade-text";
 
 const compagnies = [
   { name: "Entreprise A", logo: "https://placehold.co/600x400" },
@@ -14,9 +15,9 @@ const compagnies = [
 ];
 
 const Home = () => {
-  const data = useSelector(state => state.data)
+  const data = useSelector((state) => state.data);
   console.log(data);
-  
+
   return (
     <div
       className="min-h-screen flex justify-between flex-col bg-gradient-to-b "
@@ -30,7 +31,7 @@ const Home = () => {
       {/* Navbar, vous pouvez le supprimer si vous n'en avez pas besoin */}
       <NavBare data={data} />
 
-      <main className="container mt-10 mx-auto px-4 py-8 sm:py-16">
+      <main className="container transform translate-y-1/4  mt-10 mx-auto px-4 py-8 sm:py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -38,13 +39,36 @@ const Home = () => {
           className="text-center"
         >
           <h1 className="text-3xl sm:text-5xl font-bold mb-4 text-blue-800">
-            Achats rapides <span className="text-blue-600"> simplifiés</span>
-            <br className="hidden sm:block" />
-            pour les acheteurs en ligne.
+            <div className="flex flex-row justify-center gap-2 w-full">
+              <FadeText
+                direction="up"
+                className="inline"
+                framerProps={{
+                  show: { transition: { delay: 0.9 } },
+                }}
+                text="Achats rapides"
+              />
+              <FadeText
+                direction="up"
+                framerProps={{
+                  show: { transition: { delay: 1.2 } },
+                }}
+                text="simplifiés"
+                className="text-blue-600 inline"
+              />
+            </div>
+            {" "}
+            
+            <FadeText
+              framerProps={{
+                show: { transition: { delay: 1.3 } },
+              }}
+              text="pour les acheteurs en ligne."
+            />
           </h1>
           <p className="text-lg sm:text-xl text-gray-700 mb-6 sm:mb-8">
             La plupart des boutiques en ligne sont compliquées. Nous rendons
-            l'achat simple et rapide.
+            <FadeText text="l'achat simple et rapide." />
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <motion.button
