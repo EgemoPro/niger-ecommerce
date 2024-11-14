@@ -16,7 +16,7 @@ const compagnies = [
 
 const Home = () => {
   const data = useSelector((state) => state.data);
-  console.log(data);
+  // console.log(data);
 
   return (
     <div
@@ -39,14 +39,14 @@ const Home = () => {
           className="text-center"
         >
           <h1 className="text-3xl sm:text-5xl font-bold mb-4 text-blue-800">
-            <div className="flex flex-row justify-center gap-2 w-full">
+            <div className="flex flex-row justify-center gap-1 w-full">
               <FadeText
                 direction="up"
-                className="inline"
                 framerProps={{
                   show: { transition: { delay: 0.9 } },
                 }}
                 text="Achats rapides"
+                className="max-md:text-[1.7rem]"
               />
               <FadeText
                 direction="up"
@@ -54,7 +54,7 @@ const Home = () => {
                   show: { transition: { delay: 1.2 } },
                 }}
                 text="simplifiés"
-                className="text-blue-600 inline"
+                className="text-blue-600 max-md:text-[1.7rem]"
               />
             </div>
             {" "}

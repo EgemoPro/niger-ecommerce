@@ -67,14 +67,14 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
               className="h-full w-full flex items-center justify-around gap-5 text-inherit"
               to={`/orders`}
             >
-              <span className="h-6 w-6 p-2 text-gray-500 rounded-full flex justify-center items-center">
+              <span className="h-6 w-6 p-2 transform max-md:-translate-x-3 text-gray-500 rounded-full flex justify-center items-center">
                 {backetState.length}
               </span>
               <span className="h-6 w-6 p-2 max-md:hidden text-gray-500 rounded-full flex justify-center items-center">
                 Panier
               </span>
-              <ShoppingCart className="h-5 w-5 text-gray-500" />
             </Link>
+            <ShoppingCart className="h-5 w-5 transform translate-x-1 text-gray-500" />
           </Button>
         </div>
 
