@@ -62,7 +62,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
               className="pl-8"
             />
           </div>
-          <Button className="flex max-md:col-span-1 md:w-auto bg-transparent hover:bg-slate-400/10 border">
+          <Button className="flex bg-violet-500 md:gap-6 max-md:col-span-1 md:w-auto bg-transparent hover:bg-slate-400/10 border">
             <Link
               className="h-full w-full flex items-center justify-around gap-5 text-inherit"
               to={`/orders`}

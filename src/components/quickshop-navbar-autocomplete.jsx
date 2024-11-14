@@ -8,11 +8,11 @@ import {
   Search,
   Package,
   Menu,
-  UserPlus,
-  User2
+  // UserPlus,
+  // User2
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 /**
  * Mettre en place le lien vers le produits dans les parametres de recherche
  * mettre en place une gestion des requetes de type de contenu via redux-toolkit
@@ -35,7 +35,9 @@ const NavigationItems = () => (
       Tarifs
     </Button>
     <Button variant="ghost" className="text-gray-600">
+      <Link to={`/orders`} className="w-full h-full" >
       <ShoppingCart className="w-5 h-5" />
+      </Link>
     </Button>
   </div>
 );
