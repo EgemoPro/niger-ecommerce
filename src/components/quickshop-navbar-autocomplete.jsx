@@ -252,7 +252,7 @@ const Navbar = ({ data }) => {
 
   return (
     <div className="absolute z-50 w-full px-4 py-3 bg-white shadow-sm">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center bg--900 justify-between">
         <Logo />
 
         <div className="hidden md:flex flex-1 max-w-xl mx-4 relative">
@@ -277,7 +277,7 @@ const Navbar = ({ data }) => {
         </div>
 
         <NavigationItems />
-        <div className="flex items-center gap-3">
+        <div className="md:hidden flex items-center gap-3 ">
           {/* Fonctionnalités de login */}
           {/* <Button variant="ghost" className="flex items-center gap-3 font-semibold">
             <Avatar>

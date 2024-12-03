@@ -22,7 +22,41 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Products />,
-        loader: async () =>fetch(`https://fakestoreapi.com/products`)
+        loader: async () => {
+          try {
+            const response = await fetch('https://fakestoreapi.com/products');
+            
+            if (!response.ok) {
+              throw new Error('Erreur lors de la récupération des données');
+            }
+
+            const apiData = await response.json();
+            const globalState = store.getState();
+            const state = [...globalState.data];
+
+            if (!state.length) {
+              throw new Error('État initial non disponible');
+            }
+
+            return state.map((item, index) => {
+              if (index < apiData.length) {
+                return {
+                  ...item,
+                  title: apiData[index].title,
+                  originalPrice: apiData[index].price,
+                  images: [apiData[index].image],
+                  description: apiData[index].description, 
+                  category: apiData[index].category
+                };
+              }
+              return item;
+            });
+
+          } catch (error) {
+            console.error('Erreur dans le loader:', error);
+            throw error;
+          }
+        }
       },
       {
         path: ":id",
@@ -38,7 +72,7 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => <RouterProvider router={router} />;
-
+export default App;
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <App />

@@ -8,9 +8,11 @@ import { handleBacketAction } from "../../redux/method.js";
 
 
 const OrderTable = () => {
+  // Récupère les commandes initiales depuis le state Redux
   const initialOrders = useSelector(state => state.basket);
   const dispatch = useDispatch();
 
+  // États locaux pour gérer les différentes fonctionnalités du tableau
   const [orders, setOrders] = useState(initialOrders);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -20,15 +22,18 @@ const OrderTable = () => {
   const [statusOptions, setStatusOptions] = useState(["all"]);
   const [isEcommerceDashboardPopupOpen, setIsEcommerceDashboardPopupOpen] = useState(false);
   
+  // Effet pour extraire les statuts uniques des commandes et les ajouter aux options de filtrage
   useEffect(() => {
     const uniqueStatuses = ["all", ...new Set(initialOrders.map((order) => order.status))];
     setStatusOptions(uniqueStatuses);
   }, [initialOrders]);
 
+  // Effet pour filtrer les commandes lorsque les critères de recherche ou de statut changent
   useEffect(() => {
     filterOrders(searchTerm, statusFilter);
   }, [searchTerm, statusFilter, initialOrders]);
 
+  // Fonction pour filtrer les commandes selon la recherche et le statut
   const filterOrders = (search, status) => {
     let filteredOrders = initialOrders.filter(
       (order) =>
@@ -46,53 +51,63 @@ const OrderTable = () => {
     setCurrentPage(1);
   };
 
+  // Fonction pour exporter les commandes sélectionnées
   const handleExport = () => {
     console.log("Exporting orders:", selectedOrders);
   };
 
+  // Fonction pour vider le panier
   const handleCleanBacket = () => {
    dispatch(handleBacketAction('reset'))
   };
 
+  // Fonction pour supprimer une commande spécifique
   const handleDeleteOrder = (orderId) => {
     dispatch(handleBacketAction('delProduct',  orderId))
-    // setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
   };
+
+  // Fonction pour ouvrir la popup d'achat
   const handleBuyNow = () => {
     console.log("Buy Now clicked...");
     setIsEcommerceDashboardPopupOpen(true);
   };
 
+  // Fonction pour sélectionner/désélectionner toutes les commandes de la page courante
   const handleSelectAll = (checked) => {
     setSelectedOrders(checked ? paginatedOrders.map((order) => order.id) : []);
   };
 
+  // Fonction pour sélectionner/désélectionner une commande individuelle
   const handleSelectOrder = (orderId, checked) => {
     setSelectedOrders(prev => 
       checked ? [...prev, orderId] : prev.filter(id => id !== orderId)
     );
   };
 
+  // Fonction pour changer le nombre de lignes par page
   const handleRowsPerPageChange = (value) => {
     setRowsPerPage(Number(value));
     setCurrentPage(1);
   };
 
+  // Fonction pour aller à la page précédente
   const handlePreviousPage = () => {
     setCurrentPage(prev => Math.max(prev - 1, 1));
   };
 
+  // Fonction pour aller à la page suivante
   const handleNextPage = () => {
     setCurrentPage(prev =>
       Math.min(prev + 1, Math.ceil(orders.length / rowsPerPage))
     );
   };
 
+  // Calcul des commandes à afficher sur la page courante
   const paginatedOrders = orders.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-
+  console.log("Paginated Orders:", paginatedOrders);
   return (
     <div className="container mx-auto ">
       {isEcommerceDashboardPopupOpen && (
@@ -132,12 +147,15 @@ const OrderTable = () => {
           selectedOrders={selectedOrders}
         />
 
-        <OrderTableBody
+        {paginatedOrders.length != 0 
+          ?  (<OrderTableBody
           paginatedOrders={paginatedOrders}
           selectedOrders={selectedOrders}
           handleSelectOrder={handleSelectOrder}
           handleDeleteOrder={handleDeleteOrder}
-        />
+        />) : (<div>
+          <h1> vous n'avez aucune commmande </h1>
+        </div>) }
       </div>
 
       <Pagination

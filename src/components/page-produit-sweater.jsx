@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
   Star,
-  ShoppingCart,
   ArrowLeftCircleIcon,
   PhoneCall,
+  ShoppingBag,
 } from "lucide-react";
+import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import {
   ResizableHandle,
@@ -12,7 +13,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useSelector } from "react-redux";
-import { sizes } from "./ProductDetails";
+// import { sizes } from "./ProductDetails";
 import { useParams } from "react-router-dom";
 import OrderPopup from "./order-express-popup";
 import loader from "../assets/bouncing-squares.svg";
@@ -22,7 +23,7 @@ const PageProduitSweater = () => {
   const product = useSelector((state) =>
     state.data.find((p) => p.id === `#${id}`)
   );
-  console.log(product);
+  // console.log(product);
 
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -112,8 +113,8 @@ const PageProduitSweater = () => {
         </ResizablePanel>
       </ResizablePanelGroup>
 
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="space-y-6">
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="space-y-6 md:col-span-2">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{product.title}</h1>
           <div className="flex items-center space-x-4">
             <div className="flex">
@@ -131,34 +132,41 @@ const PageProduitSweater = () => {
           <p className="text-gray-700 text-lg leading-relaxed">{product.description}</p>
           <h2 className="text-xl font-bold text-gray-900">Où Acheter</h2>
         </div>
-        <div>
-          <div className="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-              <div className="md:mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Prix</h2>
-              </div>
+        
+        <div className="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 md:col-span-1">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+            <div className="md:mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Prix</h2>
             </div>
-            <div className="flex flex-col sm:flex-row items-center mb-8">
-              <span className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
-                {product.price} fcfa
-              </span>
-            </div>
-            <button
-              className="w-full bg-green-500 text-white rounded-xl flex items-center justify-center gap-4 font-semibold hover:bg-green-600 transition-all duration-300 py-4 px-6 shadow-sm hover:shadow-md"
-              onClick={handleAddToCart}
-            >
-              <PhoneCall className="h-6 w-6" />
-              En savoir plus
-            </button>
-            <Link 
-              to={"/product"} 
-              className="flex items-center gap-4 mt-6 text-gray-600 hover:text-gray-900 transition-colors duration-200"
-            >
-              <ArrowLeftCircleIcon className="h-6 w-6" /> 
-              <span className="font-medium">Visiter le site</span>
-            </Link>
           </div>
+          <div className="flex flex-col sm:flex-row items-center mb-8">
+            <span className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
+              {product.price} fcfa
+            </span>
+          </div>
+          <Button
+            className="w-full h-10 bg-blue-500 text-white rounded-xl mb-2 flex items-center justify-start gap-4 font-semibold hover:bg-blue-600 transition-all duration-300 py-4 px-6 shadow-sm hover:shadow-md"
+            onClick={handleAddToCart}
+          >
+            <ShoppingBag className="h-6 w-6" />
+            Acheter maintenant
+          </Button>
+          <Button
+            className="w-full h-10 bg-green-500 text-white rounded-xl flex items-center justify-start gap-4 font-semibold hover:bg-green-600 transition-all duration-300 py-4 px-6 shadow-sm hover:shadow-md"
+            onClick={handleAddToCart}
+          >
+            <PhoneCall className="h-6 w-6" />
+            En savoir plus
+          </Button>
+          <Link 
+            to={"/product"} 
+            className="flex items-center gap-4 mt-6 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+          >
+            <ArrowLeftCircleIcon className="h-6 w-6" /> 
+            <span className="font-medium">Visiter le site</span>
+          </Link>
         </div>
+      
       </div>
     </div>
   );

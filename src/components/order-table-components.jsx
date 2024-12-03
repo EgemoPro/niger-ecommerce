@@ -109,8 +109,8 @@ export const OrderTableHeader = React.memo(
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
-          <TableRow className="grid grid-cols-8 gap-4">
-            <TableHead className="">
+          <TableRow className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+            <TableHead className="hidden md:block">
               <Checkbox
                 checked={
                   selectedOrders.length === paginatedOrders.length &&
@@ -119,14 +119,13 @@ export const OrderTableHeader = React.memo(
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>COMMANDE</TableHead>
+            <TableHead>ID</TableHead>
             <TableHead>PRODUIT</TableHead>
             <TableHead>STATUT</TableHead>
-            <TableHead>QUANTITE</TableHead>
-            <TableHead>EMPLACEMENT</TableHead>
-            {/* <TableHead>DATE</TableHead> */}
+            <TableHead className="hidden md:block">QUANTITE</TableHead>
+            <TableHead className="hidden lg:block">EMPLACEMENT</TableHead>
             <TableHead>PRIX</TableHead>
-            <TableHead className="">ACTION</TableHead>
+            <TableHead>ACTION</TableHead>
           </TableRow>
         </TableHeader>
       </Table>
@@ -145,10 +144,13 @@ export const OrderTableBody = React.memo(
   }) => (
     <ScrollArea className="h-[calc(100vh-350px)] sm:h-[calc(100vh-275px)]">
       <Table>
-        <TableBody className="w-full ">
+        <TableBody className="w-full">
           {paginatedOrders.map((order) => (
-            <TableRow key={order.id + order.customer} className="grid grid-cols-8 gap-0 p-0 w-full">
-              <TableCell>
+            <TableRow 
+              key={order.id + order.customer} 
+              className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4"
+            >
+              <TableCell className="hidden md:block">
                 <Checkbox
                   checked={selectedOrders.includes(order.id)}
                   onCheckedChange={(checked) =>
@@ -157,7 +159,7 @@ export const OrderTableBody = React.memo(
                 />
               </TableCell>
               <TableCell className="font-medium">{order.id}</TableCell>
-              <TableCell className="flex">{order.title}</TableCell>
+              <TableCell className="truncate">{order.title}</TableCell>
               <TableCell>
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(
@@ -167,17 +169,18 @@ export const OrderTableBody = React.memo(
                   {order.status}
                 </span>
               </TableCell>
-              <TableCell >{order.quantity}</TableCell>
-              <TableCell className="">{order.location}</TableCell>
-              {/* <TableCell className="">{order.date}</TableCell> */}
-              <TableCell className="">{order.total.replace('$',"FCFA ")}</TableCell>
-              <TableCell className="">
+              <TableCell className="hidden md:block">{order.quantity}</TableCell>
+              <TableCell className="hidden lg:block">{order.location}</TableCell>
+              <TableCell>{order.total.replace("$","FCFA ")}
+              </TableCell>
+              <TableCell>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="ghost" size="sm">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </PopoverTrigger>
+                  {/* PopoverContent remains the same */}
                   <PopoverContent className="w-40">
                     <div className="flex flex-col space-y-2">
                       <Button
@@ -220,7 +223,6 @@ export const OrderTableBody = React.memo(
     </ScrollArea>
   )
 );
-
 export const Pagination = React.memo(
   ({
     rowsPerPage,

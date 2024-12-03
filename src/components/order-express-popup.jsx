@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
-  DialogContent, 
+  DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Carousel,
   CarouselContent,
@@ -21,7 +28,7 @@ import {
   PhoneCall as PhoneCallIcon,
   Edit2,
   Clock,
-  MessageCircle
+  MessageCircle,
 } from "lucide-react";
 import PhoneCall from "../assets/phone-call.gif";
 
@@ -50,7 +57,7 @@ const OrderPopup = ({ isOpen, onClose, product }) => {
     setFormData({
       phoneNumber: "",
       preferredTime: "",
-      message: ""
+      message: "",
     });
     onClose();
   };
@@ -61,7 +68,7 @@ const OrderPopup = ({ isOpen, onClose, product }) => {
       phoneNumber: formattedPhoneNumber,
       preferredTime: preferredTime,
       message: message,
-      product: product // Inclure les infos du produit si nécessaire
+      product: product, // Inclure les infos du produit si nécessaire
     };
     setFormData(submissionData);
     setCurrentSlide(1);
@@ -119,29 +126,39 @@ const OrderPopup = ({ isOpen, onClose, product }) => {
                     <Info className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                     Pour plus d&apos;informations sur
                   </p>
-                  <h2 className="font-bold text-xl sm:text-2xl text-blue-600">{product.title}</h2>
+                  <h2 className="font-bold text-xl sm:text-2xl text-blue-600">
+                    {product.title}
+                  </h2>
                 </div>
 
                 {/* Section téléphone */}
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                     <PhoneCallIcon className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 animate-pulse" />
-                    <p className="text-base sm:text-lg text-gray-700">Saisissez votre numéro de téléphone</p>
+                    <p className="text-base sm:text-lg text-gray-700">
+                      Saisissez votre numéro de téléphone
+                    </p>
                   </div>
 
-                  <div className="flex justify-center gap-2 sm:gap-3">
+                  <div className="flex items-center justify-center gap-2 sm:gap-3">
                     {phoneNumber.map((group, index) => (
                       <React.Fragment key={index}>
                         <Input
                           id={`phone-group-${index}`}
                           type="text"
                           value={group}
-                          onChange={(e) => handlePhoneInput(index, e.target.value)}
+                          onChange={(e) =>
+                            handlePhoneInput(index, e.target.value)
+                          }
                           onKeyDown={(e) => handleKeyDown(index, e)}
-                          className="w-12 h-12 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-semibold border-2 border-blue-200 focus:border-blue-500 rounded-lg"
+                          className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl sm:text-base font-semibold border-2 border-blue-200 focus:border-blue-500 rounded-lg"
                           maxLength={2}
                         />
-                        {index < 3 && <span className="text-gray-400 text-lg sm:text-xl">-</span>}
+                        {index < 3 && (
+                          <span className="text-gray-400 text-lg sm:text-xl">
+                            -
+                          </span>
+                        )}
                       </React.Fragment>
                     ))}
                   </div>
@@ -151,16 +168,25 @@ const OrderPopup = ({ isOpen, onClose, product }) => {
                 <div className="space-y-3 sm:space-y-4 bg-gray-50 p-4 sm:p-6 rounded-xl">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-                    <select 
+                    <Select
                       value={preferredTime}
-                      onChange={(e) => setPreferredTime(e.target.value)}
-                      className="flex-1 p-2 sm:p-3 border rounded-lg border-blue-200 focus:border-blue-500 text-base sm:text-lg"
+                      onValueChange={setPreferredTime}
                     >
-                      <option value="">Choisir l&apos;heure de rappel</option>
-                      <option value="morning">Matin (8h - 12h)</option>
-                      <option value="afternoon">Après-midi (12h - 16h)</option>
-                      <option value="evening">Soir (16h - 20h)</option>
-                    </select>
+                      <SelectTrigger className="flex-1 p-2 sm:p-3 border rounded-lg border-blue-200 focus:border-blue-500 text-base sm:text-lg">
+                        <SelectValue placeholder="Choisir l'heure de rappel" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="morning">
+                          Matin (8h - 12h)
+                        </SelectItem>
+                        <SelectItem value="afternoon">
+                          Après-midi (12h - 16h)
+                        </SelectItem>
+                        <SelectItem value="evening">
+                          Soir (16h - 20h)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="flex items-start gap-2 sm:gap-3">
@@ -192,13 +218,21 @@ const OrderPopup = ({ isOpen, onClose, product }) => {
                   <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                     <PhoneCallIcon className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
                     <p className="text-base sm:text-lg text-gray-700">
-                      Merci ! Notre équipe vous contactera très bientôt au sujet de
+                      Merci ! Notre équipe vous contactera très bientôt au sujet
+                      de
                     </p>
                   </div>
-                  <h2 className="font-bold text-xl sm:text-2xl text-blue-600 mb-3 sm:mb-4">{product.title}</h2>
+                  <h2 className="font-bold text-xl sm:text-2xl text-blue-600 mb-3 sm:mb-4">
+                    {product.title}
+                  </h2>
                   {preferredTime && (
                     <p className="text-sm sm:text-base text-gray-600">
-                      Période de rappel souhaitée : {preferredTime === 'morning' ? 'Matin' : preferredTime === 'afternoon' ? 'Après-midi' : 'Soir'}
+                      Période de rappel souhaitée :{" "}
+                      {preferredTime === "morning"
+                        ? "Matin"
+                        : preferredTime === "afternoon"
+                        ? "Après-midi"
+                        : "Soir"}
                     </p>
                   )}
                 </div>
