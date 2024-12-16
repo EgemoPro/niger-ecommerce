@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 // import ProductCard from "../../components/ProductCard.jsx";
 import ProductGrid from "../../components/product-grid-component.jsx";
 import PhoneProductCard from "../../components/PhoneProductCarde.jsx";
@@ -7,8 +7,9 @@ import PhoneProductCard from "../../components/PhoneProductCarde.jsx";
 
 
 function Products() {
-  const [isProductCardOpen, setIsProductCardOpen] = React.useState(false);
-  const [selectedProduct, setSelectedProduct] = React.useState([])
+  const [isProductCardOpen, setIsProductCardOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState([])
+
   const handleOpen = (product)=>{
     setIsProductCardOpen(true)
     setSelectedProduct(product)

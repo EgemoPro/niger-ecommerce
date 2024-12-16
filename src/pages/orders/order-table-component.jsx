@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import OrderPopup from "../../components/order-popup.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { OrderTableBody, ActionButtons, OrderTableHeader, Pagination, SearchBar, StatusFilter } from "../../components/order-table-components.jsx";
 import { handleBacketAction } from "../../redux/method.js";
-
+import {ShoppingCart} from "lucide-react"
 
 const OrderTable = () => {
   // Récupère les commandes initiales depuis le state Redux
@@ -140,24 +140,23 @@ const OrderTable = () => {
         />
       </div>
 
+      {paginatedOrders.length > 0 ? <>
+      
       <div className="overflow-x-auto">
         <OrderTableHeader
           handleSelectAll={handleSelectAll}
           paginatedOrders={paginatedOrders}
           selectedOrders={selectedOrders}
-        />
+          />
 
-        {paginatedOrders.length != 0 
-          ?  (<OrderTableBody
+         <OrderTableBody
           paginatedOrders={paginatedOrders}
           selectedOrders={selectedOrders}
           handleSelectOrder={handleSelectOrder}
           handleDeleteOrder={handleDeleteOrder}
-        />) : (<div>
-          <h1> vous n'avez aucune commmande </h1>
-        </div>) }
+        />
       </div>
-
+      
       <Pagination
         rowsPerPage={rowsPerPage}
         handleRowsPerPageChange={handleRowsPerPageChange}
@@ -166,7 +165,28 @@ const OrderTable = () => {
         currentPage={currentPage}
         totalPages={Math.ceil(orders.length / rowsPerPage)}
       />
-    </div>
+      
+      </> : (
+          <div className="flex flex-col items-center justify-center p-8 text-center">
+            <h1 className="text-xl font-semibold text-gray-700 mb-4">Vous n&apos;avez aucune commande</h1>
+            <p className="text-gray-500 mb-6">Commencez vos achats pour voir vos commandes apparaître ici</p>
+            <div 
+              className="w-full flex justify-center items-center p-4"
+            >
+              <ShoppingCart
+                className="w-48 h-48 text-slate-500"
+              />
+            </div>
+            
+            <Link 
+              to="/product"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Parcourir les produits
+            </Link>
+          </div>
+        )  }
+    </div> 
   );
 };
 

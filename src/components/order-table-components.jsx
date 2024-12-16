@@ -119,7 +119,7 @@ export const OrderTableHeader = React.memo(
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>ID</TableHead>
+            <TableHead className="hidden md:block">ID</TableHead>
             <TableHead>PRODUIT</TableHead>
             <TableHead>STATUT</TableHead>
             <TableHead className="hidden md:block">QUANTITE</TableHead>
@@ -158,7 +158,7 @@ export const OrderTableBody = React.memo(
                   }
                 />
               </TableCell>
-              <TableCell className="font-medium">{order.id}</TableCell>
+              <TableCell className="font-medium hidden md:block">{order.id}</TableCell>
               <TableCell className="truncate">{order.title}</TableCell>
               <TableCell>
                 <span

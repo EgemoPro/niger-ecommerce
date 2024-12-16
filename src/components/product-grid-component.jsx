@@ -1,16 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ProductFilters from "./product-grid-components/ProductFilters";
 import ProductGridHeader from "./product-grid-components/ProductGridHeader";
 import ProductList from "./product-grid-components/ProductList";
-import { useLoaderData } from "react-router-dom";
+// import { useLoaderData } from "react-router-dom";
 
 const ProductGrid = ({ onOpen }) => {
   const [favorites, setFavorites] = useState({});
-  const products = useLoaderData()
-  // const products = useSelector((state) => state.data);
-  // console.log(loaderData);
+  // const products = useLoaderData()
+  const products = useSelector((state) => state.data);
+  console.log(products);
   
   // Cette fonction calcule et mémorise les valeurs suivantes à partir des produits:
   // - Le prix minimum parmi tous les produits

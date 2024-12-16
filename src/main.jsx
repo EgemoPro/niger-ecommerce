@@ -2,7 +2,6 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./redux/reducer.js";
-
 import Home from "./pages/home/home.jsx";
 import Products from "./pages/products/Products.jsx";
 import OrderTable from "./pages/orders/order-table-component.jsx";
@@ -22,41 +21,41 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Products />,
-        loader: async () => {
-          try {
-            const response = await fetch('https://fakestoreapi.com/products');
+        // loader: async () => {
+        //   try {
+        //     const response = await fetch('https://fakestoreapi.com/products');
             
-            if (!response.ok) {
-              throw new Error('Erreur lors de la récupération des données');
-            }
+        //     if (!response.ok) {
+        //       throw new Error('Erreur lors de la récupération des données');
+        //     }
 
-            const apiData = await response.json();
-            const globalState = store.getState();
-            const state = [...globalState.data];
+        //     const apiData = await response.json();
+        //     const globalState = store.getState();
+        //     const state = [...globalState.data];
 
-            if (!state.length) {
-              throw new Error('État initial non disponible');
-            }
+        //     if (!state.length) {
+        //       throw new Error('État initial non disponible');
+        //     }
 
-            return state.map((item, index) => {
-              if (index < apiData.length) {
-                return {
-                  ...item,
-                  title: apiData[index].title,
-                  originalPrice: apiData[index].price,
-                  images: [apiData[index].image],
-                  description: apiData[index].description, 
-                  category: apiData[index].category
-                };
-              }
-              return item;
-            });
+        //     return state.map((item, index) => {
+        //       if (index < apiData.length) {
+        //         return {
+        //           ...item,
+        //           title: apiData[index].title,
+        //           originalPrice: apiData[index].price,
+        //           images: [apiData[index].image],
+        //           description: apiData[index].description, 
+        //           category: apiData[index].category
+        //         };
+        //       }
+        //       return item;
+        //     });
 
-          } catch (error) {
-            console.error('Erreur dans le loader:', error);
-            throw error;
-          }
-        }
+        //   } catch (error) {
+        //     console.error('Erreur dans le loader:', error);
+        //     throw error;
+        //   }
+        // }
       },
       {
         path: ":id",
