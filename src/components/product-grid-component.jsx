@@ -9,7 +9,8 @@ import ProductList from "./product-grid-components/ProductList";
 const ProductGrid = ({ onOpen }) => {
   const [favorites, setFavorites] = useState({});
   // const products = useLoaderData()
-  const products = useSelector((state) => state.data);
+  const {data:products, status, error} = useSelector((state) => state.data);
+  
   console.log(products);
   
   // Cette fonction calcule et mémorise les valeurs suivantes à partir des produits:

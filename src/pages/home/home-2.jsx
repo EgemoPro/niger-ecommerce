@@ -1,4 +1,4 @@
-import NavBare from "../../components/quickshop-navbar-autocomplete";
+import NavBare from "../../components/NavBare";
 import { motion } from "framer-motion";
 import { FacebookIcon, LinkedinIcon, InstagramIcon } from "lucide-react";
 import { Link } from "react-router-dom";

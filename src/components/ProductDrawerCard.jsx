@@ -10,7 +10,7 @@ import { handleBacketAction } from "../redux/method";
 import { ScrollArea } from "./ui/scroll-area";
 
 
-const PhoneProductCard = ({ product, onClose }) => {
+const ProductDrawerCard = ({ product, onClose }) => {
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -50,7 +50,7 @@ const PhoneProductCard = ({ product, onClose }) => {
   };
 
   return (
-    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+    <Drawer open={isDrawerOpen} >
       <DrawerContent
         side="bottom"
         className={`flex flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${
@@ -127,4 +127,4 @@ const PhoneProductCard = ({ product, onClose }) => {
   );
 };
 
-export default PhoneProductCard;
+export default ProductDrawerCard;

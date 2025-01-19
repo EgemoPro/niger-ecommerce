@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import OrderPopup from "../../components/order-express-popup";
+import loader from "../../assets/bouncing-squares.svg";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import {
   Star,
   ArrowLeftCircleIcon,
   PhoneCall,
   ShoppingBag,
 } from "lucide-react";
-import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useSelector } from "react-redux";
 // import { sizes } from "./ProductDetails";
-import { useParams } from "react-router-dom";
-import OrderPopup from "./order-express-popup";
-import loader from "../assets/bouncing-squares.svg";
 
-const PageProduitSweater = () => {
+const ProductSweaterPage = () => {
   const { id } = useParams();
   const product = useSelector((state) =>
-    state.data.find((p) => p.id === `#${id}`)
+    state.data.data.find((p) => p.id === `#${id}`)
   );
   // console.log(product);
 
@@ -41,6 +42,7 @@ const PageProduitSweater = () => {
 
   const handleAddToCart = () => {
     setIsOpen(true);
+    
   };
 
   const handleImageClick = (index) => {
@@ -86,25 +88,27 @@ const PageProduitSweater = () => {
       <OrderPopup isOpen={isOpen} onClose={setIsOpen} product={product} />
       <ResizablePanelGroup
         direction="horizontal"
-        className="max-h-[600px] w-full flex flex-col md:flex-row shadow-lg rounded-xl overflow-hidden p-4 bg-gray-50"
+        className="h-auto md:max-h-[500px] space-x-2 w-full flex flex-col md:flex-row shadow-sm rounded-md overflow-hidden p-4 bg-gray-50"
       >
-        <ResizablePanel defaultSize={50} className="mb-4 md:mb-0">
+        <ResizablePanel defaultSize={40} minSize={40}  maxSize={55} className="mb-4 md:mb-0">
           <img
             src={product.images[mainImage]}
             alt={product.title}
             className="w-full h-full object-cover rounded-lg shadow-sm transition-transform hover:scale-105"
           />
         </ResizablePanel>
-        <ResizableHandle className="hidden md:block" />
-        <ResizablePanel defaultSize={50} className='max-md:ml-4'>
-          <div className="grid grid-cols-3 gap-4">
+        <ResizableHandle className="border-l-2 border-black/10 hover:border-black/50 rounded-full" />
+        <ResizablePanel defaultSize={30} minSize={20} className="ml-2">
+          <div className="grid grid-cols-3 space-x-3">
             {product.images.map((image, index) => (
               <img
                 key={index}
                 src={image}
                 alt={`${product.title} - Vue ${index + 1}`}
                 className={`w-full h-auto object-cover rounded-sm cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  index === mainImage ? "ring-4 ring-blue-50" : "hover:ring-2 ring-blue-300"
+                  index === mainImage
+                    ? "ring-4 ring-blue-50"
+                    : "hover:ring-2 ring-blue-300"
                 }`}
                 onClick={() => handleImageClick(index)}
               />
@@ -114,33 +118,40 @@ const PageProduitSweater = () => {
       </ResizablePanelGroup>
 
       <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-2">
-        <div className="space-y-6 md:col-span-2">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{product.title}</h1>
-          <div className="flex items-center space-x-4">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="h-6 w-6 text-yellow-400 fill-current"
-                />
-              ))}
+        <div className="space-y-2 md:col-span-2">
+            <h1 className="text-3xl text-justify uppercase font-Barlow font-bold text-gray-900 tracking-tight">
+              {product.title}
+            </h1>
+          <ScrollArea className="w-full h-full " >
+            <div className="flex items-center space-x-4 mb-3 mt-3">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className="h-6 w-6 text-yellow-400 fill-current"
+                  />
+                ))}
+              </div>
+              <span className="text-base text-gray-600 font-medium font-Barlow">
+                {product.rating} {product.reviews} Avis
+              </span>
             </div>
-            <span className="text-base text-gray-600 font-medium">
-              {product.rating} ({product.reviews} Avis)
-            </span>
-          </div>
-          <p className="text-gray-700 text-lg leading-relaxed">{product.description}</p>
-          <h2 className="text-xl font-bold text-gray-900">Où Acheter</h2>
+            <p className="text-gray-700 lowercase tracking-tigh font-medium text-md text-justify font-OpenSans leading-relaxed md:pr-5">
+              {product.description}
+            </p>
+            <h2 className="text-xl font-bold text-gray-900 mt-10">Où Acheter</h2>
+          </ScrollArea>
         </div>
-        
+
+        {/* partie achat */}
         <div className="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 md:col-span-1">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          {/* <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
             <div className="md:mb-4">
               <h2 className="text-xl font-bold text-gray-900">Prix</h2>
             </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center mb-8">
-            <span className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
+          </div> */}
+          <div className="h-1/3 w-full flex items-center justify-center mb-4">
+            <span className="text-4xl text-center uppercase font-bold text-gray-900/90 mb-4 sm:mb-0 tracking-tight">
               {product.price} fcfa
             </span>
           </div>
@@ -158,18 +169,17 @@ const PageProduitSweater = () => {
             <PhoneCall className="h-6 w-6" />
             En savoir plus
           </Button>
-          <Link 
-            to={"/product"} 
+          <Link
+            to={"/product"}
             className="flex items-center gap-4 mt-6 text-gray-600 hover:text-gray-900 transition-colors duration-200"
           >
-            <ArrowLeftCircleIcon className="h-6 w-6" /> 
+            <ArrowLeftCircleIcon className="h-6 w-6" />
             <span className="font-medium">Visiter le site</span>
           </Link>
         </div>
-      
       </div>
     </div>
   );
 };
 
-export default PageProduitSweater;
+export default ProductSweaterPage;

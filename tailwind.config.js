@@ -74,8 +74,13 @@ export default {
   					'background-position': '200%'
   				}
   			}
-  		}
+  		},
+		fontFamily:{
+			Mulish:['Mulish', 'serif'],
+			Barlow : ['Barlow', 'serif'],
+			OpenSans : ['Open Sans', 'serif'],
+		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+//   plugins: [require("tailwindcss-animate")],
 }

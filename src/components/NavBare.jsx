@@ -1,225 +1,323 @@
-import React, { useState } from "react";
-import { ShoppingCart, Search, PackageX, Menu, ShoppingBag } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
-  Combobox,
-  ComboboxButton,
-  ComboboxInput,
-  ComboboxOption,
-} from "@headlessui/react";
+  ShoppingCart,
+  ShoppingBag,
+  Search,
+  Package,
+  Menu,
+  // UserPlus,
+  // User2
+} from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import AuthBtn from "./auth/auth-btn";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+/**
+ * Mettre en place le lien vers le produits dans les parametres de recherche
+ * mettre en place une gestion des requetes de type de contenu via redux-toolkit
+ * tester l'uniformiter des state de redux
+ */
 
-const products = [
-  "Smartphone",
-  "Ordinateur portable",
-  "Tablette",
-  "Casque audio",
-  "Enceinte bluetooth",
-  "Montre connectée",
-  "Caméra",
-  "Clavier",
-  "Souris",
-  "Écran",
-];
+const Logo = () => (
+  <div className="flex items-center gap-2">
+    <ShoppingBag className="text-blue-600 mr-2" />
+    <span className="font-semibold text-lg">QuickShop</span>
+  </div>
+);
 
-const NavBare = () => {
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [query, setQuery] = useState("");
+const NavigationItems = () => (
+  <div className="hidden md:flex items-center gap-6">
+    {/* <Button variant="ghost" className="text-gray-600">
+      Tarifs
+    </Button> */}
+    <Button variant="ghost" className="text-gray-600">
+      <Link to={`/orders`} className="w-full h-full" >
+      <ShoppingCart className="w-5 h-5" />
+      </Link>
+    </Button>
+    <AuthBtn/>
+  </div>
+);
+
+const SearchResults = ({
+  groupedProducts,
+  selectedIndex,
+  selectProduct,
+  flattenedProducts,
+  setSelectedIndex,
+}) => {
+  return (
+    <>
+      {Object.entries(groupedProducts).map(([category, items]) => (
+        <div key={category}>
+          <div className="px-4 py-2 text-sm font-semibold text-gray-500 bg-gray-50">
+            {category}
+          </div>
+          {items.map((product) => {
+            const index = flattenedProducts.findIndex(
+              (p) => p.id === product.id
+            );
+            return (
+              <div
+                key={product.id}
+                className={`px-4 py-2 flex items-center justify-between cursor-pointer ${
+                  selectedIndex === index ? "bg-blue-50" : "hover:bg-gray-50"
+                }`}
+                onClick={() => selectProduct(product)}
+                onMouseEnter={() => setSelectedIndex(index)}
+              >
+                <div className="flex items-center gap-2">
+                  <Package className="w-4 h-4 text-gray-400" />
+                  <Link
+                    to={`/product/${product.id.replace("#", "")}`}
+                    className="w-full h-full"
+                  >
+                    {product.title}
+                  </Link>
+                </div>
+                <span className="text-sm text-gray-500">{product.price}</span>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </>
+  );
+};
+
+const SearchBar = ({
+  searchQuery,
+  setSearchQuery,
+  setIsOpen,
+  handleKeyDown,
+  inputRef,
+}) => (
+  <div className="relative w-full">
+    <Input
+      ref={inputRef}
+      type="text"
+      value={searchQuery}
+      onChange={(e) => {
+        setSearchQuery(e.target.value);
+        setIsOpen(true);
+      }}
+      onFocus={() => setIsOpen(true)}
+      onKeyDown={handleKeyDown}
+      placeholder="Rechercher des produits..."
+      className="w-full pl-4 pr-10"
+    />
+    <Search className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+  </div>
+);
+
+const AutocompleteDropdown = ({
+  isOpen,
+  dropdownRef,
+  groupedProducts,
+  filteredProducts,
+  selectedIndex,
+  selectProduct,
+  flattenedProducts,
+  setSelectedIndex,
+}) =>
+  isOpen && (
+    <Card
+      ref={dropdownRef}
+      className="absolute z-50 md:w-full max-md:w-[92%] md:mt-10 max-h-[400px] overflow-auto shadow-lg"
+    >
+      {filteredProducts.length > 0 ? (
+        <SearchResults
+          groupedProducts={groupedProducts}
+          selectedIndex={selectedIndex}
+          selectProduct={selectProduct}
+          flattenedProducts={flattenedProducts}
+          setSelectedIndex={setSelectedIndex}
+        />
+      ) : (
+        <div className="px-4 py-8 text-center text-gray-500">
+          Aucun résultat trouvé.
+        </div>
+      )}
+    </Card>
+  );
+
+const useAutocomplete = (products) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const groupedProducts = filteredProducts.reduce((acc, product) => {
+    if (!acc[product.category]) {
+      acc[product.category] = [];
+    }
+    acc[product.category].push(product);
+    return acc;
+  }, {});
+
+  const flattenedProducts = Object.values(groupedProducts).flat();
+
+  const selectProduct = (product) => {
+    setSearchQuery(product.title);
+    setIsOpen(false);
+    setSelectedIndex(-1);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!isOpen) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedIndex((prev) =>
+          prev < flattenedProducts.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (selectedIndex >= 0) {
+          selectProduct(flattenedProducts[selectedIndex]);
+        }
+        break;
+      case "Escape":
+        setIsOpen(false);
+        break;
+    }
+  };
+
+  return {
+    isOpen,
+    setIsOpen,
+    searchQuery,
+    setSearchQuery,
+    selectedIndex,
+    setSelectedIndex,
+    filteredProducts,
+    groupedProducts,
+    flattenedProducts,
+    selectProduct,
+    handleKeyDown,
+  };
+};
+
+const Navbar = ({ data }) => {
+  const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const filteredProducts =
-    query === ""
-      ? products
-      : products.filter((product) =>
-          product.toLowerCase().includes(query.toLowerCase())
-        );
+  const {
+    isOpen,
+    setIsOpen,
+    searchQuery,
+    setSearchQuery,
+    selectedIndex,
+    setSelectedIndex,
+    filteredProducts,
+    groupedProducts,
+    flattenedProducts,
+    selectProduct,
+    handleKeyDown,
+  } = useAutocomplete(data);
 
-  const handleProductSelect = (product) => {
-    setSelectedProduct(product);
-    setQuery("");
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setIsOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <>
-      <header className="bg-white shadow-sm">
-        <nav className="container mx-auto px-4 py-3">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <ShoppingBag className="text-blue-600 mr-2" />
-              <span className="text-xl font-bold">QuickShop</span>
-            </div>
-            <div className="hidden md:flex flex-grow mx-4 max-w-96">
-              <Combobox value={selectedProduct} onChange={handleProductSelect}>
-                <div className="relative w-full">
-                  <div className="relative w-full cursor-default overflow-hidden rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-                    <ComboboxInput
-                      className="w-full border border-gray-300 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 focus:border-gray-500 rounded-lg"
-                      displayValue={(product) => product}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Rechercher des produits..."
-                    />
-                    <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                      <Search
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </ComboboxButton>
-                  </div>
-                  {query !== "" && (
-                    <ComboboxOption className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                      {filteredProducts.length === 0 ? (
-                        <div className="relative cursor-pointer select-none py-2 px-4 text-gray-700 flex items-center">
-                          <PackageX className="mr-2 h-5 w-5" />
-                          Aucun produit trouvé.
-                        </div>
-                      ) : (
-                        filteredProducts.map((product) => (
-                          <ComboboxOption
-                            key={product}
-                            className={({ active }) =>
-                              `relative cursor-default select-none pl-10 pr-4 ${
-                                active
-                                  ? "bg-blue-600 text-white"
-                                  : "text-gray-900"
-                              }`
-                            }
-                            value={product}
-                          >
-                            {({ selected, active }) => (
-                              <>
-                                <span
-                                  className={`block truncate ${
-                                    selected ? "font-medium" : "font-normal"
-                                  }`}
-                                >
-                                  {product}
-                                </span>
-                                {selected ? (
-                                  <span
-                                    className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                      active ? "text-white" : "text-blue-600"
-                                    }`}
-                                  >
-                                    ✓
-                                  </span>
-                                ) : null}
-                              </>
-                            )}
-                          </ComboboxOption>
-                        ))
-                      )}
-                    </ComboboxOption>
-                  )}
-                </div>
-              </Combobox>
-            </div>
-            <div className="hidden md:flex items-center">
-              <a href="#" className="text-gray-600 hover:text-gray-800 mr-4">
-                Fonctionnalités
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-800 mr-4">
-                Tarifs
-              </a>
-              <button className=" text-blue-500 px-4 py-2 rounded-md hover:text-blue-600 hover:scale-110">
-                  <ShoppingCart className="ml-2 h-5 w-5" />
-                </button>
-            </div>
-            <button
-              className="md:hidden text-gray-600 hover:text-gray-800"
-              onClick={toggleMenu}
-            >
-              <Menu size={24} />
-            </button>
+    <div className="absolute z-50 w-full px-4 py-3 bg-white shadow-sm">
+      <div className="flex items-center bg--900 justify-between">
+        <Logo />
+
+        <div className="hidden md:flex flex-1 max-w-xl mx-4 relative">
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setIsOpen={setIsOpen}
+            handleKeyDown={handleKeyDown}
+            inputRef={inputRef}
+          />
+
+          <AutocompleteDropdown
+            isOpen={isOpen}
+            dropdownRef={dropdownRef}
+            groupedProducts={groupedProducts}
+            filteredProducts={filteredProducts}
+            selectedIndex={selectedIndex}
+            selectProduct={selectProduct}
+            flattenedProducts={flattenedProducts}
+            setSelectedIndex={setSelectedIndex}
+          />
+        </div>
+
+        <NavigationItems />
+        <div className="md:hidden flex items-center gap-3 ">
+          {/* Fonctionnalités de login */}
+          <AuthBtn/>
+          <button
+            className="md:hidden text-gray-600 hover:text-gray-800"
+            onClick={toggleMenu}
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden mt-4">
+          <div className="mb-4">
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setIsOpen={setIsOpen}
+              handleKeyDown={handleKeyDown}
+              inputRef={inputRef}
+            />
+
+            <AutocompleteDropdown
+              isOpen={isOpen}
+              dropdownRef={dropdownRef}
+              groupedProducts={groupedProducts}
+              filteredProducts={filteredProducts}
+              selectedIndex={selectedIndex}
+              selectProduct={selectProduct}
+              flattenedProducts={flattenedProducts}
+              setSelectedIndex={setSelectedIndex}
+            />
           </div>
-          {isMenuOpen && (
-            <div className="md:hidden mt-4">
-              <div className="mb-4">
-                <Combobox
-                  value={selectedProduct}
-                  onChange={handleProductSelect}
-                >
-                  <div className="relative w-full">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-                      <ComboboxInput
-                        className="w-full border border-gray-300 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 focus:border-gray-500 rounded-lg"
-                        displayValue={(product) => product}
-                        onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Rechercher des produits..."
-                      />
-                      <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                        <Search
-                          className="h-5 w-5 text-gray-400"
-                          aria-hidden="true"
-                        />
-                      </ComboboxButton>
-                    </div>
-                    {query !== "" && (
-                      <ComboboxOption className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        {filteredProducts.length === 0 ? (
-                          <div className="relative cursor-pointer select-none py-2 px-4 text-gray-700 flex items-center">
-                            <PackageX className="mr-2 h-5 w-5" />
-                            Aucun produit trouvé.
-                          </div>
-                        ) : (
-                          filteredProducts.map((product) => (
-                            <ComboboxOption
-                              key={product}
-                              className={({ active }) =>
-                                `relative cursor-default select-none pl-10 pr-4 ${
-                                  active
-                                    ? "bg-blue-600 text-white"
-                                    : "text-gray-900"
-                                }`
-                              }
-                              value={product}
-                            >
-                              {({ selected, active }) => (
-                                <>
-                                  <span
-                                    className={`block truncate ${
-                                      selected ? "font-medium" : "font-normal"
-                                    }`}
-                                  >
-                                    {product}
-                                  </span>
-                                  {selected ? (
-                                    <span
-                                      className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                        active ? "text-white" : "text-blue-600"
-                                      }`}
-                                    >
-                                      ✓
-                                    </span>
-                                  ) : null}
-                                </>
-                              )}
-                            </ComboboxOption>
-                          ))
-                        )}
-                      </ComboboxOption>
-                    )}
-                  </div>
-                </Combobox>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <a href="#" className="text-gray-600 hover:text-gray-800">
-                  Fonctionnalités
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-800">
-                  Tarifs
-                </a>
-                <button className="text-blue-500  py-2 rounded-md hover:text-blue-600">
-                  <ShoppingCart className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          )}
-        </nav>
-      </header>
-    </>
+          {/* ici les liens secondaires */}
+          <div className="flex flex-col space-y-2">
+           
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default NavBare;
+export default Navbar;

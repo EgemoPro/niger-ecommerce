@@ -1,10 +1,12 @@
-import NavBare from "../../components/quickshop-navbar-autocomplete";
+import NavBare from "../../components/NavBare";
 import { motion } from "framer-motion";
 import { Facebook, Linkedin, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import Baniere from "../../assets/Baniere.png";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FadeText } from "@/components/ui/fade-text";
+import { useEffect } from "react";
+import { fetchInitialData } from "../../redux/Slices/initialData";
 
 const compagnies = [
   { name: "Entreprise A", logo: "https://placehold.co/600x400" },
@@ -15,8 +17,12 @@ const compagnies = [
 ];
 
 const Home = () => {
-  const data = useSelector((state) => state.data);
+  const dispatch = useDispatch()
+  const {data, status, error} = useSelector((state) => state.data);
   // console.log(data);
+  useEffect(()=>{
+    dispatch(fetchInitialData())
+  },[dispatch])
 
   return (
     <div
