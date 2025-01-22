@@ -29,7 +29,7 @@ const AuthBtn = () => {
       <DrawerTrigger asChild>
         <Button
           variant="ghost"
-          className="text-gray-600 outline outline-[1px] outline-slate-400/50"
+          className="text-gray-600 h-8 outline outline-[1px] outline-slate-400/50"
         >
           Se connecter
         </Button>
