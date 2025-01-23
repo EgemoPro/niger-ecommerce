@@ -10,12 +10,18 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 import { Button } from "../ui/button";
+import Loader from "../loader";
+
 import { Separator } from "../ui/separator";
+import GoogleAuhtButton from "./buttons/GoogleAuhtButton";
+import FacebookAuhtButton from "./buttons/FaceBookAuthButton";
+import AppleAuhtButton from "./buttons/AppleAuthButton";
 
 const AuthBtn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -37,7 +43,7 @@ const AuthBtn = () => {
 
       <DrawerContent
         className={`bg-gradient-to-b from-gray-50 to-white ${
-          isMobile ? "h-[100dvh]" : "h-[90vh]"
+          isMobile ? "h-[95dvh]" : "h-[90vh]"
         }`}
       >
         <div className="mx-auto w-full max-w-lg">
@@ -146,11 +152,11 @@ const AuthBtn = () => {
                 </div>
               )}
 
-              <Button className="w-full h-12 md:h-11 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 mt-6">
+              <Button className="flex gap-2 items-center w-full h-12 md:h-11 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 mt-6">
                 <span className="text-base">
                   {isLogin ? "Se connecter" : "S'inscrire"}
                 </span>
-                <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                {isDataLoading ? <Loader className={'mt-1'} /> : <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" /> }
               </Button>
 
               <p className="text-center text-sm text-gray-500 mt-6">
@@ -171,22 +177,9 @@ const AuthBtn = () => {
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-6">
-              {[
-                { name: "Google", color: "bg-red-50 hover:bg-red-100" },
-                { name: "Apple", color: "bg-gray-50 hover:bg-gray-100" },
-                { name: "Microsoft", color: "bg-blue-50 hover:bg-blue-100" },
-              ].map((provider) => (
-                <button
-                  key={provider.name}
-                  className={`flex items-center justify-center h-12 md:h-11 rounded-xl transition-all duration-200 ${provider.color} border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow group`}
-                >
-                  <img
-                    src="/api/placeholder/24/24"
-                    alt={provider.name}
-                    className="w-5 h-5 group-hover:scale-110 transition-transform duration-200"
-                  />
-                </button>
-              ))}
+              <GoogleAuhtButton/>
+              <FacebookAuhtButton/>
+              <AppleAuhtButton/>
             </div>
           </div>
         </div>

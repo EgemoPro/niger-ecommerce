@@ -16,19 +16,21 @@ const ActionButtons = ({
       <div className="flex md:gap-2 w-full max-md:h-12 justify-end  md:px-4">
         <button
           onClick={toggleFavorite}
-          className={`flex items-center justify-center max-middle:w-1/4 px-3 md:px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 max-md:rounded-none ${
+          className={`flex items-center justify-center gap-2 max-middle:w-1/4 px-3 md:px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 max-md:rounded-none ${
             isFavorite
               ? "bg-red-100 text-red-600"
               : "bg-gray-200 text-gray-800 hover:bg-gray-300"
           }`}
         >
-          <Heart
-            size={18}
-            className={`mr-2 transition-transform duration-300 ${
-              isFavorite ? "fill-current transform scale-110" : ""
-            }`}
-          />
-          Favoris
+          <span className="w-1/3 flex items-center justify-center">
+            <Heart
+              size={18}
+              className={`block min-w-8 transition-transform duration-300 ${
+                isFavorite ? "fill-current transform scale-110" : ""
+              }`}
+            />
+          </span>
+          <span className="w-2/3 flex  items-start">Favoris</span>
         </button>
         <button
           onClick={onAddToCart}
@@ -41,16 +43,11 @@ const ActionButtons = ({
             <ShoppingCart size={18} />
           </span>
 
-          <span
-            className="max-md:w-4/6 "
-          >
-          Ajouter au panier
-          </span>
+          <span className="max-md:w-4/6 ">Ajouter au panier</span>
         </button>
       </div>
     </div>
   );
 };
-
 
 export default ActionButtons;
