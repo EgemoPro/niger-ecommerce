@@ -43,7 +43,7 @@ const AuthBtn = () => {
 
       <DrawerContent
         className={`bg-gradient-to-b from-gray-50 to-white ${
-          isMobile ? "h-[95dvh]" : "h-[90vh]"
+          isMobile ? "h-[98dvh]" : "h-[90vh]"
         }`}
       >
         <div className="mx-auto w-full max-w-lg">
