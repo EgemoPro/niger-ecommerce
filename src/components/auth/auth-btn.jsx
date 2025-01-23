@@ -14,7 +14,7 @@ import Loader from "../loader";
 
 import { Separator } from "../ui/separator";
 import GoogleAuhtButton from "./buttons/GoogleAuhtButton";
-import FacebookAuhtButton from "./buttons/FaceBookAuthButton";
+import FacebookAuhtButton from "./buttons/FacebookAuthButton";
 import AppleAuhtButton from "./buttons/AppleAuthButton";
 
 const AuthBtn = () => {
