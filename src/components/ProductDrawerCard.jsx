@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Maximize2, Minimize2 } from "lucide-react";
-import { Drawer, DrawerContent, DrawerClose } from "@/components/ui/drawer";
+import { Drawer,DrawerTitle, DrawerContent, DrawerClose } from "@/components/ui/drawer";
 import ImageCarousel from "./ImageCarousel";
 import ProductDetails, { sizes } from "./ProductDetails";
 import ActionButtons from "./ActionButtons";
@@ -11,15 +11,17 @@ import { ScrollArea } from "./ui/scroll-area";
 
 
 const ProductDrawerCard = ({ product, onClose }) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [colorSelected, setColorSelected] = useState("");
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   console.log(product)
+
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
@@ -50,7 +52,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
   };
 
   return (
-    <Drawer open={isDrawerOpen} >
+    <Drawer open={isDrawerOpen} dismissible={false} >
       <DrawerContent
         side="bottom"
         className={`flex flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${
@@ -60,7 +62,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
         } `}
       >
         {/* Header du produit */}
-        <div className="flex flew-row justify-between items-center mb-2">
+        <DrawerTitle className="flex flew-row  justify-end items-center mb-2">
           <div className="flex items-center justify-center gap-4 h-10 w-24">
             <SharePopover />
             <button
@@ -75,19 +77,17 @@ const ProductDrawerCard = ({ product, onClose }) => {
                   setIsDrawerOpen(false);
                   setTimeout(onClose, 300);
                 }}
-                className="text-gray-500 hover:text-gray-700 transition-all duration-300 transform hover:scale-110 active:scale-95"
+                className="text-gray-500 hover:text-gray-700 transition-all duration-300 transform -translate-y-7 hover:scale-110 active:scale-95"
               >
                 <X size={20} />
               </button>
             </DrawerClose>
           </div>
-        </div>
+        </DrawerTitle>
 
         {/* Contenu principal : Carousel et détails produit */}
         <ScrollArea className="w-full max-middle:p-4">
           <div className="flex w-full max-middle:flex-col flex-row justify-between gap-4">
-
-          
           <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]">
             <ImageCarousel
               images={product.images}

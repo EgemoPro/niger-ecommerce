@@ -62,22 +62,25 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
               className="pl-8"
             />
           </div>
-          <Button className="flex bg-violet-500 md:gap-6 max-md:col-span-1 md:w-auto bg-transparent hover:bg-slate-400/10 border">
+          <Button className="max-md:col-span-1 md:w-auto w-full ">
             <Link
-              className="h-full w-full flex items-center justify-around gap-5 text-inherit"
+              className="h-full w-full flex items-center gap-2 max-md:flex-row-reverse justify-around"
               to={`/orders`}
             >
-              <span className="h-6 w-6 p-2 transform max-md:-translate-x-3 text-gray-500 rounded-full flex justify-center items-center">
+              <span className="h-6 w-6 p-2 rounded-full flex justify-center items-center bg-gray-200/30 md:mr-2">
                 {backetState.length}
               </span>
-              <span className="h-6 w-6 p-2 max-md:hidden text-gray-500 rounded-full flex justify-center items-center">
+              <span className="h-6 w-6 text-base p-2 max-md:hidden  flex justify-center items-center">
                 Panier
               </span>
+              <span className="h-auto w-auto p-2 block">
+                <ShoppingCart className="h-4 w-4 block " />
+              </span>
             </Link>
-            <ShoppingCart className="h-5 w-5 transform translate-x-1 text-gray-500" />
           </Button>
         </div>
 
+        {/* categorie liste  */}
         <ScrollArea className="max-md:w-full md:w-2/3 h-auto p-2">
           <div className="flex gap-2">
             <Button
@@ -105,8 +108,8 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
         </ScrollArea>
       </div>
 
-      <div className="flex md:justify-between  items-center gap-3 p-1">
-        <span className="text-green-600 text-sm font-semibold text-center w-1/4 ">
+      <div className="flex md:justify-between items-center gap-3 p-1">
+        <span className="text-green-600 text-sm font-semibold text-center w-1/4">
           {filters.priceRange[0]} FCFA
         </span>
         <Slider
@@ -117,7 +120,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
           onValueChange={handlePriceChange}
           className="md:w-4/6 w-1/2"
         />
-        <span className="text-green-600 text-sm font-semibold  text-center  w-1/4">
+        <span className="text-green-600 text-sm font-semibold text-center w-1/4">
           {filters.priceRange[1]} FCFA
         </span>
       </div>

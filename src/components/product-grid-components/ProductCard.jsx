@@ -12,8 +12,10 @@ import loader from "../../assets/bouncing-squares.svg";
 import ProductRating from "./ProductRating";
 import ProductPrice from "./ProductPrice";
 
+
 const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isUserLogin,setIsUserLogin] = useState(false);
 
   return (
     <Card className="overflow-hidden min-w-[240px]">
@@ -21,6 +23,7 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
         <CardTitle className="relative">
           <Button
             variant="ghost"
+            
             className="absolute h-8 w-8 top-4 right-4 z-10 flex items-center justify-between p-1 rounded-full bg-slate-50 hover:scale-110 transition-transform duration-300 ease-in-out transform"
             onClick={() => onToggleFavorite(product.id)}
           >

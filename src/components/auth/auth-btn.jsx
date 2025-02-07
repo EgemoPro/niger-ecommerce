@@ -11,17 +11,33 @@ import {
 } from "../ui/drawer";
 import { Button } from "../ui/button";
 import Loader from "../loader";
-
+import z from "zod";
 import { Separator } from "../ui/separator";
 import GoogleAuhtButton from "./buttons/GoogleAuhtButton";
 import FacebookAuhtButton from "./buttons/FacebookAuthButton";
 import AppleAuhtButton from "./buttons/AppleAuthButton";
+
+const schema = z.object({
+  username: z.string().min(3, "Le nom doit avoir au moins 3 caractères").max(50, "Le nom est trop long"),
+  email: z.string().email("L'email est invalide"),
+  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères").max(50, "Mot de passe trop long"),
+});
+
 
 const AuthBtn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    error: {
+      field:"",
+      message:""
+    }
+  });
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -29,6 +45,19 @@ const AuthBtn = () => {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+ 
+  const handleInputChange = (field, value) => {
+    try {
+      schema.shape[field].parse(value);
+      setFormData((prev) => ({ ...prev, [field]: value, error: {...prev.error, field:""}  }));
+    } catch (error) {
+      setFormData((prev) => ({ ...prev, [field]: value, error: {...prev.error, field: field, message:JSON.parse(error.message)[0].message} }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    console.log(formData);
+  };
 
   return (
     <Drawer>
@@ -86,10 +115,17 @@ const AuthBtn = () => {
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                     <input
                       type="text"
+                      onChange={(e) => handleInputChange("username", e.target.value)}
+                      value={formData.username}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all duration-200 text-base hover:border-gray-300"
                       placeholder="John Doe"
                     />
                   </div>
+                  {!!formData.error && formData.error.field === "username" ? (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formData.error.message}
+                    </p>
+                  ): null}
                 </div>
               )}
 
@@ -101,10 +137,17 @@ const AuthBtn = () => {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                   <input
                     type="email"
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    value={formData.email}
                     className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all duration-200 text-base hover:border-gray-300"
                     placeholder="vous@gmail.com"
                   />
                 </div>
+                {!!formData.error && formData.error.field === "email" ? (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formData.error.message}
+                    </p>
+                  ): null}
               </div>
 
               <div className="space-y-2">
@@ -115,6 +158,8 @@ const AuthBtn = () => {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                   <input
                     type={showPassword ? "text" : "password"}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    value={formData.password}
                     className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all duration-200 text-base hover:border-gray-300"
                     placeholder="••••••••"
                   />
@@ -130,6 +175,11 @@ const AuthBtn = () => {
                     )}
                   </button>
                 </div>
+                {!!formData.error && formData.error.field === "password" ? (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formData.error.message}
+                    </p>
+                  ): null}
               </div>
 
               {isLogin && (
@@ -152,11 +202,19 @@ const AuthBtn = () => {
                 </div>
               )}
 
-              <Button className="flex gap-2 items-center w-full h-12 md:h-11 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 mt-6">
+              <Button
+                onClick={handleSubmit}
+                disabled={!formData.email || !formData.password || isDataLoading}
+                className="flex gap-2 items-center w-full h-12 md:h-11 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 mt-6"
+              >
                 <span className="text-base">
                   {isLogin ? "Se connecter" : "S'inscrire"}
                 </span>
-                {isDataLoading ? <Loader className={'mt-1'} /> : <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" /> }
+                {isDataLoading ? (
+                  <Loader className={"mt-1"} />
+                ) : (
+                  <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                )}
               </Button>
 
               <p className="text-center text-sm text-gray-500 mt-6">
@@ -177,9 +235,9 @@ const AuthBtn = () => {
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-6">
-              <GoogleAuhtButton/>
-              <FacebookAuhtButton/>
-              <AppleAuhtButton/>
+              <GoogleAuhtButton />
+              <FacebookAuhtButton />
+              <AppleAuhtButton />
             </div>
           </div>
         </div>

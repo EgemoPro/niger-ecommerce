@@ -1,114 +1,77 @@
 import { createSlice } from '@reduxjs/toolkit';
 import api from '../../lib/axios';
 
+// Définition des constantes pour éviter les répétitions
+const TOKEN_KEY = 'jwt';
+
+// État initial
+const initialState = {
+  user: null,
+  token: localStorage.getItem(TOKEN_KEY) || null,
+  isLoading: false,
+  error: null,
+};
+
+// Création du slice Redux
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: null,
-    token: localStorage.getItem('token'),
-    isLoading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    loginStart: (state) => {
+    authRequest: (state) => {
       state.isLoading = true;
       state.error = null;
     },
-    loginSuccess: (state, action) => {
+    authSuccess: (state, action) => {
       const { user, token } = action.payload;
       state.user = user;
       state.token = token;
       state.isLoading = false;
       state.error = null;
     },
-    loginFailure: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    registerStart: (state) => {
-      state.isLoading = true;
-      state.error = null;
-    },
-    registerSuccess: (state, action) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isLoading = false;
-      state.error = null;
-    },
-    registerFailure: (state, action) => {
+    authFailure: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
     logout: (state) => {
-      localStorage.removeItem('token');
+      localStorage.removeItem(TOKEN_KEY);
       state.user = null;
       state.token = null;
-    },
-    checkAuthStart: (state) => {
-      state.isLoading = true;
-      state.error = null;
-    },
-    checkAuthSuccess: (state, action) => {
-      state.user = action.payload;
-      state.isLoading = false;
-      state.error = null;
-    },
-    checkAuthFailure: (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
     },
   },
 });
 
-export const {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-  registerStart,
-  registerSuccess,
-  registerFailure,
-  logout,
-  checkAuthStart,
-  checkAuthSuccess,
-  checkAuthFailure,
-} = authSlice.actions;
+// Exportation des actions
+export const { authRequest, authSuccess, authFailure, logout } = authSlice.actions;
 
-export const login = (credentials) => async (dispatch) => {
-  dispatch(loginStart());
+// Fonction générique pour gérer les requêtes d'authentification
+const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
+  dispatch(authRequest());
   try {
-    const response = await api.post('user/login', credentials);
+    const response = await api.post(endpoint, data);
     const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    dispatch(loginSuccess({ user, token }));
+    localStorage.setItem(TOKEN_KEY, token);
+    dispatch(successAction({ user, token }));
     return true;
   } catch (error) {
-    const errorMessage = error.response?.data?.message || 'Erreur de connexion';
-    dispatch(loginFailure(errorMessage));
+    const errorMessage = error.response?.data?.message || 'Une erreur est survenue.';
+    dispatch(authFailure(errorMessage));
     return false;
   }
 };
 
-export const register = (userData) => async (dispatch) => {
-  dispatch(registerStart());
-  try {
-    const response = await api.post('user/register', userData);
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    dispatch(registerSuccess({ user, token }));
-    return true;
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || 'Erreur d\'inscription';
-    dispatch(registerFailure(errorMessage));
-    return false;
-  }
-};
+// Actions asynchrones
+// credenntial: {email,password}
+export const login = (credentials) => (dispatch) =>
+  handleAuthRequest(dispatch, 'user/login', credentials, authSuccess);
+
+export const register = (userData) => (dispatch) =>
+  handleAuthRequest(dispatch, 'user/register', userData, authSuccess);
 
 export const checkAuth = () => async (dispatch) => {
-  dispatch(checkAuthStart());
-  const token = localStorage.getItem('token');
+  dispatch(authRequest());
+  const token = localStorage.getItem(TOKEN_KEY);
   if (!token) {
-    dispatch(checkAuthFailure('Pas de token trouvé.'));
+    dispatch(authFailure('Pas de token trouvé.'));
     return false;
   }
 
@@ -116,11 +79,11 @@ export const checkAuth = () => async (dispatch) => {
     const response = await api.get('user/profile', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    dispatch(checkAuthSuccess(response.data));
+    dispatch(authSuccess({ user: response.data, token }));
     return true;
   } catch (error) {
-    localStorage.removeItem('token');
-    dispatch(checkAuthFailure('Erreur lors de la vérification de l\'authentification.'));
+    localStorage.removeItem(TOKEN_KEY);
+    dispatch(authFailure('Erreur lors de la vérification de l\'authentification.'));
     return false;
   }
 };
