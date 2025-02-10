@@ -8,5 +8,11 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-  }
+  },
+  // server:{
+  //   proxy:{
+  //     "/auth": "http://localhost:8000/user",
+  //     changeOrigin: true,
+  //   }
+  // }
 })

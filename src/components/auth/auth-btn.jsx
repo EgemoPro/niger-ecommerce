@@ -16,27 +16,41 @@ import { Separator } from "../ui/separator";
 import GoogleAuhtButton from "./buttons/GoogleAuhtButton";
 import FacebookAuhtButton from "./buttons/FacebookAuthButton";
 import AppleAuhtButton from "./buttons/AppleAuthButton";
+import { useSelector, useDispatch } from "react-redux";
+import { login, register, logout } from "../../redux/Slices/authSlice";
 
 const schema = z.object({
-  username: z.string().min(3, "Le nom doit avoir au moins 3 caractères").max(50, "Le nom est trop long"),
+  username: z
+    .string()
+    .min(3, "Le nom doit avoir au moins 3 caractères")
+    .max(50, "Le nom est trop long"),
   email: z.string().email("L'email est invalide"),
-  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères").max(50, "Mot de passe trop long"),
+  password: z
+    .string()
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .max(50, "Mot de passe trop long"),
 });
 
-
 const AuthBtn = () => {
+  const {
+    user,
+    isLoading,
+    error: connexionError,
+    token,
+  } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDataLoading, setIsDataLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     error: {
-      field:"",
-      message:""
-    }
+      field: "",
+      message: "",
+    },
   });
 
   useEffect(() => {
@@ -45,17 +59,46 @@ const AuthBtn = () => {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
- 
+
   const handleInputChange = (field, value) => {
     try {
       schema.shape[field].parse(value);
-      setFormData((prev) => ({ ...prev, [field]: value, error: {...prev.error, field:""}  }));
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+        error: { ...prev.error, field: "" },
+      }));
     } catch (error) {
-      setFormData((prev) => ({ ...prev, [field]: value, error: {...prev.error, field: field, message:JSON.parse(error.message)[0].message} }));
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+        error: {
+          ...prev.error,
+          field: field,
+          message: JSON.parse(error.message)[0].message,
+        },
+      }));
     }
   };
 
+  useEffect(() => {
+    if (user && token) {
+      // Cookies.set('jwt', token, { expires: 7 });
+      setIsLogin(true);
+    }
+  }, [user, token]);
+
   const handleSubmit = async () => {
+    const { username, email, password } = formData;
+    if (isLogin) {
+      // login
+      console.log("login");
+      dispatch(login({ email, password }));
+    } else {
+      // register
+      console.log("register");
+      dispatch(register({ username, email, password }));
+    }
     console.log(formData);
   };
 
@@ -115,7 +158,9 @@ const AuthBtn = () => {
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                     <input
                       type="text"
-                      onChange={(e) => handleInputChange("username", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("username", e.target.value)
+                      }
                       value={formData.username}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all duration-200 text-base hover:border-gray-300"
                       placeholder="John Doe"
@@ -125,7 +170,7 @@ const AuthBtn = () => {
                     <p className="text-red-500 text-sm mt-1">
                       {formData.error.message}
                     </p>
-                  ): null}
+                  ) : null}
                 </div>
               )}
 
@@ -144,10 +189,10 @@ const AuthBtn = () => {
                   />
                 </div>
                 {!!formData.error && formData.error.field === "email" ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formData.error.message}
-                    </p>
-                  ): null}
+                  <p className="text-red-500 text-sm mt-1">
+                    {formData.error.message}
+                  </p>
+                ) : null}
               </div>
 
               <div className="space-y-2">
@@ -158,7 +203,9 @@ const AuthBtn = () => {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                   <input
                     type={showPassword ? "text" : "password"}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
                     value={formData.password}
                     className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all duration-200 text-base hover:border-gray-300"
                     placeholder="••••••••"
@@ -176,10 +223,10 @@ const AuthBtn = () => {
                   </button>
                 </div>
                 {!!formData.error && formData.error.field === "password" ? (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formData.error.message}
-                    </p>
-                  ): null}
+                  <p className="text-red-500 text-sm mt-1">
+                    {JSON.stringify(formData.error.message)}
+                  </p>
+                ) : null}
               </div>
 
               {isLogin && (
@@ -201,16 +248,16 @@ const AuthBtn = () => {
                   </a>
                 </div>
               )}
-
+              {connexionError && (<p className="text-red-500 text-sm mt-1">{connexionError}</p>)}
               <Button
                 onClick={handleSubmit}
-                disabled={!formData.email || !formData.password || isDataLoading}
+                disabled={!formData.email || !formData.password || isLoading}
                 className="flex gap-2 items-center w-full h-12 md:h-11 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 mt-6"
               >
                 <span className="text-base">
                   {isLogin ? "Se connecter" : "S'inscrire"}
                 </span>
-                {isDataLoading ? (
+                {isLoading ? (
                   <Loader className={"mt-1"} />
                 ) : (
                   <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />

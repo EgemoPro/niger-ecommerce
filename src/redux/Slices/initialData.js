@@ -1,18 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from 'axios';
+import axios from "axios";
 import { initialState } from "../initialState";
 
-
-
-const fetchInitialData = createAsyncThunk(
-  'data/fetchInitialData',
-  async () => {
+const fetchInitialData = createAsyncThunk("data/fetchInitialData", async () => {
   try {
-    const response = await axios.get(`https://fakestoreapi.com/products?limit=${initialState.length}`);
+    const response = await axios.get(
+      `https://fakestoreapi.com/products?limit=${initialState.length}`
+    );
     const data = response.data;
     for (let i = 0; i < data.length; i++) {
       initialState[i].title = data[i].title;
-      initialState[i].originalPrice = data[i].price;
+      initialState[i].originalPrice =
+        data[i].price <= initialState[i].originalPrice
+          ? data[i].price
+          : initialState[i].originalPrice;
       initialState[i].images = [data[i].image];
       initialState[i].description = data[i].description;
       initialState[i].category = data[i].category;
@@ -21,22 +22,19 @@ const fetchInitialData = createAsyncThunk(
     console.error("Error fetching initial data:", error);
   }
   return initialState;
-})
-
-
+});
 
 // faire cette requete avec axios
 // const initialData  = () => {}
 
 // console.log(await initialUpdatedState(initialState.length));
 
-
 const dataSlice = createSlice({
   name: "data",
   initialState: {
-    data : [],
-    status : 'idle', // idle | loading | succeeded | failed
-    error : null
+    data: [],
+    status: "idle", // idle | loading | succeeded | failed
+    error: null,
   },
   reducers: {
     setQuantity: function (state, action) {
@@ -47,19 +45,19 @@ const dataSlice = createSlice({
       );
     },
   },
-  extraReducers : (builder) => {
+  extraReducers: (builder) => {
     builder.addCase(fetchInitialData.pending, (state) => {
-      state.status = 'loading'
-    })
+      state.status = "loading";
+    });
     builder.addCase(fetchInitialData.fulfilled, (state, action) => {
-      state.status = 'succeeded'
-      state.data = action.payload
-    })
+      state.status = "succeeded";
+      state.data = action.payload;
+    });
     builder.addCase(fetchInitialData.rejected, (state, action) => {
-      state.status = 'failed'
-      state.error = action.error.message
-    })
-  }
+      state.status = "failed";
+      state.error = action.error.message;
+    });
+  },
 });
 
 // const { addProduct, delProduct } = backetSlice.actions;

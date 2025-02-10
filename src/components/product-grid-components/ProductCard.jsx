@@ -15,7 +15,7 @@ import ProductPrice from "./ProductPrice";
 
 const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [isUserLogin,setIsUserLogin] = useState(false);
+  // const [isUserLogin,setIsUserLogin] = useState(false);
 
   return (
     <Card className="overflow-hidden min-w-[240px]">

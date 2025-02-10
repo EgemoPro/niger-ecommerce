@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 /**
  * Creates an instance of axios with a predefined configuration.
@@ -9,9 +10,10 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: 'http://localhost:8000/'
 });
+api.defaults.withCredentials = true;
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('jwt') || Cookies.get('jwt');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -47,13 +47,18 @@ export const { authRequest, authSuccess, authFailure, logout } = authSlice.actio
 const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
   dispatch(authRequest());
   try {
-    const response = await api.post(endpoint, data);
-    const { token, user } = response.data;
+    const response = await api.post(endpoint, data,{
+      withCredentials: true,
+      withXSRFToken: true
+    });
+    console.log("auth response", response)
+    const { token, ...user } = response.data;
     localStorage.setItem(TOKEN_KEY, token);
     dispatch(successAction({ user, token }));
     return true;
   } catch (error) {
-    const errorMessage = error.response?.data?.message || 'Une erreur est survenue.';
+    console.log("auth error", error.response.data)
+    const errorMessage = error.response?.data?.error || 'Une erreur est survenue.';
     dispatch(authFailure(errorMessage));
     return false;
   }

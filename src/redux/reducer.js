@@ -4,6 +4,7 @@ import { dataSlice } from './Slices/initialData'
 import { favoriSlice } from './Slices/favorisSlice'
 import {enableMapSet} from 'immer'
 import authSlice from './Slices/authSlice'
+
 // import ReduxThunk from 'redux-thunk'
 
 // const middlewares = [ReduxThunk]
@@ -15,7 +16,8 @@ export const store = configureStore({
         basket: backetSlice.reducer,
         data : dataSlice.reducer,
         favoris: favoriSlice.reducer,
-        // auht: authSlice.reducer
+        auth: authSlice.reducer
     },
+    
     // middleware: compose(applyMiddleware(...middlewares))
-})
+},window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
