@@ -65,7 +65,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
           <Button className="max-md:col-span-1 md:w-auto w-full ">
             <Link
               className="h-full w-full flex items-center gap-2 max-md:flex-row-reverse justify-around"
-              to={`/orders`}
+              to={`/products/orders`}
             >
               <span className="h-6 w-6 p-2 rounded-full flex justify-center items-center bg-gray-200/30 md:mr-2">
                 {backetState.length}

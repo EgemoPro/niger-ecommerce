@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import {signInWithRedirect, getRedirectResult} from "firebase/auth"
 import GoogleIcon from "../../../assets/google-color-svgrepo-com.svg";
 
 import {

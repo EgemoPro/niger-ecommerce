@@ -1,12 +1,13 @@
-import NavBare from "../../components/NavBare";
-import { motion } from "framer-motion";
-import { Facebook, Linkedin, Instagram } from "lucide-react";
-import { Link } from "react-router-dom";
-import Baniere from "../../assets/Baniere.png";
-import { useDispatch, useSelector } from "react-redux";
-import { FadeText } from "@/components/ui/fade-text";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchInitialData } from "../../redux/Slices/initialData";
+import { checkAuth } from "../../redux/Slices/authSlice";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FadeText } from "@/components/ui/fade-text";
+import { Facebook, Linkedin, Instagram } from "lucide-react";
+import NavBare from "../../components/NavBare";
+import Baniere from "../../assets/Baniere.png";
 
 const compagnies = [
   { name: "Entreprise A", logo: "https://placehold.co/600x400" },
@@ -19,9 +20,13 @@ const compagnies = [
 const Home = () => {
   const dispatch = useDispatch()
   const {data, status, error} = useSelector((state) => state.data);
+
   // console.log(data);
   useEffect(()=>{
     dispatch(fetchInitialData())
+  },[dispatch])
+  useEffect(()=>{
+    dispatch(checkAuth())
   },[dispatch])
 
   return (
@@ -30,8 +35,9 @@ const Home = () => {
       style={{
         backgroundImage: `url(${Baniere})`,
         backgroundSize: "cover",
-        backgroundOrigin: "border-box",
-        backgroundPosition: "20px -20px",
+        backgroundOrigin: "content-box",
+        backgroundPosition: "top right",
+        // backgroundPosition: "20px -20px",
       }}
     >
       {/* Navbar, vous pouvez le supprimer si vous n'en avez pas besoin */}
@@ -82,7 +88,7 @@ const Home = () => {
               whileTap={{ scale: 0.95 }}
               className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 w-full sm:w-auto transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
             >
-              <Link to="/product" className="h-full w-auto">
+              <Link to="/products" className="h-full w-auto">
                 Commencer les achats
               </Link>
             </motion.button>

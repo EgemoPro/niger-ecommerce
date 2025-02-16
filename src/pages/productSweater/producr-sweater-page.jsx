@@ -170,7 +170,7 @@ const ProductSweaterPage = () => {
             En savoir plus
           </Button>
           <Link
-            to={"/product"}
+            to={"/products"}
             className="flex items-center gap-4 mt-6 text-gray-600 hover:text-gray-900 transition-colors duration-200"
           >
             <ArrowLeftCircleIcon className="h-6 w-6" />

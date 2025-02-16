@@ -17,7 +17,7 @@ import GoogleAuhtButton from "./buttons/GoogleAuhtButton";
 import FacebookAuhtButton from "./buttons/FacebookAuthButton";
 import AppleAuhtButton from "./buttons/AppleAuthButton";
 import { useSelector, useDispatch } from "react-redux";
-import { login, register, logout } from "../../redux/Slices/authSlice";
+import { login, register } from "../../redux/Slices/authSlice";
 
 const schema = z.object({
   username: z
@@ -102,6 +102,8 @@ const AuthBtn = () => {
     console.log(formData);
   };
 
+  
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -109,13 +111,13 @@ const AuthBtn = () => {
           variant="ghost"
           className="text-gray-600 h-8 outline outline-[1px] outline-slate-400/50"
         >
-          Se connecter
+          Se connecter {isLoading && <Loader className="ml-2" />}
         </Button>
       </DrawerTrigger>
 
       <DrawerContent
         className={`bg-gradient-to-b from-gray-50 to-white ${
-          isMobile ? "h-[98dvh]" : "h-[90vh]"
+          isMobile ? "h-[98dvh]" : "h-[95vh]"
         }`}
       >
         <div className="mx-auto w-full max-w-lg">
@@ -248,7 +250,9 @@ const AuthBtn = () => {
                   </a>
                 </div>
               )}
-              {connexionError && (<p className="text-red-500 text-sm mt-1">{connexionError}</p>)}
+              {connexionError && (
+                <p className="text-red-500 text-sm mt-1">{connexionError}</p>
+              )}
               <Button
                 onClick={handleSubmit}
                 disabled={!formData.email || !formData.password || isLoading}

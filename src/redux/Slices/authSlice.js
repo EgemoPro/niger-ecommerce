@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import api from '../../lib/axios';
+import Cookies from 'js-cookie';
 
 // Définition des constantes pour éviter les répétitions
 const TOKEN_KEY = 'jwt';
@@ -7,7 +8,7 @@ const TOKEN_KEY = 'jwt';
 // État initial
 const initialState = {
   user: null,
-  token: localStorage.getItem(TOKEN_KEY) || null,
+  token: localStorage.getItem(TOKEN_KEY) || Cookies.get(TOKEN_KEY) || null,
   isLoading: false,
   error: null,
 };
@@ -34,6 +35,7 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       localStorage.removeItem(TOKEN_KEY);
+      state.isLoading = false;
       state.user = null;
       state.token = null;
     },
@@ -41,16 +43,18 @@ const authSlice = createSlice({
 });
 
 // Exportation des actions
-export const { authRequest, authSuccess, authFailure, logout } = authSlice.actions;
+export const { authRequest, authSuccess, authFailure, logout:authLogout } = authSlice.actions;
 
 // Fonction générique pour gérer les requêtes d'authentification
 const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
   dispatch(authRequest());
+  
   try {
-    const response = await api.post(endpoint, data,{
-      withCredentials: true,
-      withXSRFToken: true
-    });
+    if(endpoint === 'user/logout') {
+      dispatch(authLogout());
+      return true;
+    }
+    const response = await api.post(endpoint, data);
     console.log("auth response", response)
     const { token, ...user } = response.data;
     localStorage.setItem(TOKEN_KEY, token);
@@ -72,9 +76,12 @@ export const login = (credentials) => (dispatch) =>
 export const register = (userData) => (dispatch) =>
   handleAuthRequest(dispatch, 'user/register', userData, authSuccess);
 
+export const logout = () => (dispatch) =>
+  handleAuthRequest(dispatch, 'user/logout');
+
 export const checkAuth = () => async (dispatch) => {
   dispatch(authRequest());
-  const token = localStorage.getItem(TOKEN_KEY);
+  const token = localStorage.getItem(TOKEN_KEY) || Cookies.get(TOKEN_KEY);
   if (!token) {
     dispatch(authFailure('Pas de token trouvé.'));
     return false;

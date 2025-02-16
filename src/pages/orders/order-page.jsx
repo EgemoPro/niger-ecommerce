@@ -118,7 +118,7 @@ const OrderPage = () => {
       )}
       <div className="flex flex-col md:flex-row justify-between items-center">
         <h1 className="flex flex-row items-center gap-3 p-2 h-10 w-full sm:text-xl  text-[#2563eb] text-lg font-semibold sm:mb-0">
-          <Link className="cursor-pointer text-xl mt-1 bg-black/5 rounded-sm hover:bg-black/10 ease-in-out duration-75" to="/product">
+          <Link className="cursor-pointer text-xl mt-1 bg-black/5 rounded-sm hover:bg-black/10 ease-in-out duration-75" to="/products">
             <ChevronLeft />
           </Link>
           Order
@@ -179,7 +179,7 @@ const OrderPage = () => {
             </div>
             
             <Link 
-              to="/product"
+              to="/products"
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               Parcourir les produits

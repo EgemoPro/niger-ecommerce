@@ -22,12 +22,13 @@ const ProductList = ({
     const handleScroll = (e) => {
       if (scrollRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+        console.log(scrollTop, scrollHeight, clientHeight);
 
         // Vérifie si on est en bas du scroll
         if (scrollTop + clientHeight >= scrollHeight - 5) {
-          setIsBottom(true);
+          // setIsBottom(true);
         } else {
-          setIsBottom(false);
+          // setIsBottom(false);
         }
       }
     };

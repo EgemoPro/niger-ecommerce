@@ -8,13 +8,17 @@ import {
 } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import loader from "../../assets/bouncing-squares.svg";
+import Loader from "../../assets/bouncing-squares.svg";
 import ProductRating from "./ProductRating";
 import ProductPrice from "./ProductPrice";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  // const dispatch = useDispatch();
+  const {user, isLoading} = useSelector((state) => state.auth);
+
   // const [isUserLogin,setIsUserLogin] = useState(false);
 
   return (
@@ -23,9 +27,11 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
         <CardTitle className="relative">
           <Button
             variant="ghost"
-            
+            disabled={user == null}
             className="absolute h-8 w-8 top-4 right-4 z-10 flex items-center justify-between p-1 rounded-full bg-slate-50 hover:scale-110 transition-transform duration-300 ease-in-out transform"
-            onClick={() => onToggleFavorite(product.id)}
+            onClick={() => {
+              onToggleFavorite(product.id)
+            }}
           >
             <Heart
               className={`h-6 w-6 ${
@@ -41,7 +47,7 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
       >
         {!imageLoaded && (
           <div className="w-full h-52 flex items-center justify-center">
-            <img src={loader} alt="Loading..." className="w-12 h-12" />
+            <img src={Loader} alt="Loading..." className="w-12 h-12" />
           </div>
         )}
         <img

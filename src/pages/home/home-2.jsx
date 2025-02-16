@@ -81,7 +81,7 @@ const Home = () => {
               whileTap={{ scale: 0.95 }}
               className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 w-full sm:w-auto transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
             >
-              <Link to="/product" className="h-full w-auto">
+              <Link to="/products" className="h-full w-auto">
                 Commencer les achats
               </Link>
             </motion.button>

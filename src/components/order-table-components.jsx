@@ -190,7 +190,7 @@ export const OrderTableBody = React.memo(
                         onClick={() => handleViewOrder(order.id)}
                       >
                         <Eye className="h-4 w-4 mr-2" />
-                        <Link to={`/product/${order.id.replace("#", "")}`}>
+                        <Link to={`/products/${order.id.replace("#", "")}`}>
                           View
                         </Link>
                       </Button>

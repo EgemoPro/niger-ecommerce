@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  ShoppingCart,
   ShoppingBag,
   Search,
   Package,
@@ -13,6 +11,8 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import AuthBtn from "./auth/auth-btn";
+import { useSelector } from "react-redux";
+import { UserInfo } from "./user-info";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 /**
  * Mettre en place le lien vers le produits dans les parametres de recherche
@@ -27,17 +27,10 @@ const Logo = () => (
   </div>
 );
 
-const NavigationItems = () => (
+const NavigationItems = ({user}) => (
   <div className="hidden md:flex items-center gap-6">
-    {/* <Button variant="ghost" className="text-gray-600">
-      Tarifs
-    </Button> */}
-    <Button variant="ghost" className="text-gray-600">
-      <Link to={`/orders`} className="w-full h-full" >
-      <ShoppingCart className="w-5 h-5" />
-      </Link>
-    </Button>
-    <AuthBtn/>
+    
+    {user == null? <AuthBtn /> : <UserInfo />}
   </div>
 );
 
@@ -71,7 +64,7 @@ const SearchResults = ({
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-gray-400" />
                   <Link
-                    to={`/product/${product.id.replace("#", "")}`}
+                    to={`/products/${product.id.replace("#", "")}`}
                     className="w-full h-full"
                   >
                     {product.title}
@@ -215,6 +208,7 @@ const Navbar = ({ data }) => {
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isLoading, error } = useSelector((state) => state.auth);
 
   const {
     isOpen,
@@ -275,10 +269,14 @@ const Navbar = ({ data }) => {
           />
         </div>
 
-        <NavigationItems />
+        <NavigationItems user={user}/>
+
         <div className="md:hidden flex items-center gap-3 ">
           {/* Fonctionnalités de login */}
-          <AuthBtn/>
+          {user == null && <AuthBtn />}
+          {user != null && (
+            <UserInfo/>
+          )}
           <button
             className="md:hidden text-gray-600 hover:text-gray-800"
             onClick={toggleMenu}
@@ -311,9 +309,7 @@ const Navbar = ({ data }) => {
             />
           </div>
           {/* ici les liens secondaires */}
-          <div className="flex flex-col space-y-2">
-           
-          </div>
+          <div className="flex flex-col space-y-2"></div>
         </div>
       )}
     </div>
