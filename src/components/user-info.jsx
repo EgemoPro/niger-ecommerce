@@ -1,8 +1,4 @@
-import {
-  LogOut,
-  ShoppingBasket,
-  User
-} from "lucide-react";
+import { LogOut, ShoppingBasket, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,8 +17,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { logout } from "../redux/Slices/authSlice";
+import Loader from "./loader";
 // import {useToast} from "./ui/toast";
 
 export function UserInfo() {
@@ -37,18 +34,24 @@ export function UserInfo() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="flex items-center gap-2 bg-transparent border-none hover:bg-transparent">
-          <Avatar className="cursor-pointer">
-            <AvatarImage
-              src={user.payload.imgSrc || "https://github.com/shadcn.png"}
-              alt="@img"
-            />
-            <AvatarFallback>
-              {user.payload.email.slice(4).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <p className="hidden md:block text-sm tracking-tight font-semibold text-gray-800">
-            {user.payload.email}
-          </p>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <Avatar className="cursor-pointer">
+                <AvatarImage
+                  src={user.payload.imgSrc || "https://github.com/shadcn.png"}
+                  alt="@img"
+                />
+                <AvatarFallback>
+                  {user.payload.email.slice(4).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <p className="hidden md:block text-sm tracking-tight font-semibold text-gray-800">
+                {user.payload.email}
+              </p>
+            </>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 mt-1.5 ml-4">

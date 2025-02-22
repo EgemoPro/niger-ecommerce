@@ -1,9 +1,10 @@
-import { applyMiddleware, configureStore} from '@reduxjs/toolkit'
-import { backetSlice } from './Slices/basketSlice'
-import { dataSlice } from './Slices/initialData'
-import { favoriSlice } from './Slices/favorisSlice'
-import {enableMapSet} from 'immer'
+import {  configureStore} from '@reduxjs/toolkit';
+import { backetSlice } from './Slices/basketSlice';
+import { dataSlice } from './Slices/initialData';
+import { favoriSlice } from './Slices/favorisSlice';
 import authSlice from './Slices/authSlice'
+import userSlice from './Slices/userSlice';
+import {enableMapSet} from 'immer'
 
 // import ReduxThunk from 'redux-thunk'
 
@@ -16,7 +17,8 @@ export const store = configureStore({
         basket: backetSlice.reducer,
         data : dataSlice.reducer,
         favoris: favoriSlice.reducer,
-        auth: authSlice.reducer
+        auth: authSlice.reducer,
+        user: userSlice.reducer
     },
     
     // middleware: compose(applyMiddleware(...middlewares))

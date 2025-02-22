@@ -8,12 +8,15 @@ import Cookies from 'js-cookie';
  * @property {string} baseURL - The base URL for the axios instance.
  */
 const api = axios.create({
-  baseURL: 'http://localhost:8000/'
+  baseURL: '/api',
+  withCredentials: true
 });
+
 api.defaults.withCredentials = true;
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('jwt') || Cookies.get('jwt');
+  const token = localStorage.getItem('jwt') | Cookies.get('jwt');
+  console.log(token)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

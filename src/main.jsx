@@ -1,8 +1,7 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import { createRoot } from "react-dom/client";
-import {Toaster} from "./components/ui/toaster.jsx"
 import { Provider } from "react-redux";
-import { store } from "./redux/reducer.js";
+import { store } from "./redux/store.js";
 import Router from "./routes/main.routes";
 import "./index.css";
 
@@ -13,6 +12,5 @@ export default App;
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <App />
-    <Toaster />
   </Provider>
 );

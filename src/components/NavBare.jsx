@@ -27,10 +27,13 @@ const Logo = () => (
   </div>
 );
 
-const NavigationItems = ({user}) => (
+const NavigationItems = ({ user }) => (
   <div className="hidden md:flex items-center gap-6">
-    
-    {user == null? <AuthBtn /> : <UserInfo />}
+    {user != null && Object.keys(user.payload).length > 1 ? (
+      <UserInfo />
+    ) : (
+      <AuthBtn />
+    )}
   </div>
 );
 
@@ -269,13 +272,14 @@ const Navbar = ({ data }) => {
           />
         </div>
 
-        <NavigationItems user={user}/>
+        <NavigationItems user={user} />
 
         <div className="md:hidden flex items-center gap-3 ">
           {/* Fonctionnalités de login */}
-          {user == null && <AuthBtn />}
-          {user != null && (
-            <UserInfo/>
+          {user != null && Object.keys(user.payload).length >1 ? (
+            <UserInfo />
+          ) : (
+            <AuthBtn />
           )}
           <button
             className="md:hidden text-gray-600 hover:text-gray-800"

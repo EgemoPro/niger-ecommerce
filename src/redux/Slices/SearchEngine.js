@@ -111,10 +111,10 @@ export const {
 } = searchEngineSlice.actions;
 
 export const searchEngineSelectors = {
+  selectFilteredResults,
   selectSearchTerm,
   selectSearchResults,
   selectFilters,
-  selectFilteredResults,
   selectCache,
 };
 

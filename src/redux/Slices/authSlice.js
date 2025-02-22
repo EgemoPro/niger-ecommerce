@@ -50,7 +50,8 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
   dispatch(authRequest());
   
   try {
-    if(endpoint === 'user/logout') {
+    if(endpoint === 'auth/user/logout') {
+      await api.get(endpoint, data);
       dispatch(authLogout());
       return true;
     }
@@ -58,6 +59,7 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
     console.log("auth response", response)
     const { token, ...user } = response.data;
     localStorage.setItem(TOKEN_KEY, token);
+    // Cookies.set(TOKEN_KEY, token)
     dispatch(successAction({ user, token }));
     return true;
   } catch (error) {
@@ -71,13 +73,13 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
 // Actions asynchrones
 // credenntial: {email,password}
 export const login = (credentials) => (dispatch) =>
-  handleAuthRequest(dispatch, 'user/login', credentials, authSuccess);
+  handleAuthRequest(dispatch, 'auth/user/login', credentials, authSuccess);
 
 export const register = (userData) => (dispatch) =>
-  handleAuthRequest(dispatch, 'user/register', userData, authSuccess);
+  handleAuthRequest(dispatch, 'auth/user/register', userData, authSuccess);
 
 export const logout = () => (dispatch) =>
-  handleAuthRequest(dispatch, 'user/logout');
+  handleAuthRequest(dispatch, 'auth/user/logout');
 
 export const checkAuth = () => async (dispatch) => {
   dispatch(authRequest());
@@ -86,9 +88,9 @@ export const checkAuth = () => async (dispatch) => {
     dispatch(authFailure('Pas de token trouvé.'));
     return false;
   }
-
+  console.log(token)
   try {
-    const response = await api.get('user/profile', {
+    const response = await api.get('auth/user/profile', {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch(authSuccess({ user: response.data, token }));

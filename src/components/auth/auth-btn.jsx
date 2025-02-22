@@ -18,6 +18,8 @@ import FacebookAuhtButton from "./buttons/FacebookAuthButton";
 import AppleAuhtButton from "./buttons/AppleAuthButton";
 import { useSelector, useDispatch } from "react-redux";
 import { login, register } from "../../redux/Slices/authSlice";
+import {useToast} from "../../hooks/use-toast";
+
 
 const schema = z.object({
   username: z
@@ -32,6 +34,7 @@ const schema = z.object({
 });
 
 const AuthBtn = () => {
+  const toast = useToast()
   const {
     user,
     isLoading,
@@ -80,9 +83,9 @@ const AuthBtn = () => {
       }));
     }
   };
-
+  
   useEffect(() => {
-    if (user && token) {
+    if ((user != null && Object.keys(user.payload).length == 1) || !token ) {
       // Cookies.set('jwt', token, { expires: 7 });
       setIsLogin(true);
     }
@@ -250,9 +253,9 @@ const AuthBtn = () => {
                   </a>
                 </div>
               )}
-              {connexionError && (
+              {(connexionError && !JSON.stringify(connexionError).includes("token")) ? (
                 <p className="text-red-500 text-sm mt-1">{connexionError}</p>
-              )}
+              ) : null}
               <Button
                 onClick={handleSubmit}
                 disabled={!formData.email || !formData.password || isLoading}

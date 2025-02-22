@@ -5,6 +5,7 @@ import ProductFilters from "./product-grid-components/ProductFilters";
 import ProductGridHeader from "./product-grid-components/ProductGridHeader";
 import ProductList from "./product-grid-components/ProductList";
 import { fetchInitialData } from "../redux/Slices/initialData";
+import { toggleFavoriteAsync } from "../redux/Slices/userSlice";
 // import { useLoaderData } from "react-router-dom";
 
 const ProductGrid = ({ onOpen }) => {
@@ -13,8 +14,8 @@ const ProductGrid = ({ onOpen }) => {
 
   // const products = useLoaderData()
   const { data: products, status, error } = useSelector((state) => state.data);
+  const { user } = useSelector((state) => state.auth);
 
-  console.log(products, status, error);
 
   useEffect(() => {
     if (status === "idle") {
@@ -105,6 +106,9 @@ const ProductGrid = ({ onOpen }) => {
       ...prev,
       [productId]: !prev[productId],
     }));
+    console.log(productId)
+    if(user != null)
+    dispatch(toggleFavoriteAsync(productId, user.payload._id))
   }, []);
 
   // Cette fonction mémorisée met à jour l'état des filtres
