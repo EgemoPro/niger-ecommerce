@@ -13,7 +13,8 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		screens: {
-  			middle: '800px'
+  			middle: '800px',
+			mobile: '600px'
   		},
   		colors: {
   			background: 'hsl(var(--background))',

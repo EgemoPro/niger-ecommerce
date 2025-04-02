@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -12,31 +12,48 @@ import Loader from "../../assets/bouncing-squares.svg";
 import ProductRating from "./ProductRating";
 import ProductPrice from "./ProductPrice";
 import { useDispatch, useSelector } from "react-redux";
+import { toggleFavoriteAsync } from "../../redux/Slices/userSlice";
 
-
-const ProductCard = ({ product, isFavorite, onToggleFavorite, onOpen }) => {
+const ProductCard = ({ product, onOpen }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  // const dispatch = useDispatch();
-  const {user, isLoading} = useSelector((state) => state.auth);
+  const [localIsFavorite, setLocalIsFavorite] = useState(false);
+  
+  const dispatch = useDispatch();
+  const { user, isLoadig } = useSelector((state) => state.auth);
+  const { favorites, isLoading } = useSelector((state) => state.user);
 
-  // const [isUserLogin,setIsUserLogin] = useState(false);
+  // Synchroniser l'état local avec Redux
+  useEffect(() => {
+    if (Array.isArray(favorites)) {
+      const isFav = favorites.some(fav => fav.productId === product.id);
+      setLocalIsFavorite(isFav);
+    }
+  }, [favorites, product.id]);
 
+  // Fonction pour basculer le statut de favori
+  const handleToggleFavorite = useCallback(() => {
+    if (user?.payload?.userId) {
+      // Mise à jour optimiste de l'UI
+      setLocalIsFavorite(!localIsFavorite);
+      // Dispatch de l'action Redux
+      dispatch(toggleFavoriteAsync(product.id, user.payload.userId));
+    }
+  }, [dispatch, product.id, user, localIsFavorite]);
+  
   return (
-    <Card className="overflow-hidden min-w-[240px]">
+    <Card className="overflow-hidden min-w-[250px] min-h-[300px] ">
       <CardHeader className="p-0">
         <CardTitle className="relative">
           <Button
             variant="ghost"
-            disabled={user == null}
+            disabled={user == null || isLoading}
             className="absolute h-8 w-8 top-4 right-4 z-10 flex items-center justify-between p-1 rounded-full bg-slate-50 hover:scale-110 transition-transform duration-300 ease-in-out transform"
-            onClick={() => {
-              onToggleFavorite(product.id)
-            }}
+            onClick={handleToggleFavorite}
           >
             <Heart
               className={`h-6 w-6 ${
-                isFavorite ? "text-red-500 fill-current" : "text-gray-500"
-              } transition-colors duration-300`}
+                localIsFavorite ? "text-red-500 fill-current" : "text-gray-500"
+              } ${isLoading ? "opacity-50" : ""} transition-colors duration-300`}
             />
           </Button>
         </CardTitle>

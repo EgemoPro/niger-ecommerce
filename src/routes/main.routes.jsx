@@ -22,45 +22,46 @@ const Router = () => {
       element: <HomePage />,
     },
     {
-      path:"/profile",
-      element:<UserPage/>,
-      children:[
+      path: "/profile",
+      element: <UserPage />,
+      children: [
         {
-          path:"general",
-          element: <General/>,
+          path: "general",
+          element: <General />,
         },
         {
-          path:"edit",
-          element: <EditProfile/>,
+          path: "edit",
+          element: <EditProfile />,
         },
         {
-          path:"password",
-          element: <Password/>,
+          path: "password",
+          element: <Password />,
         },
         {
-          path:"payouts",
-          element: <Payouts/>,
+          path: "payouts",
+          element: <Payouts />,
         },
         {
-          path:"notifications",
-          element: <Notifications/>,
+          path: "notifications",
+          element: <Notifications />,
         },
         {
-          path:"data",
-          element: <DataPrivacy/>,
+          path: "data",
+          element: <DataPrivacy />,
         },
         {
-          path:"delete",
-          element: <DeleteAccount/>,
+          path: "delete",
+          element: <DeleteAccount />,
         },
-        
-      ]
-      },
+      ],
+    },
     {
-      path:"/shop",
-      element:<>
-        <Shop/>
-      </>
+      path: "/shop",
+      element: (
+        <>
+          <Shop />
+        </>
+      ),
     },
     {
       path: "/products",
@@ -82,7 +83,7 @@ const Router = () => {
         {
           path: "orders",
           element: <OrderPage />,
-        }
+        },
       ],
     },
   ]);

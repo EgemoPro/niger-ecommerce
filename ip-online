@@ -1,1 +1,3 @@
 ngrok http --domain=serval-included-subtly.ngrok-free.app 80
+
+npx update-browserslist-db@latest

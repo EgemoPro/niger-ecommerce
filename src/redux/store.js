@@ -5,8 +5,9 @@ import { favoriSlice } from './Slices/favorisSlice';
 import authSlice from './Slices/authSlice'
 import userSlice from './Slices/userSlice';
 import {enableMapSet} from 'immer'
+import SettingSlice from './Slices/settingsSlice';
+import {thunk} from 'redux-thunk'
 
-// import ReduxThunk from 'redux-thunk'
 
 // const middlewares = [ReduxThunk]
 
@@ -18,8 +19,9 @@ export const store = configureStore({
         data : dataSlice.reducer,
         favoris: favoriSlice.reducer,
         auth: authSlice.reducer,
-        user: userSlice.reducer
+        user: userSlice.reducer,
+        settings : SettingSlice.reducer
     },
-    
+    middleware : md => md().concat(thunk),
     // middleware: compose(applyMiddleware(...middlewares))
 },window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())

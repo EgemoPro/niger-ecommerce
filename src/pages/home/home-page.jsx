@@ -18,16 +18,11 @@ const compagnies = [
 ];
 
 const Home = () => {
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
   const {data, status, error} = useSelector((state) => state.data);
 
   // console.log(data);
-  useEffect(()=>{
-    dispatch(fetchInitialData())
-  },[dispatch])
-  useEffect(()=>{
-    dispatch(checkAuth())
-  },[dispatch])
+  
 
   return (
     <div
@@ -36,7 +31,7 @@ const Home = () => {
         backgroundImage: `url(${Baniere})`,
         backgroundSize: "cover",
         backgroundOrigin: "content-box",
-        backgroundPosition: "top right",
+        backgroundPosition: "top left",
         // backgroundPosition: "20px -20px",
       }}
     >

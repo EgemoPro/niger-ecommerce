@@ -115,7 +115,7 @@ const UserPage = () => {
           <div className="col-span-full md:col-span-1 row-span-1 md:row-span-6 max-md:gap-3">
             <MobileNav activePath={path} setPath={setPath} />
 
-            <nav className="hidden lg:fixed md:flex flex-col gap-1 h-full">
+            <nav className="hidden md:flex flex-col gap-1 h-full">
               {navItems.map((item, index) => (
                 <NavLink
                   key={index}

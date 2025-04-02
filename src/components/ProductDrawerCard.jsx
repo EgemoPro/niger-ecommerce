@@ -1,30 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { X, Maximize2, Minimize2 } from "lucide-react";
-import { Drawer,DrawerTitle, DrawerContent, DrawerClose } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerTitle,
+  DrawerContent,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import ImageCarousel from "./ImageCarousel";
 import ProductDetails, { sizes } from "./ProductDetails";
 import ActionButtons from "./ActionButtons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SharePopover from "./SharePopover";
 import { handleBacketAction } from "../redux/method";
 import { ScrollArea } from "./ui/scroll-area";
-
+import { toggleFavoriteAsync } from "../redux/Slices/userSlice";
 
 const ProductDrawerCard = ({ product, onClose }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [colorSelected, setColorSelected] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const dispatch = useDispatch();
-  console.log(product)
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
+  const dispatch = useDispatch();
+  const { user, isLoadig } = useSelector((state) => state.auth);
+  const { favorites, isLoading } = useSelector((state) => state.user);
+
+  useEffect(() => {
+      if (Array.isArray(favorites)) {
+        const isFav = favorites.some(fav => fav.productId === product.id);
+        setIsFavorite(isFav);
+      }
+    }, [favorites, product.id]);
+
+   const toggleFavorite = useCallback(() => {
+      if (user?.payload?.userId) {
+        // Mise à jour optimiste de l'UI
+        setIsFavorite(!isFavorite);
+        // Dispatch de l'action Redux
+        dispatch(toggleFavoriteAsync(product.id, user.payload.userId));
+      }
+    }, [dispatch, product.id, user, isFavorite]);
+    
+
 
   const nextImage = () => {
     setCurrentImageIndex(
@@ -40,7 +60,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
   };
 
   const handleBasket = () => {
-    dispatch(handleBacketAction("addProduct", {...product, quantity}));
+    dispatch(handleBacketAction("addProduct", { ...product, quantity }));
   };
 
   useEffect(() => {
@@ -51,14 +71,14 @@ const ProductDrawerCard = ({ product, onClose }) => {
     setIsFullScreen(!isFullScreen);
   };
 
+  
+
   return (
-    <Drawer open={isDrawerOpen} dismissible={false} >
+    <Drawer open={isDrawerOpen} dismissible={false}>
       <DrawerContent
         side="bottom"
-        className={`flex flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${
-          isFullScreen
-            ? "h-[calc(100%-20px)]"
-            : "h-[95%]"
+        className={`flex rounded-sm flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${
+          isFullScreen ? "h-[calc(100%-20px)]" : "h-[95%]"
         } `}
       >
         {/* Header du produit */}
@@ -88,29 +108,33 @@ const ProductDrawerCard = ({ product, onClose }) => {
         {/* Contenu principal : Carousel et détails produit */}
         <ScrollArea className="w-full max-middle:p-4">
           <div className="flex w-full max-middle:flex-col flex-row justify-between gap-4">
-          <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]">
-            <ImageCarousel
-              images={product.images}
-              currentImageIndex={currentImageIndex}
-              setCurrentImageIndex={setCurrentImageIndex}
-              nextImage={nextImage}
-              prevImage={prevImage}
-              isFullScreen={isFullScreen}
-            />
-            <h2 className="text-xl md:text-2xl font-semibold uppercase text-gray-800 tracking-tight leading-tight px-1 max-md:text-center">{product.title}</h2>
+            <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]">
+              <ImageCarousel
+                images={product.images}
+                currentImageIndex={currentImageIndex}
+                setCurrentImageIndex={setCurrentImageIndex}
+                nextImage={nextImage}
+                prevImage={prevImage}
+                isFullScreen={isFullScreen}
+              />
+              <h2 className="text-xl md:text-2xl font-semibold uppercase text-gray-800 tracking-tight leading-tight px-1 max-md:text-center">
+                {product.title}
+              </h2>
+            </div>
+            <div className="w-1/2 md:h-full max-middle:w-full h-1/2 p-1">
+              <ProductDetails
+                product={product}
+                selectedSize={selectedSize}
+                setSelectedSize={setSelectedSize}
+                colorSelected={colorSelected}
+                setColorSelected={setColorSelected}
+                quantity={quantity}
+                setQuantity={setQuantity}
+              />
+            </div>
           </div>
-          <div className="w-1/2 md:h-full max-middle:w-full h-1/2 p-1">
-            <ProductDetails
-              product={product}
-              selectedSize={selectedSize}
-              setSelectedSize={setSelectedSize}
-              colorSelected={colorSelected}
-              setColorSelected={setColorSelected}
-              quantity={quantity}
-              setQuantity={setQuantity}
-            />
-          </div>
-          </div>
+          {/* espace commentaire */}
+          
         </ScrollArea>
 
         {/* Boutons d'action: Favoris, Ajouter au panier, etc. */}

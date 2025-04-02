@@ -5,17 +5,11 @@ import ProductFilters from "./product-grid-components/ProductFilters";
 import ProductGridHeader from "./product-grid-components/ProductGridHeader";
 import ProductList from "./product-grid-components/ProductList";
 import { fetchInitialData } from "../redux/Slices/initialData";
-import { toggleFavoriteAsync } from "../redux/Slices/userSlice";
-// import { useLoaderData } from "react-router-dom";
 
 const ProductGrid = ({ onOpen }) => {
-  const [favorites, setFavorites] = useState({});
   const dispatch = useDispatch();
-
-  // const products = useLoaderData()
   const { data: products, status, error } = useSelector((state) => state.data);
-  const { user } = useSelector((state) => state.auth);
-
+  // const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (status === "idle") {
@@ -53,7 +47,7 @@ const ProductGrid = ({ onOpen }) => {
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
-      priceRange: [minPrice, maxPrice],
+      priceRange: [minPrice, maxPrice]
     }));
   }, [minPrice, maxPrice]);
 
@@ -98,19 +92,7 @@ const ProductGrid = ({ onOpen }) => {
     return sortProducts(filteredProducts);
   }, [filterProducts, sortProducts]);
 
-  // Cette fonction mémorisée gère le basculement des favoris pour un produit donné
-  // Elle utilise un setter fonctionnel pour mettre à jour l'état des favoris de manière sûre
-  // en inversant la valeur booléenne associée à l'ID du produit
-  const toggleFavorite = useCallback((productId) => {
-    setFavorites((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-    console.log(productId)
-    if(user != null)
-    dispatch(toggleFavoriteAsync(productId, user.payload._id))
-  }, []);
-
+  // console.log(visibleProducts)
   // Cette fonction mémorisée met à jour l'état des filtres
   // Elle est appelée lorsque l'utilisateur modifie les critères de filtrage
   // La mémoisation évite de recréer la fonction à chaque rendu
@@ -128,8 +110,6 @@ const ProductGrid = ({ onOpen }) => {
         />
         <ProductList
           visibleProducts={visibleProducts}
-          favorites={favorites}
-          toggleFavorite={toggleFavorite}
           onOpen={onOpen}
           isDataLoadig={status === "loading"}
         />

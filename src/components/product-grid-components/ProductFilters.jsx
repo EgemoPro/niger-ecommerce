@@ -13,8 +13,8 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
     priceRange: [...pricesRange],
     searchTerm: "",
   });
-  const backetState = useSelector((state) => state.basket);
-  // console.log(backetState);
+  const bascketLength = useSelector((state) => state.basket.length);
+  // console.log(bascketLength);
 
   const updateFilters = useCallback(
     (newFilters) => {
@@ -50,7 +50,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
 
   return (
     <div className="flex flex-col max-md:gap-3 w-full">
-      <div className="flex max-md:flex-col flex-row gap-2 mt-2 h-auto">
+      <div className="flex max-md:flex-col flex-row gap-2 h-auto">
         <div className="max-md:grid max-md:grid-cols-4 max-md:w-full flex w-1/3 gap-2 p-2">
           <div className="relative max-md:col-span-3 md:w-2/3 right-0">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4" />
@@ -68,7 +68,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
               to={`/products/orders`}
             >
               <span className="h-6 w-6 p-2 rounded-full flex justify-center items-center bg-gray-200/30 md:mr-2">
-                {backetState.length}
+                {bascketLength}
               </span>
               <span className="h-6 w-6 text-base p-2 max-md:hidden  flex justify-center items-center">
                 Panier

@@ -119,7 +119,7 @@ const AuthBtn = () => {
       </DrawerTrigger>
 
       <DrawerContent
-        className={`bg-gradient-to-b from-gray-50 to-white ${
+        className={`bg-gradient-to-tr from-gray-50 to-slate-100 ${
           isMobile ? "h-[98dvh]" : "h-[95vh]"
         }`}
       >

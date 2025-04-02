@@ -60,6 +60,5 @@ const dataSlice = createSlice({
   },
 });
 
-// const { addProduct, delProduct } = backetSlice.actions;
 
 export { dataSlice, fetchInitialData };

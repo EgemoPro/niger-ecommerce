@@ -2,8 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import api from "../../lib/axios";
 import Cookies from "js-cookies";
 
+
 const TOKEN_KEY = "jwt";
 
+console.log("cookie", Cookies.getItem(TOKEN_KEY))
 // État initial
 const initialState = {
   favorites: [],
@@ -16,13 +18,44 @@ const initialState = {
 };
 
 // Fonction générique pour requêtes API
-const handleRequest = async (
-  dispatch,
-  action,
-  endpoint,
-  method = "GET",
-  data = null
-) => {
+// const handleRequest = async (
+//   dispatch,
+//   action,
+//   endpoint,
+//   method = "GET",
+//   data = null
+// ) => {
+//   dispatch(requestStart());
+//   try {
+//     const response =
+//       method === "GET"
+//         ? await api.get(endpoint, {
+//             headers: {
+//               Authorization: `Bearer ${
+//                 localStorage.getItem(TOKEN_KEY) || Cookies.getItem(TOKEN_KEY)
+//               }`,
+//             },
+//           })
+//         : await api({
+//             method,
+//             url: endpoint,
+//             data,
+//             headers: {
+//               Authorization: `Bearer ${
+//                 localStorage.getItem(TOKEN_KEY) || Cookies.getItem(TOKEN_KEY)
+//               }`,
+//             },
+//           });
+
+//     dispatch(action(response.data.payload.favorites));
+//     dispatch(requestSuccess());
+//   } catch (error) {
+//     const message = error.response?.data?.error || "Erreur serveur.";
+//     dispatch(requestFail(message));
+//     console.error(message);
+//   }
+// };
+const handleRequest = async (dispatch, actions, endpoint, method = "GET", data = null) => {
   dispatch(requestStart());
   try {
     const response =
@@ -45,7 +78,15 @@ const handleRequest = async (
             },
           });
 
-    dispatch(action(response.data));
+    const payload = response.data.payload;
+
+    // On met à jour chaque partie du state si la donnée existe dans la réponse
+    if (payload.favorites !== undefined) dispatch(setFavorites(payload.favorites));
+    if (payload.following !== undefined) dispatch(setFollowing(payload.following));
+    if (payload.orders !== undefined) dispatch(setOrders(payload.orders));
+    if (payload.notifications !== undefined) dispatch(setNotifications(payload.notifications));
+    if (payload.cart !== undefined) dispatch(setCart(payload.cart));
+
     dispatch(requestSuccess());
   } catch (error) {
     const message = error.response?.data?.error || "Erreur serveur.";
@@ -53,6 +94,7 @@ const handleRequest = async (
     console.error(message);
   }
 };
+
 
 // Création du slice Redux
 const userSlice = createSlice({
@@ -91,6 +133,7 @@ const userSlice = createSlice({
 
     // Gestion des favoris
     toggleFavorite: (state, action) => {
+      console.log(action.payload)
       const index = state.favorites.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -139,12 +182,13 @@ export const fetchOrders = () => async (dispatch) =>
 
 export const toggleFavoriteAsync =
   (productId, userId) => async (dispatch, getState) => {
-    console.log(dispatch, getState);
-    const isFavorite = getState().user.favorites.some(
-      (fav) => fav.id === productId
-    );
-    const method = isFavorite ? "DELETE" : "POST";
-    await handleRequest(dispatch, toggleFavorite, "user/favorites", method, {
+    console.log(dispatch, getState().auth.user.payload.favorites);
+    // const isFavorite = getState().auth.user.payload.favorites.some(
+    //   (fav) => fav.productId === productId
+    // );
+    // console.log( "Product already exist", isFavorite)
+    // const method = isFavorite ? "DELETE" : "POST";
+    await handleRequest(dispatch, toggleFavorite, "user/favorites", "POST", {
       productId,
       userId,
     });
