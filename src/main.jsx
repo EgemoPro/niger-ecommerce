@@ -7,9 +7,14 @@ import Router from "./routes/main.routes";
 import { fetchInitialData } from "./redux/Slices/initialData.js";
 import { checkAuth } from "./redux/Slices/authSlice.js";
 import { setFavorites } from "./redux/Slices/userSlice.js";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
+// import { Toaster } from "sonner";
+
 
 const router = Router();
+const queryClient = new QueryClient();
+
 const App = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((st) => st.auth);
@@ -29,7 +34,10 @@ const App = () => {
 };
 export default App;
 createRoot(document.getElementById("root")).render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <QueryClientProvider client={queryClient}>
+    {/* <Toaster/> */}
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </QueryClientProvider>
 );

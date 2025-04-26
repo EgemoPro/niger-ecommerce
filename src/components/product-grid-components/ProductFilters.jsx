@@ -4,8 +4,8 @@ import { Slider } from "@/components/ui/slider";
 import { Tag, Search, ShoppingCart } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { Link } from "react-router-dom";
+// import { useSelector } from "react-redux";
 
 const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
   const [filters, setFilters] = useState({
@@ -13,7 +13,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
     priceRange: [...pricesRange],
     searchTerm: "",
   });
-  const bascketLength = useSelector((state) => state.basket.length);
+  // const bascketLength = useSelector((state) => state.basket.length);
   // console.log(bascketLength);
 
   const updateFilters = useCallback(
@@ -51,8 +51,8 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
   return (
     <div className="flex flex-col max-md:gap-3 w-full">
       <div className="flex max-md:flex-col flex-row gap-2 h-auto">
-        <div className="max-md:grid max-md:grid-cols-4 max-md:w-full flex w-1/3 gap-2 p-2">
-          <div className="relative max-md:col-span-3 md:w-2/3 right-0">
+        <div className="md:grid max-md:grid-cols-4 max-md:w-full flex md:w-2/5 gap-2 p-2">
+          <div className="relative max-md:col-span-3 w-full right-0">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4" />
             <Input
               type="text"
@@ -62,7 +62,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
               className="pl-8"
             />
           </div>
-          <Button className="max-md:col-span-1 md:w-auto w-full ">
+          {/* <Button className="max-md:col-span-1 md:w-auto w-full ">
             <Link
               className="h-full w-full flex items-center gap-2 max-md:flex-row-reverse justify-around"
               to={`/products/orders`}
@@ -77,7 +77,7 @@ const ProductFilters = ({ categories, onFilterChange, pricesRange }) => {
                 <ShoppingCart className="h-4 w-4 block " />
               </span>
             </Link>
-          </Button>
+          </Button> */}
         </div>
 
         {/* categorie liste  */}

@@ -12,7 +12,7 @@ import {
 import { Link, useSearchParams } from "react-router-dom";
 import AuthBtn from "./auth/auth-btn";
 import { useSelector } from "react-redux";
-import { UserInfo } from "./user-info";
+import { UserInfo } from "./auth/user-info";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 /**
  * Mettre en place le lien vers le produits dans les parametres de recherche

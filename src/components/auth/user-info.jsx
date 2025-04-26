@@ -1,4 +1,4 @@
-import { LogOut, ShoppingBasket, User } from "lucide-react";
+import { LogOut, MessageCircle, MessageSquare, ShoppingBasket, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,17 +15,28 @@ import {
   //   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Navigate } from "react-router-dom";
-import { logout } from "../redux/Slices/authSlice";
-import Loader from "./loader";
+import { Link,  } from "react-router-dom";
+import { logout } from "../../redux/Slices/authSlice";
+import Loader from "../loader";
+// import { useState } from "react";
+import {motion} from "framer-motion";
 // import {useToast} from "./ui/toast";
 
 export function UserInfo() {
   const dispatch = useDispatch();
   const { user, isLoading } = useSelector((state) => state.auth);
+  const bascketLength = useSelector((state) => state.basket.length);
+  const messageLength = useSelector((state) => state.message?.length || 0);
+  
+
+
+  // console.log(messageLength)
   // const toast = useToast();
+
+
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -33,25 +44,45 @@ export function UserInfo() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="flex items-center gap-2 bg-transparent border-none hover:bg-transparent">
+        <Button className="flex items-center gap-2 bg-transparent border-none hover:bg-transparent outline-transparent outline-none focus:outline-none outline-offset-0">
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : user != null ? (
             <>
+
               <Avatar className="cursor-pointer">
                 <AvatarImage
                   src={user.payload.imgSrc || "https://github.com/shadcn.png"}
                   alt="@img"
                 />
                 <AvatarFallback>
-                  {user.payload.email.slice(4).toUpperCase()}
+                  {user.payload.email.split("@")[0].toUpperCase()}
                 </AvatarFallback>
               </Avatar>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+
+              <Badge disabled={true}  className={"absolute max-md:hidden -translate-x-5 translate-y-2 gap-1.5 transition-all duration-300"} >
+                <>
+                  <ShoppingBasket size={15} />
+                  <span className="text-md text-white">{bascketLength}</span>
+                </>
+                {messageLength > 0 ? (<>
+                  <MessageSquare size={15} />
+                  <span className="text-md text-white">{messageLength}</span>
+                </>): null}
+                
+              </Badge>
+              </motion.div>
               <p className="hidden md:block text-sm tracking-tight font-semibold text-gray-800">
-                {user.payload.email}
+                {user.payload.email.slice(0,3).toUpperCase()}
               </p>
             </>
-          )}
+          ) : null}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 mt-1.5 ml-4">
@@ -66,7 +97,7 @@ export function UserInfo() {
           <DropdownMenuItem>
             <ShoppingBasket />
             <Link to={"/products/orders"}>Panier</Link>
-            <DropdownMenuShortcut>⇧⌘B</DropdownMenuShortcut>
+            <DropdownMenuShortcut className={"gap-2"}> <Badge className="bg-blue-500 hover:bg-blue-700" >{bascketLength} </Badge>  ⇧⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 

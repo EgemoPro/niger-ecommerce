@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import HomePage from "../pages/home/home-page";
 import ProductsPage from "../pages/products/products-page";
@@ -14,6 +13,15 @@ import Payouts from "../pages/user/sub-pages/payouts";
 import Notifications from "../pages/user/sub-pages/notifications";
 import DataPrivacy from "../pages/user/sub-pages/data-privacy";
 import DeleteAccount from "../pages/user/sub-pages/delete-account";
+// import ShopDetails from "../pages/shop/ShopDetails";
+// import {ShopAbout} from "@/components/shop/ShopAbout";
+// import ShopProducts from "../pages/shop/shop/Products";
+// import ShopPhotos from "../pages/shop/shop/Photos";
+// import ShopReviews from "../pages/shop/shop/Reviews";
+// import ShopFAQ from "../pages/shop/shop/FAQ";
+// import ShopChat from "../pages/shop/shop/Chat";
+// import ProductDetail from "../pages/shop/shop/ProductDetail";
+
 
 const Router = () => {
   return createBrowserRouter([
@@ -57,11 +65,43 @@ const Router = () => {
     },
     {
       path: "/shop",
-      element: (
-        <>
-          <Shop />
-        </>
-      ),
+      element: <Shop />,
+      // children:[
+      //   {
+      //     path:":id",
+      //     element:<Outlet/>,
+      //     children:[
+      //       {
+      //         path:"about",
+      //         element: <ShopAbout />
+      //       },
+      //       { 
+      //         path: "products", 
+      //         element: <ShopProducts /> 
+      //       },
+      //       { 
+      //         path: "photos", 
+      //         element: <ShopPhotos /> 
+      //       },
+      //       { 
+      //         path: "reviews", 
+      //         element: <ShopReviews /> 
+      //       },
+      //       { 
+      //         path: "faq", 
+      //         element: <ShopFAQ /> 
+      //       },
+      //       { 
+      //         path: "chat", 
+      //         element: <ShopChat /> 
+      //       },
+      //       { 
+      //         path: "product/:productId", 
+      //         element: <ProductDetail /> 
+      //       }
+      //     ],
+      //   }
+      // ]
     },
     {
       path: "/products",
