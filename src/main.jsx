@@ -9,6 +9,7 @@ import { checkAuth } from "./redux/Slices/authSlice.js";
 import { setFavorites } from "./redux/Slices/userSlice.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
+// import "./App.css"
 // import { Toaster } from "sonner";
 
 
