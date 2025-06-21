@@ -1,4 +1,4 @@
-import { LogOut, MessageCircle, MessageSquare, ShoppingBasket, User } from "lucide-react";
+import { LogOut, MessageCircle, MessageSquare, ShoppingBasket, SquareCheckBig, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,24 +18,36 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
-import { Link,  } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { logout } from "../../redux/Slices/authSlice";
 import Loader from "../loader";
 // import { useState } from "react";
-import {motion} from "framer-motion";
-// import {useToast} from "./ui/toast";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 export function UserInfo() {
   const dispatch = useDispatch();
-  const { user, isLoading } = useSelector((state) => state.auth);
+  const { user, isLoading, token } = useSelector((state) => state.auth);
   const bascketLength = useSelector((state) => state.basket.length);
   const messageLength = useSelector((state) => state.message?.length || 0);
-  
 
-
-  // console.log(messageLength)
-  // const toast = useToast();
-
+  useEffect(() => {
+    if ((user != null && Object.keys(user.payload).length > 1) && !!token) {
+      toast.success("Vous êtes connecté", {
+        duration: 5000,
+        icon: <SquareCheckBig className="h-4 w-4" />,
+        className: "bg-green-50 text-green-600 border border-green-200",
+        action: {
+          label: "Fermer",
+          onClick: () => {
+            toast.dismiss()
+          },
+          className: "bg-green-600 text-white hover:bg-green-700",
+        }
+      });
+    }
+  }, [user])
 
   const handleLogout = () => {
     dispatch(logout());
@@ -44,12 +56,11 @@ export function UserInfo() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="flex items-center gap-2 bg-transparent border-none hover:bg-transparent outline-transparent outline-none focus:outline-none outline-offset-0">
+        <Button className="flex items-center gap-2 bg-transparent border-none hover:bg-transparent outline-transparent outline-none focus:outline-none focus:ring-0">
           {isLoading ? (
             <Loader />
           ) : user != null ? (
             <>
-
               <Avatar className="cursor-pointer">
                 <AvatarImage
                   src={user.payload.imgSrc || "https://github.com/shadcn.png"}
@@ -66,20 +77,20 @@ export function UserInfo() {
                 transition={{ duration: 0.5 }}
               >
 
-              <Badge disabled={true}  className={"absolute max-md:hidden -translate-x-5 translate-y-2 gap-1.5 transition-all duration-300"} >
-                <>
-                  <ShoppingBasket size={15} />
-                  <span className="text-md text-white">{bascketLength}</span>
-                </>
-                {messageLength > 0 ? (<>
-                  <MessageSquare size={15} />
-                  <span className="text-md text-white">{messageLength}</span>
-                </>): null}
-                
-              </Badge>
+                <Badge disabled={true} className={"absolute max-md:hidden -translate-x-5 translate-y-2 gap-1.5 transition-all duration-300"} >
+                  <>
+                    <ShoppingBasket size={15} />
+                    <span className="text-md text-white">{bascketLength}</span>
+                  </>
+                  {messageLength > 0 ? (<>
+                    <MessageSquare size={15} />
+                    <span className="text-md text-white">{messageLength}</span>
+                  </>) : null}
+
+                </Badge>
               </motion.div>
               <p className="hidden md:block text-sm tracking-tight font-semibold text-gray-800">
-                {user.payload.email.slice(0,3).toUpperCase()}
+                {user.payload.email.slice(0, 3).toUpperCase()}
               </p>
             </>
           ) : null}

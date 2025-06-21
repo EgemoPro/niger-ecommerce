@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import api from "../../lib/axios"
 
 const initialState = {
-    bascket : 0,
+    basket : 0,
     message : 0
 }
 

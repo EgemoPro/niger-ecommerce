@@ -4,16 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import ProductFilters from "./product-grid-components/ProductFilters";
 import ProductGridHeader from "./product-grid-components/ProductGridHeader";
 import ProductList from "./product-grid-components/ProductList";
-import { fetchInitialData } from "../redux/Slices/initialData";
+import { fetchProducts } from "../redux/Slices/initialData";
 
 const ProductGrid = ({ onOpen }) => {
   const dispatch = useDispatch();
   const { data: products, status, error } = useSelector((state) => state.data);
-  // const { user } = useSelector((state) => state.auth);
-
+  
   useEffect(() => {
     if (status === "idle") {
-      dispatch(fetchInitialData());
+      dispatch(fetchProducts());
     } 
   }, [status, dispatch]);
 

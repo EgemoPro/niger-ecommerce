@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { backetSlice } from './Slices/basketSlice';
-import { dataSlice } from './Slices/initialData';
+import dataSlice from './Slices/initialData';
 import { favoriSlice } from './Slices/favorisSlice';
 import authSlice from './Slices/authSlice'
 import userSlice from './Slices/userSlice';
@@ -10,8 +10,6 @@ import shopReducer from './Slices/shopSlice';
 import productReducer from './Slices/productSlice';
 import { thunk } from 'redux-thunk'
 
-
-// const middlewares = [ReduxThunk]
 
 enableMapSet()
 

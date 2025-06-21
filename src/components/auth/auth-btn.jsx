@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { User, Mail, Lock, Eye, EyeOff, ChevronRight, X } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ChevronRight, X , TriangleAlert} from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -18,7 +18,7 @@ import FacebookAuhtButton from "./buttons/FacebookAuthButton";
 import AppleAuhtButton from "./buttons/AppleAuthButton";
 import { useSelector, useDispatch } from "react-redux";
 import { login, register } from "../../redux/Slices/authSlice";
-import {useToast} from "../../hooks/use-toast";
+import {toast} from "sonner";
 
 
 const schema = z.object({
@@ -34,7 +34,6 @@ const schema = z.object({
 });
 
 const AuthBtn = () => {
-  const toast = useToast()
   const {
     user,
     isLoading,
@@ -42,6 +41,7 @@ const AuthBtn = () => {
     token,
   } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -86,10 +86,26 @@ const AuthBtn = () => {
   
   useEffect(() => {
     if ((user != null && Object.keys(user.payload).length == 1) || !token ) {
-      // Cookies.set('jwt', token, { expires: 7 });
       setIsLogin(true);
     }
   }, [user, token]);
+
+  useEffect(() => {
+    if ((JSON.stringify(connexionError).trim() != "") && connexionError !=null) {
+      console.log(connexionError)
+      toast.error("Erreur",{
+        description: connexionError,
+        duration: 5000,
+        icon: <TriangleAlert className="h-4 w-4" />,
+        className: "bg-red-50 text-red-600 border border-red-200",
+        action: {
+          label: "Fermer",
+          onClick: () => toast.dismiss(),
+          className: "bg-red-600 text-white hover:bg-red-700",
+        }
+      });
+    }
+  }, [connexionError]);
 
   const handleSubmit = async () => {
     const { username, email, password } = formData;

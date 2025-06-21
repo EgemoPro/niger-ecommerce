@@ -22,6 +22,8 @@ const ProductCard = ({ product, onOpen }) => {
   const { user, isLoadig } = useSelector((state) => state.auth);
   const { favorites, isLoading } = useSelector((state) => state.user);
 
+  console.log(product.images[0].url);
+
   // Synchroniser l'état local avec Redux
   useEffect(() => {
     if (Array.isArray(favorites)) {
@@ -68,8 +70,8 @@ const ProductCard = ({ product, onOpen }) => {
           </div>
         )}
         <img
-          src={product.images[0]}
-          alt={product.title}
+          src={product.images[0].url}
+          alt={product.images[0].alt || "Product Image"}
           className={`w-full h-52 object-cover object-left-top scale-90 hover:scale-100 transition-transform duration-300 ease-in-out ${
             imageLoaded ? "" : "hidden"
           }`}

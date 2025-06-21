@@ -39,15 +39,15 @@ import { ExportPDF } from "./quickExportPDF.jsx";
 
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
-    case "fulfilled":
-    case "shipped":
+    // case "fulfilled":
+    case "available":
       return "text-green-600 bg-green-100";
-    case "ready for ship":
-      return "text-blue-600 bg-blue-100";
-    case "pending":
-      return "text-yellow-600 bg-yellow-100";
+    // case "ready for ship":
+    //   return "text-blue-600 bg-blue-100";
+    // case "pending":
+    //   return "text-yellow-600 bg-yellow-100";
     default:
-      return "text-gray-600 bg-gray-100";
+      return "text-red-600 bg-gray-100";
   }
 };
 
@@ -94,7 +94,7 @@ export const ActionButtons = React.memo(
         Commander
       </Button>
       <Button
-        className="bg-transparent hover:text-red-700 hover:bg-transparent text-red-500  flex items-center w-full gap-3 sm:w-auto"
+        className="bg-red-200 hover:bg-red-300 hover:text-red-900 text-red-700  flex items-center w-full gap-3 sm:w-auto"
         onClick={handleCleanBacket}
       >
         <Trash2 className="h-4 w-4 mr-2" />
@@ -147,7 +147,7 @@ export const OrderTableBody = React.memo(
         <TableBody className="w-full">
           {paginatedOrders.map((order) => (
             <TableRow 
-              key={order.id + order.customer} 
+              key={order.id} 
               className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4"
             >
               <TableCell className="hidden md:block">
@@ -158,7 +158,7 @@ export const OrderTableBody = React.memo(
                   }
                 />
               </TableCell>
-              <TableCell className="font-medium hidden md:block">{order.id}</TableCell>
+              <TableCell className="font-medium hidden md:block text-clip">{order.id}</TableCell>
               <TableCell className="truncate">{order.title}</TableCell>
               <TableCell>
                 <span
@@ -171,8 +171,7 @@ export const OrderTableBody = React.memo(
               </TableCell>
               <TableCell className="hidden md:block">{order.quantity}</TableCell>
               <TableCell className="hidden lg:block">{order.location}</TableCell>
-              <TableCell>{order.total.replace("$","FCFA ")}
-              </TableCell>
+              <TableCell>{order?.price}</TableCell>
               <TableCell>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -190,7 +189,7 @@ export const OrderTableBody = React.memo(
                         onClick={() => handleViewOrder(order.id)}
                       >
                         <Eye className="h-4 w-4 mr-2" />
-                        <Link to={`/products/${order.id.replace("#", "")}`}>
+                        <Link to={`/products/${order.id}`}>
                           View
                         </Link>
                       </Button>

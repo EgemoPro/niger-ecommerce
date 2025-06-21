@@ -22,7 +22,7 @@ import {
 const ProductSweaterPage = () => {
   const { id } = useParams();
   const product = useSelector((state) =>
-    state.data.data.find((p) => p.id === `#${id}`)
+    state.data.data.find((p) => p.id === id)
   );
   // console.log(product);
 
@@ -51,17 +51,17 @@ const ProductSweaterPage = () => {
 
   useEffect(() => {
     const loadImages = async () => {
-      const imagePromises = product.images.map((src) => {
+      const imagePromises = product.images.map(({url}) => {
         return new Promise((resolve, reject) => {
           const img = new Image();
-          img.src = src;
+          img.src = url;
           img.onload = resolve;
           const timeoutId = setTimeout(() => {
-            reject(new Error(`Image loading timeout: ${src}`));
+            reject(new Error(`Image loading timeout: ${url}`));
           }, 10000); // 10 seconds timeout
           img.onerror = () => {
             clearTimeout(timeoutId);
-            reject(new Error(`Failed to load image: ${src}`));
+            reject(new Error(`Failed to load image: ${url}`));
           };
         });
       });
@@ -92,7 +92,7 @@ const ProductSweaterPage = () => {
       >
         <ResizablePanel defaultSize={40} minSize={40}  maxSize={55} className="mb-4 md:mb-0">
           <img
-            src={product.images[mainImage]}
+            src={product.images[mainImage].url}
             alt={product.title}
             className="w-full h-full object-cover rounded-lg shadow-sm transition-transform hover:scale-105"
           />
@@ -103,8 +103,8 @@ const ProductSweaterPage = () => {
             {product.images.map((image, index) => (
               <img
                 key={index}
-                src={image}
-                alt={`${product.title} - Vue ${index + 1}`}
+                src={image.url}
+                alt={image.alt || `${product.title} - Vue ${index + 1}`}
                 className={`w-full h-auto object-cover rounded-sm cursor-pointer transition-all duration-200 hover:shadow-md ${
                   index === mainImage
                     ? "ring-4 ring-blue-50"

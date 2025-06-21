@@ -7,7 +7,7 @@ export const PageNavigation = ({ title }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50">
+    <div className="fixed top-0 left-0 right-0 bg-red-500/95 backdrop-blur-sm z-50">
       <div className="max-w-[1200px] mx-auto">
         <div className="border-b border-secondary/10">
           <div className="flex items-center justify-between px-4 py-2">

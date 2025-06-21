@@ -95,7 +95,7 @@ const Router = () => {
       children:[
         {
           path: "",
-          element: <Index />,
+          element: <Index />
         },
         {
           path: ":id/*",

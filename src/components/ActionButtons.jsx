@@ -7,7 +7,6 @@ import {cn} from "../lib/utils"
 const ActionButtons = ({
   isFavorite,
   toggleFavorite,
-  product,
   onAddToCart,
 }) => {
   const basket = useSelector((state) => state.basket);

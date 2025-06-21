@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchInitialData } from "../../redux/Slices/initialData";
+import { fetchProducts } from "../../redux/Slices/initialData";
 import { checkAuth } from "../../redux/Slices/authSlice";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";

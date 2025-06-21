@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ShoppingBasket } from "lucide-react";
 import { Link } from "react-router-dom";
 import OrderPopup from "../../components/order-popup.jsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,8 +37,8 @@ const OrderPage = () => {
   const filterOrders = (search, status) => {
     let filteredOrders = initialOrders.filter(
       (order) =>
-        order.customer.toLowerCase().includes(search.toLowerCase()) ||
         order.id.toLowerCase().includes(search.toLowerCase())
+        // order.customer.toLowerCase().includes(search.toLowerCase()) ||
     );
 
     if (status !== "all") {
@@ -122,7 +122,7 @@ const OrderPage = () => {
             <ChevronLeft />
           </Link>
           Order
-          <span className="flex items-center justify-center ml-3 mt-1 text-gray-400 text-sm h-full">({orders.length} Order)</span>
+          <span className="flex items-center justify-center ml-3 gap-3 text-gray-400 text-md h-full"> <ShoppingBasket size={30} className="text-green-500" /> {String(orders.length).padStart(2, "0")}  </span>
         </h1>
       </div>
 

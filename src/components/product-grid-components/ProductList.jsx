@@ -10,11 +10,26 @@ import { setProductPage } from "../../redux/Slices/settingsSlice";
 const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
   const dispatch = useDispatch();
   const scrollRef = useRef(null);
+
+
   const [isBottom, setIsBottom] = useState(false);
   const [isOnscroll, setIsOnScroll] = useState(false);
 
 
   useEffect(() => {
+    /**
+     * Gère l'événement de défilement pour le conteneur de la liste des produits.
+     * 
+     * Cette fonction :
+     * - Envoie l'état actuel du défilement et la position à Redux via l'action `setProductPage`.
+     * - Met à jour l'état `isBottom` pour indiquer si l'utilisateur est proche du bas du conteneur.
+     *
+     * @param {React.UIEvent<HTMLDivElement>} e - L'objet événement de défilement.
+     *
+     * Effets de bord :
+     * - Déclenche l'action Redux `setProductPage` avec la position de défilement et l'état.
+     * - Met à jour l'état local `isBottom` si l'utilisateur atteint le bas.
+     */
     const handleScroll = (e) => {
       const currentRef = e.target;
 
@@ -31,7 +46,7 @@ const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
             },
           })
         );
-        if(scrollTop + clientHeight >= scrollHeight - 45)
+        if (scrollTop + clientHeight >= scrollHeight - 45)
           setIsBottom(true);
         else setIsBottom(false);
       }
@@ -58,16 +73,16 @@ const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
     >
       <div className="grid max-mobile:grid-cols-1 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 gap-3 p-2">
         {visibleProducts.map((product, index) => (
-            <div
-              key={index}
-              className=" col-span-1 row-span-1 snap-start scroll-mt-4 snap-always "
-            >
-              <ProductCard key={product.id} product={product} onOpen={onOpen} />
-            </div>))}
+          <div
+            key={index}
+            className="col-span-1 row-span-1 snap-start scroll-mt-4 snap-always "
+          >
+            <ProductCard key={product.id} product={product} onOpen={onOpen} />
+          </div>))}
+      </div>
+      <div className="h-50 w-full flex items-center justify-center p-3">
         {isBottom && (
-          <div className="h-50 grid col-span-2 md:col-span-3 lg:col-span-4 row-span-1 place-items-center">
-            <Loader className={`h-8 w-8`} />
-          </div>
+          <Loader className={`h-8 w-8`} />
         )}
       </div>
     </ScrollArea>

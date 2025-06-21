@@ -29,7 +29,7 @@ const Index = () => {
               créés par des passionnés
             </p>
 
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
+            {/* <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
               <button className="group bg-secondary-foreground text-white px-6 py-3 rounded-full font-medium hover:bg-secondary-foreground/90 transition-all duration-300 hover:scale-105">
                 <Store className="inline-block w-5 h-5 mr-2 transition-transform group-hover:scale-110" />
                 Créer ma boutique
@@ -39,7 +39,7 @@ const Index = () => {
                 En savoir plus 
                 <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -140,16 +140,7 @@ const Index = () => {
           />
         </div>
 
-        {/* Bannière d'inscription */}
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white px-6 py-4 rounded-full shadow-xl border border-gray-100 backdrop-blur-sm z-50 animate-bounce hover:animate-none transition-all duration-300">
-          <button className="flex items-center gap-2 text-secondary-foreground font-medium">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <BadgeCheck className="w-4 h-4 text-primary" />
-            Commencez gratuitement
-            <Clock className="w-4 h-4 text-secondary ml-2" />
-            <span className="text-small text-secondary">2 min</span>
-          </button>
-        </div>
+        
       </main>
     </div>
   );

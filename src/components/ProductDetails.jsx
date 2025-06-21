@@ -81,7 +81,7 @@ const ProductDetails = ({
   };
 
   return (
-    <div className="bg-white h-auto  md:h-full w-full  md:pl-4 p-2 rounded-lg shadow-sm  sm:mt-0  sm:p-4">
+    <div className="bg-[#f9f9f9]/95 h-auto  md:h-full w-full  md:pl-4 p-2 rounded-lg shadow-sm  sm:mt-0  sm:p-4">
       <div className="">
         <div className="flex items-baseline mb-3 sm:mb-4">
           <span className="text-xl md:text-2xl font-bold text-gray-900">
@@ -148,8 +148,10 @@ const ProductDetails = ({
         {/* taille */}
         {product.sizes.length > 0 && (
           <>
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
+            <div
+              className=""
+            >
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm</h3>:mb-3">
                 Taille
               </h3>
               <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -185,7 +187,7 @@ const ProductDetails = ({
               <Minus size={14} className="sm:w-4 sm:h-4" />
             </Button>
             <span className="mx-3 sm:mx-4 text-base sm:text-lg font-medium">
-              {quantity}
+              {String(quantity).padStart(2, "0")}
             </span>
             <Button
               variant="outline"

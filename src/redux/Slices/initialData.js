@@ -1,64 +1,83 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { initialState } from "../initialState";
+import api from "../../lib/axios";
 
-const fetchInitialData = createAsyncThunk("data/fetchInitialData", async () => {
-  try {
-    const response = await axios.get(
-      `https://fakestoreapi.com/products?limit=${initialState.length}`
-    );
-    const data = response.data;
-    for (let i = 0; i < data.length; i++) {
-      initialState[i].title = data[i].title;
-      initialState[i].originalPrice =
-        data[i].price <= initialState[i].originalPrice
-          ? data[i].price
-          : initialState[i].originalPrice;
-      initialState[i].images = [data[i].image];
-      initialState[i].description = data[i].description;
-      initialState[i].category = data[i].category;
+const initialState = {
+  data: [],
+  status: "idle", // idle | loading | succeeded | failed
+  error: null,
+  pagination: {
+    currentPage: 1,
+    limit: 3,
+    hasNextPage: true,
+    total: 0,
+  },
+};
+
+// 🔁 Thunk async avec gestion de la pagination
+export const fetchProducts = createAsyncThunk(
+  "data/fetch",
+  async ({ page = 1, limit = 3 }, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/products", {
+        params: { page, limit },
+      });
+
+      const { success, payload, error } = response.data;
+      console.log({ success, payload, error })
+      
+      if (!success) {
+        return rejectWithValue(error || "Une erreur inconnue est survenue.");
+      }
+
+      return {
+        products: payload.products.map((product) => ({
+          id: product._id,
+          status: product.available ? "available" : "unavailable",
+          ...product
+          // price: product.price.toFixed(2), // Formater le prix
+        })),
+        currentPage: page,
+        next: payload.next,
+        previous: payload.previous,
+        total: payload.total,
+        limit,
+      };
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
-  } catch (error) {
-    console.error("Error fetching initial data:", error);
   }
-  return initialState;
-});
-
-// faire cette requete avec axios
-// const initialData  = () => {}
-
-// console.log(await initialUpdatedState(initialState.length));
+);
 
 const dataSlice = createSlice({
   name: "data",
-  initialState: {
-    data: [],
-    status: "idle", // idle | loading | succeeded | failed
-    error: null,
-  },
+  initialState,
   reducers: {
-    setQuantity: function (state, action) {
-      state.forEach((product) =>
-        product.id == action.payload.id
-          ? (product.quantity = action.payload.quantity)
-          : product
-      );
+    setPage(state, action) {
+      state.pagination.currentPage = action.payload;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchInitialData.pending, (state) => {
-      state.status = "loading";
-    });
-    builder.addCase(fetchInitialData.fulfilled, (state, action) => {
-      state.status = "succeeded";
-      state.data = action.payload;
-    });
-    builder.addCase(fetchInitialData.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    });
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        const { products, currentPage, limit, total, next } = action.payload;
+
+        state.status = "succeeded";
+        state.data = products;
+        state.pagination.currentPage = currentPage;
+        state.pagination.limit = limit;
+        state.pagination.total = total;
+        state.pagination.hasNextPage = next !== null;
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
   },
 });
 
-
-export { dataSlice, fetchInitialData };
+export const { setPage } = dataSlice.actions;
+export default dataSlice;

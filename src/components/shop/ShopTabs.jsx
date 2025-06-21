@@ -11,7 +11,7 @@ export const ShopTabs = ({ tabs, shopId, currentTab, className }) => {
               key={tab.path}
               to={`/shop/${shopId}/${tab.path}`}
               className={`relative py-4 px-4 text-body transition-colors duration-300 ${
-                currentTab === tab.path ? "text-primary" : "text-secondary hover:text-secondary-foreground"
+                currentTab === tab.path ? "text-gray-900" : "text-gray-500 hover:text-gray-600"
               }`}
             >
               {tab.label}

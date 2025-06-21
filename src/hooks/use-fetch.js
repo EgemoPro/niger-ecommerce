@@ -1,76 +1,97 @@
-import * as React from "react";
-import api from "../lib/axios.js";
+import { useState, useRef, useCallback } from "react";
+import api from "../lib/axios";
 
-const HTTP_METHODS = {
-    GET: "GET",
-    POST: "POST",
-    PUT: "PUT",
-    DELETE: "DELETE",
-    PATCH: "PATCH",
-};
+const usePaginatedFetch = ({
+  method = "get",
+  url,
+  initialPage = 1,
+  limit = 10,
+  body = null,
+  config = {},
+}) => {
+  const [page, setPage] = useState(initialPage);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-const useFetch = ({ endPoint, requestData = null, method = "GET", timeout = 300 }) => {
-    const [data, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState(null);
+  const controllerRef = useRef(null);
 
-    const fetchData = React.useCallback(async (signal) => {
-        setLoading(true);
-        try {
-            let response;
-            switch (method) {
-                case HTTP_METHODS.GET:
-                    response = await api.get(endPoint, { signal });
-                    break;
-                case HTTP_METHODS.POST:
-                    response = await api.post(endPoint, requestData, { signal });
-                    break;
-                case HTTP_METHODS.PUT:
-                    response = await api.put(endPoint, requestData, { signal });
-                    break;
-                case HTTP_METHODS.DELETE:
-                    response = await api.delete(endPoint, { signal });
-                    break;
-                case HTTP_METHODS.PATCH:
-                    response = await api.patch(endPoint, requestData, { signal });
-                    break;
-                default:
-                    throw new Error("Invalid HTTP method");
-            }
-            setData(response.data);
-        } catch (err) {
-            if (err.name !== 'AbortError') {
-                setError(err);
-            }
-        } finally {
-            setLoading(false);
+  const fetchData = useCallback(
+    async (customPage = page) => {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      controllerRef.current = controller;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const queryConfig = {
+          ...config,
+          params: {
+            ...(config.params || {}),
+            page: customPage,
+            limit,
+          },
+          signal: controller.signal,
+        };
+
+        const payload = body;
+        let response;
+
+        switch (method.toLowerCase()) {
+          case "get":
+            response = await api.get(url, queryConfig);
+            break;
+          case "post":
+            response = await api.post(url, payload, queryConfig);
+            break;
+          case "put":
+            response = await api.put(url, payload, queryConfig);
+            break;
+          case "patch":
+            response = await api.patch(url, payload, queryConfig);
+            break;
+          case "delete":
+            response = await api.delete(url, queryConfig);
+            break;
+          default:
+            throw new Error(`Méthode HTTP non supportée : ${method}`);
         }
-    }, [endPoint, requestData, method]);
 
-    React.useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
+        setData(response.data);
+        setPage(customPage);
+        return response.data;
+      } catch (err) {
+        if (err.name !== "CanceledError" && err.name !== "AbortError") {
+          setError(err);
+        }
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [url, method, config, page, limit, body]
+  );
 
-        const fetchWithTimeout = async () => {
-            const timeoutId = setTimeout(() => {
-                controller.abort();
-            }, timeout);
+  const nextPage = () => fetchData(page + 1);
+  const prevPage = () => fetchData(Math.max(1, page - 1));
+  const goToPage = (n) => fetchData(Math.max(1, n));
+  const refetch = () => fetchData(page);
 
-            try {
-                await fetchData(signal);
-            } finally {
-                clearTimeout(timeoutId);
-            }
-        };
-
-        fetchWithTimeout();
-
-        return () => {
-            controller.abort();
-        };
-    }, [fetchData, timeout]);
-
-    return { data, loading, error };
+  return {
+    data,
+    error,
+    loading,
+    page,
+    nextPage,
+    prevPage,
+    goToPage,
+    refetch,
+  };
 };
 
-export default useFetch;
+export default usePaginatedFetch;

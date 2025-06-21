@@ -18,10 +18,11 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       // changeOrigin: true,  },
-      // "/user": {
-      //   target: "http://localhost:8000/user",
+      // "/products": {
+      //   target: "http://localhost:8173/products",
+      //   rewrite: (path) => path.replace(/^\/api/, ""),
+      //   changeOrigin: true,  
       // },
-      // changeOrigin: true,  },
 
       //   changeOrigin: true,
     },

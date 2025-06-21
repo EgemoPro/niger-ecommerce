@@ -55,6 +55,7 @@ const SearchResults = ({
             const index = flattenedProducts.findIndex(
               (p) => p.id === product.id
             );
+            // console.log(product)
             return (
               <div
                 key={product.id}
@@ -67,7 +68,7 @@ const SearchResults = ({
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-gray-400" />
                   <Link
-                    to={`/products/${product.id.replace("#", "")}`}
+                    to={`/products/${product.id}`}
                     className="w-full h-full"
                   >
                     {product.title}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { X, Maximize2, Minimize2 } from "lucide-react";
+import { X, Maximize2, Minimize2, Store, LucideShoppingBasket, Bookmark, Share2Icon } from "lucide-react";
 import {
   Drawer,
   DrawerTitle,
@@ -14,6 +14,10 @@ import SharePopover from "./SharePopover";
 import { handleBacketAction } from "../redux/method";
 import { ScrollArea } from "./ui/scroll-area";
 import { toggleFavoriteAsync } from "../redux/Slices/userSlice";
+import TabsBar from "./tabs-bar/tabs-bar";
+
+
+
 
 const ProductDrawerCard = ({ product, onClose }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -29,21 +33,21 @@ const ProductDrawerCard = ({ product, onClose }) => {
   const { favorites, isLoading } = useSelector((state) => state.user);
 
   useEffect(() => {
-      if (Array.isArray(favorites)) {
-        const isFav = favorites.some(fav => fav.productId === product.id);
-        setIsFavorite(isFav);
-      }
-    }, [favorites, product.id]);
+    if (Array.isArray(favorites)) {
+      const isFav = favorites.some(fav => fav.productId === product.id);
+      setIsFavorite(isFav);
+    }
+  }, [favorites, product.id]);
 
-   const toggleFavorite = useCallback(() => {
-      if (user?.payload?.userId) {
-        // Mise à jour optimiste de l'UI
-        setIsFavorite(!isFavorite);
-        // Dispatch de l'action Redux
-        dispatch(toggleFavoriteAsync(product.id, user.payload.userId));
-      }
-    }, [dispatch, product.id, user, isFavorite]);
-    
+  const toggleFavorite = useCallback(() => {
+    if (user?.payload?.userId) {
+      // Mise à jour optimiste de l'UI
+      setIsFavorite(!isFavorite);
+      // Dispatch de l'action Redux
+      dispatch(toggleFavoriteAsync(product.id, user.payload.userId));
+    }
+  }, [dispatch, product.id, user, isFavorite]);
+
 
 
   const nextImage = () => {
@@ -71,26 +75,18 @@ const ProductDrawerCard = ({ product, onClose }) => {
     setIsFullScreen(!isFullScreen);
   };
 
-  
+
 
   return (
     <Drawer open={isDrawerOpen} dismissible={false}>
       <DrawerContent
         side="bottom"
-        className={`flex rounded-sm flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${
-          isFullScreen ? "h-[calc(100%-20px)]" : "h-[95%]"
-        } `}
+        className={`flex rounded-sm flex-col bg-white w-full p-3 md:p-4 lg:p-6 transition-all duration-300  ${isFullScreen ? "h-[calc(100%-20px)]" : "h-[95%]"
+          } `}
       >
         {/* Header du produit */}
         <DrawerTitle className="flex flew-row  justify-end items-center mb-2">
           <div className="flex items-center justify-center gap-4 h-10 w-24">
-            <SharePopover />
-            <button
-              onClick={toggleFullScreen}
-              className="text-gray-500 hover:text-gray-700 transition-all duration-300 transform hover:scale-110 active:scale-95"
-            >
-              {isFullScreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-            </button>
             <DrawerClose asChild>
               <button
                 onClick={() => {
@@ -103,6 +99,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
               </button>
             </DrawerClose>
           </div>
+          {/* Follow Btn */}
         </DrawerTitle>
 
         {/* Contenu principal : Carousel et détails produit */}
@@ -111,6 +108,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
             <div className="w-1/2 max-middle:w-full h-full max-middle:h-[calc(50%-100px)]">
               <ImageCarousel
                 images={product.images}
+                toggleFullScreen={toggleFullScreen}
                 currentImageIndex={currentImageIndex}
                 setCurrentImageIndex={setCurrentImageIndex}
                 nextImage={nextImage}
@@ -122,19 +120,39 @@ const ProductDrawerCard = ({ product, onClose }) => {
               </h2>
             </div>
             <div className="w-1/2 md:h-full max-middle:w-full h-1/2 p-1">
-              <ProductDetails
-                product={product}
-                selectedSize={selectedSize}
-                setSelectedSize={setSelectedSize}
-                colorSelected={colorSelected}
-                setColorSelected={setColorSelected}
-                quantity={quantity}
-                setQuantity={setQuantity}
+              <TabsBar
+                tabs={[
+                  {
+                    value: "details",
+                    label: (<>
+                      <LucideShoppingBasket size={24} />
+                      <span className="text-[1.2rem]">Details</span>
+                    </>), content: (
+                      <ProductDetails
+                        product={product}
+                        selectedSize={selectedSize}
+                        setSelectedSize={setSelectedSize}
+                        colorSelected={colorSelected}
+                        setColorSelected={setColorSelected}
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                      />
+                    )
+                  },
+                  {
+                    value: "store", label: (<>
+                      <Store size={24} />
+                      <span className="text-[1.2rem]">Info Boutique</span>
+                    </>),
+                    content: <h1>reviews</h1>
+                  },
+                ]}
               />
+
             </div>
           </div>
           {/* espace commentaire */}
-          
+
         </ScrollArea>
 
         {/* Boutons d'action: Favoris, Ajouter au panier, etc. */}
