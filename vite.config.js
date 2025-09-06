@@ -10,21 +10,17 @@ export default defineConfig({
     },
   },
   server: {
+    host: "0.0.0.0",
     // port: 5000,
     proxy: {
       "/api": {
-        target:  "http://localhost:8173",
+        target: "http://localhost:8173",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-      // changeOrigin: true,  },
-      // "/products": {
-      //   target: "http://localhost:8173/products",
-      //   rewrite: (path) => path.replace(/^\/api/, ""),
-      //   changeOrigin: true,  
-      // },
+        changeOrigin: true,
 
-      //   changeOrigin: true,
+      },
+
     },
   },
 });

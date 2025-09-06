@@ -1,4 +1,3 @@
-import React from "react";
 import { useState, useEffect } from "react";
 import { User, Mail, Lock, Eye, EyeOff, ChevronRight, X , TriangleAlert} from "lucide-react";
 import {
@@ -91,13 +90,15 @@ const AuthBtn = () => {
   }, [user, token]);
 
   useEffect(() => {
-    if ((JSON.stringify(connexionError).trim() != "") && connexionError !=null) {
-      console.log(connexionError)
+    const errMsg  = JSON.stringify(connexionError).trim();
+
+    if (( errMsg != "") && connexionError !=null &&  !errMsg.includes("token")) {
+      console.log(errMsg)
       toast.error("Erreur",{
-        description: connexionError,
+        description: errMsg,
         duration: 5000,
         icon: <TriangleAlert className="h-4 w-4" />,
-        className: "bg-red-50 text-red-600 border border-red-200",
+        className: "bg-red-500 text-red-600 border border-red-200",
         action: {
           label: "Fermer",
           onClick: () => toast.dismiss(),
@@ -151,7 +152,7 @@ const AuthBtn = () => {
               </Button>
             </DrawerClose>
 
-            <div className="text-center mb-6">
+            <div className="text-center mb-2">
               <div className="mb-4">
                 <div className="h-12 w-12 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center">
                   <User className="h-6 w-6 text-white" />
@@ -168,10 +169,10 @@ const AuthBtn = () => {
             </div>
           </DrawerHeader>
 
-          <div className="px-6 pb-6 space-y-6 overflow-y-auto max-h-[calc(100vh-240px)] md:max-h-[65vh] scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+          <div className="px-6 pb-6 space-y-6 overflow-y-auto max-h-[calc(100vh-200px)] md:max-h-[65vh] scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             <div className="space-y-4">
               {!isLogin && (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-sm font-medium text-gray-700">
                     Nom complet
                   </label>
@@ -195,7 +196,7 @@ const AuthBtn = () => {
                 </div>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
                   Adresse Gmail
                 </label>
@@ -216,7 +217,7 @@ const AuthBtn = () => {
                 ) : null}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
                   Mot de passe
                 </label>
@@ -298,7 +299,7 @@ const AuthBtn = () => {
               </p>
             </div>
             <div className="relative">
-              <Separator className="my-8" />
+              <Separator className="my-6" />
               <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white px-4">
                 <span className="text-sm text-gray-400">ou continuez avec</span>
               </div>

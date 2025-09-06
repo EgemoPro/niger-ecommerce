@@ -1,4 +1,4 @@
-import { Bookmark, ChevronLeft, ChevronRight, Share2Icon } from "lucide-react";
+import { Bookmark, BookmarkCheckIcon, ChevronLeft, ChevronRight, Share2Icon, UserCheck2Icon, UserPlus } from "lucide-react";
 import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
 import loader from '../assets/bouncing-squares.svg'
 import { useState, useEffect } from "react";
@@ -8,12 +8,14 @@ import ImageActions from "./image-actions";
 
 const Buttons = [
   {
-    Title: "share",
-    Icon: Share2Icon 
+    Title: "follow",
+    Icon: UserPlus,
+    ClickedIcon: UserCheck2Icon 
   },
   {
     Title: "follow",
-    Icon: Bookmark 
+    Icon: Bookmark,
+    ClickedIcon: BookmarkCheckIcon
   }
 ]
 

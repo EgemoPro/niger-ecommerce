@@ -15,6 +15,7 @@ import { handleBacketAction } from "../redux/method";
 import { ScrollArea } from "./ui/scroll-area";
 import { toggleFavoriteAsync } from "../redux/Slices/userSlice";
 import TabsBar from "./tabs-bar/tabs-bar";
+import { Button } from "./ui/button";
 
 
 
@@ -124,10 +125,13 @@ const ProductDrawerCard = ({ product, onClose }) => {
                 tabs={[
                   {
                     value: "details",
-                    label: (<>
-                      <LucideShoppingBasket size={24} />
-                      <span className="text-[1.2rem]">Details</span>
-                    </>), content: (
+                    label: (
+                      // <Button className="text-[1.2rem]">
+                        
+                        <LucideShoppingBasket size={24} />
+                        // {/* Details */}
+                      // {/* </Button> */}
+                    ), content: (
                       <ProductDetails
                         product={product}
                         selectedSize={selectedSize}
@@ -142,7 +146,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
                   {
                     value: "store", label: (<>
                       <Store size={24} />
-                      <span className="text-[1.2rem]">Info Boutique</span>
+                      {/* <span className="text-[1.2rem]">Boutique</span> */}
                     </>),
                     content: <h1>reviews</h1>
                   },

@@ -3,8 +3,12 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 import { SendHorizontal } from 'lucide-react'
 
 import { cn } from "@/lib/utils"
+import { useSelector } from "react-redux"
 
-const Slider = React.forwardRef(({ className, ...props }, ref) => (
+const Slider = React.forwardRef(({ className, ...props }, ref) => {
+  // const {} = useSelector(state => state)
+  
+  return(
   <SliderPrimitive.Root
     ref={ref}
     className={cn("relative flex w-full touch-none select-none items-center", className)}
@@ -25,7 +29,7 @@ const Slider = React.forwardRef(({ className, ...props }, ref) => (
       <SendHorizontal className="h-5 w-5 hover:cursor-pointer hover:scale-110 opacity-70 duration-75   transition-opacity hover:opacity-100" />
     </SliderPrimitive.Thumb>
   </SliderPrimitive.Root>
-))
+)})
 Slider.displayName = SliderPrimitive.Root.displayName
 
 export { Slider }

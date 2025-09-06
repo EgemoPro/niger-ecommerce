@@ -22,7 +22,7 @@ export function BasketBtn({ onAddToCart, basketCount }) {
       onClick={handleAddToCart}
       disabled={isAdding}
       className={cn(
-        "relative overflow-hidden h-full w-full md:w-auto max-md:rounded-none",
+        "relative overflow-hidden h-full  md:w-auto max-md:rounded-none",
         isAdded ? "bg-green-500/80 hover:bg-green-600/90" : "bg-blue-600 hover:bg-blue-700",
       )}
     >

@@ -9,7 +9,7 @@ const ProductPrice = ({ price, originalPrice, discount }) => (
           FCFA {originalPrice.toFixed(2)}
         </span>
         <Badge variant="destructive" className="ml-1 text-xs">
-          {Math.ceil(price / originalPrice)}% Réduction
+          - {Math.ceil((price / originalPrice)*100)}%
         </Badge>
       </>
     )}

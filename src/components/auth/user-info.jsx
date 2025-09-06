@@ -1,4 +1,4 @@
-import { LogOut, MessageCircle, MessageSquare, ShoppingBasket, SquareCheckBig, User } from "lucide-react";
+import { BellDot, LogOut, MessageCircle, MessageSquare, ShoppingBasket, SquareCheckBig, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,8 +29,9 @@ import { useEffect } from "react";
 export function UserInfo() {
   const dispatch = useDispatch();
   const { user, isLoading, token } = useSelector((state) => state.auth);
-  const bascketLength = useSelector((state) => state.basket.length);
+  const bascketLength = useSelector((state) => state.basket.items.length);
   const messageLength = useSelector((state) => state.message?.length || 0);
+  const notifications = useSelector(state => state.notifications)
 
   useEffect(() => {
     if ((user != null && Object.keys(user.payload).length > 1) && !!token) {
@@ -42,8 +43,7 @@ export function UserInfo() {
           label: "Fermer",
           onClick: () => {
             toast.dismiss()
-          },
-          className: "bg-green-600 text-white hover:bg-green-700",
+          }
         }
       });
     }
@@ -77,15 +77,30 @@ export function UserInfo() {
                 transition={{ duration: 0.5 }}
               >
 
-                <Badge disabled={true} className={"absolute max-md:hidden -translate-x-5 translate-y-2 gap-1.5 transition-all duration-300"} >
-                  <>
+                <Badge disabled={true} className={"absolute bg-pink-500 max-md:hidden -translate-x-5 translate-y-2 gap-1.5 transition-all duration-300"} >
+                  <div
+                    className="flex items-center gap-0.5  text-white"
+                  >
+                    <BellDot size={15} />
+                    <span className="text-md text-white">{}</span>
+
+                  </div>
+
+                  <div
+                    className="flex items-center gap-1  text-white"
+                  >
                     <ShoppingBasket size={15} />
                     <span className="text-md text-white">{bascketLength}</span>
-                  </>
-                  {messageLength > 0 ? (<>
-                    <MessageSquare size={15} />
-                    <span className="text-md text-white">{messageLength}</span>
-                  </>) : null}
+
+                  </div>
+                  <div
+                    className="flex items-center gap-0.5 text-white"
+                  >
+                    {messageLength > 0 ? (<>
+                      <MessageSquare size={15} />
+                      <span className="text-md text-white">{messageLength}</span>
+                    </>) : null}
+                  </div>
 
                 </Badge>
               </motion.div>
@@ -96,7 +111,7 @@ export function UserInfo() {
           ) : null}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 mt-1.5 ml-4">
+      <DropdownMenuContent className="w-56 mt-1.5 mr-3">
         <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -105,10 +120,20 @@ export function UserInfo() {
             <Link to={"/profile"}>Profile</Link>
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
+           <DropdownMenuItem>
+            <BellDot />
+            <Link to={"/profile/notifications"}>Notifications</Link>
+            <DropdownMenuShortcut>⇧⌘N</DropdownMenuShortcut>
+          </DropdownMenuItem>
           <DropdownMenuItem>
             <ShoppingBasket />
             <Link to={"/products/orders"}>Panier</Link>
             <DropdownMenuShortcut className={"gap-2"}> <Badge className="bg-blue-500 hover:bg-blue-700" >{bascketLength} </Badge>  ⇧⌘B</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <MessageCircle />
+            <Link to={"/chat"}>Messagerie</Link>
+            <DropdownMenuShortcut className={"gap-2"}> {messageLength > 0 && <Badge className="bg-green-500 hover:bg-green-700" >{messageLength} </Badge>}  ⇧⌘M</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 

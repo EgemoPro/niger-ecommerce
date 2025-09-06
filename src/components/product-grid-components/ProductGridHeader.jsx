@@ -37,8 +37,8 @@ const ProductGridHeader = () => {
  useEffect(() => {
    
     if (
-      content.scroll.option.scrollTop + content.scroll.option.clientHeight >=
-      content.scroll.option.scrollHeight - 45
+      content.scroll.metrics.scrollTop + content.scroll.metrics.clientHeight >=
+      content.scroll.metrics.scrollHeight - 45
     ) {
       // console.log("hello bro", isVisible);
       setIsVisible(!isVisible)

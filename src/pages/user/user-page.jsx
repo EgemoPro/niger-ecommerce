@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { NavLink, Outlet, useLocation, Await, Navigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, Await, Navigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Home } from "lucide-react";
 import { Separator } from "../../components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { navItems } from "./sub-pages/navigation-items.js";
@@ -19,8 +19,16 @@ const CustomHeader = ({ srcImg, name, path }) => (
         {name}
       </h1>
       <p className="text-xs sm:text-sm text-gray-500 truncate">
-        {path}
+        Profile / {path}
       </p>
+    </div>
+    <div>
+
+      <Link to={"/"} className="flex items-center gap-2 border-b p-1 px-2 text-lg text-gray-500 hover:text-gray-950 duration-150">
+        <Home size={18} />
+        Home
+      </Link>
+      
     </div>
   </div>
 );
@@ -34,7 +42,7 @@ const MobileNav = ({ activePath, setPath }) => {
 
   return (
     <div className="lg:hidden relative mx-4 sm:mx-6">
-      <button 
+      <button
         className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
         onClick={handleInteraction}
         onMouseEnter={handleInteraction}
@@ -42,11 +50,11 @@ const MobileNav = ({ activePath, setPath }) => {
         <span className="text-gray-700 font-medium text-sm sm:text-base">
           {activePath.name || "Navigation"}
         </span>
-        <ChevronDown 
+        <ChevronDown
           className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
-      
+
       <AnimatePresence>
         {isOpen && (
           <motion.nav
@@ -61,11 +69,10 @@ const MobileNav = ({ activePath, setPath }) => {
                 <NavLink
                   key={index}
                   to={`/profile/${item.href}`}
-                  className={({ isActive }) => 
-                    `block px-3 py-2 rounded-md text-sm transition-colors ${
-                      isActive
-                        ? "text-gray-900 bg-gray-100 font-medium"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  className={({ isActive }) =>
+                    `block px-3 py-2 rounded-md text-sm transition-colors ${isActive
+                      ? "text-gray-900 bg-gray-100 font-medium"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`
                   }
                   onClick={() => {
@@ -115,17 +122,17 @@ const UserPage = () => {
         <main className="min-h-screen flex flex-col">
           {/* Header Section */}
           <div className="flex-shrink-0 bg-white border-b border-gray-200">
-            <CustomHeader 
+            <CustomHeader
               name={user.payload.username}
               path={path.name || "Profile"}
             />
           </div>
-          
+
           {/* Mobile Navigation */}
           <div className="flex-shrink-0 lg:hidden py-4 bg-white border-b border-gray-100">
             <MobileNav activePath={path} setPath={setPath} />
           </div>
-          
+
           {/* Main Content Section */}
           <div className="flex-1 flex">
             {/* Desktop Navigation Sidebar */}
@@ -148,9 +155,9 @@ const UserPage = () => {
                     </NavLink>
                   ))}
                 </nav>
-                
+
                 <Separator className="my-6" />
-                
+
                 <NavLink
                   to="/profile/delete"
                   className="flex items-center px-4 py-3 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
@@ -159,7 +166,7 @@ const UserPage = () => {
                 </NavLink>
               </div>
             </aside>
-            
+
             {/* Content Area */}
             <div className="flex-1 flex flex-col min-w-0">
               <div className="flex-1 p-4 sm:p-6 lg:p-8 xl:p-12">

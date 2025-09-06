@@ -10,10 +10,11 @@ import {ShoppingCart} from "lucide-react"
 const OrderPage = () => {
   // Récupère les commandes initiales depuis le state Redux
   const initialOrders = useSelector(state => state.basket);
+  console.log("Initial Orders from Redux:", initialOrders);
   const dispatch = useDispatch();
 
   // États locaux pour gérer les différentes fonctionnalités du tableau
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState(initialOrders.items);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrders, setSelectedOrders] = useState([]);
@@ -24,18 +25,18 @@ const OrderPage = () => {
   
   // Effet pour extraire les statuts uniques des commandes et les ajouter aux options de filtrage
   useEffect(() => {
-    const uniqueStatuses = ["all", ...new Set(initialOrders.map((order) => order.status))];
+    const uniqueStatuses = ["all", ...new Set(initialOrders.items.map((order) => order.status))];
     setStatusOptions(uniqueStatuses);
   }, [initialOrders]);
 
   // Effet pour filtrer les commandes lorsque les critères de recherche ou de statut changent
   useEffect(() => {
     filterOrders(searchTerm, statusFilter);
-  }, [searchTerm, statusFilter, initialOrders]);
+  }, [searchTerm, statusFilter, initialOrders.items]);
 
   // Fonction pour filtrer les commandes selon la recherche et le statut
   const filterOrders = (search, status) => {
-    let filteredOrders = initialOrders.filter(
+    let filteredOrders = initialOrders.items.filter(
       (order) =>
         order.id.toLowerCase().includes(search.toLowerCase())
         // order.customer.toLowerCase().includes(search.toLowerCase()) ||

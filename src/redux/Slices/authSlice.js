@@ -8,7 +8,8 @@ const TOKEN_KEY = 'jwt';
 // État initial
 const initialState = {
   user: null,
-  token: localStorage.getItem(TOKEN_KEY) || Cookies.get(TOKEN_KEY) || null,
+  token: Cookies.get(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || null,
+  isAuthenticated: false,
   isLoading: false,
   error: null,
 };
@@ -22,12 +23,25 @@ const authSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     },
+    // Action unifiée pour toutes les authentifications réussies
     authSuccess: (state, action) => {
       const { user, token } = action.payload;
       state.user = user;
       state.token = token;
       state.isLoading = false;
       state.error = null;
+      state.isAuthenticated = true;
+    },
+    
+    // Alias pour compatibilité avec le middleware Socket
+    loginSuccess: (state, action) => {
+      // Réutiliser la logique d'authSuccess
+      authSlice.caseReducers.authSuccess(state, action);
+    },
+    
+    restoreAuth: (state, action) => {
+      // Réutiliser la logique d'authSuccess
+      authSlice.caseReducers.authSuccess(state, action);
     },
     authFailure: (state, action) => {
       state.isLoading = false;
@@ -35,6 +49,7 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       localStorage.removeItem(TOKEN_KEY);
+      Cookies.remove(TOKEN_KEY);
       state.isLoading = false;
       state.user = null;
       state.token = null;
@@ -43,7 +58,23 @@ const authSlice = createSlice({
 });
 
 // Exportation des actions
-export const { authRequest, authSuccess, authFailure, logout:authLogout } = authSlice.actions;
+export const { 
+  authRequest, 
+  authSuccess, 
+  loginSuccess,
+  restoreAuth,
+  authFailure, 
+  logout: authLogout 
+} = authSlice.actions;
+
+// Sélecteurs
+export const authSelectors = {
+  selectUser: (state) => state.auth.user,
+  selectToken: (state) => state.auth.token,
+  selectIsAuthenticated: (state) => state.auth.isAuthenticated,
+  selectIsLoading: (state) => state.auth.isLoading,
+  selectError: (state) => state.auth.error
+};
 
 // Fonction générique pour gérer les requêtes d'authentification
 const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
@@ -59,7 +90,7 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
     console.log("auth response", response)
     const { token, ...user } = response.data;
     localStorage.setItem(TOKEN_KEY, token);
-    // Cookies.set(TOKEN_KEY, token)
+    Cookies.set(TOKEN_KEY, token)
     dispatch(successAction({ user, token }));
     return true;
   } catch (error) {
@@ -83,7 +114,7 @@ export const logout = () => (dispatch) =>
 
 export const checkAuth = () => async (dispatch) => {
   dispatch(authRequest());
-  const token = localStorage.getItem(TOKEN_KEY) || Cookies.get(TOKEN_KEY);
+  const token = Cookies.get(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
   if (!token) {
     dispatch(authFailure('Pas de token trouvé.'));
     return false;

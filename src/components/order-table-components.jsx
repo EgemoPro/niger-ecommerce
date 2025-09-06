@@ -158,7 +158,7 @@ export const OrderTableBody = React.memo(
                   }
                 />
               </TableCell>
-              <TableCell className="font-medium hidden md:block text-clip">{order.id}</TableCell>
+              <TableCell className="font-medium hidden md:block text-clip">{order.id.slice(0, 8)}</TableCell>
               <TableCell className="truncate">{order.title}</TableCell>
               <TableCell>
                 <span

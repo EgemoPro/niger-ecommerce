@@ -23,6 +23,7 @@ import ShopReviewsPage from "../pages/shop/shop-components/ReviewsPage";
 import ShopFAQPage from "../pages/shop/shop-components/FAQPage";
 import ShopChatPage from "../pages/shop/shop-components/ChatPage";
 import ProductDetailPage from "../pages/shop/shop-components/ProductDetailPage";
+import ChatPage from "../pages/chat/chat-page";
 
 
 
@@ -132,6 +133,10 @@ const Router = () => {
           ],
         },
       ]
+    },
+    {
+      path: "/chat",
+      element: <ChatPage />,
     },
     
   ]);

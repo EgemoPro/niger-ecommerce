@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import api from "../../lib/axios";
-import Cookies from "js-cookies";
-
+import Cookies from "js-cookie";
 
 const TOKEN_KEY = "jwt";
 
-console.log("cookie", Cookies.getItem(TOKEN_KEY))
+console.log("cookie", Cookies.get(TOKEN_KEY));
 // État initial
 const initialState = {
   favorites: [],
@@ -55,43 +54,43 @@ const initialState = {
 //     console.error(message);
 //   }
 // };
-const handleRequest = async (dispatch, actions, endpoint, method = "GET", data = null) => {
+// Fonction générique simplifiée pour les requêtes API
+const handleRequest = async (dispatch, action, endpoint, method = "GET", data = null) => {
   dispatch(requestStart());
+  
   try {
-    const response =
-      method === "GET"
-        ? await api.get(endpoint, {
-            headers: {
-              Authorization: `Bearer ${
-                localStorage.getItem(TOKEN_KEY) || Cookies.getItem(TOKEN_KEY)
-              }`,
-            },
-          })
-        : await api({
-            method,
-            url: endpoint,
-            data,
-            headers: {
-              Authorization: `Bearer ${
-                localStorage.getItem(TOKEN_KEY) || Cookies.getItem(TOKEN_KEY)
-              }`,
-            },
-          });
-
-    const payload = response.data.payload;
-
-    // On met à jour chaque partie du state si la donnée existe dans la réponse
-    if (payload.favorites !== undefined) dispatch(setFavorites(payload.favorites));
-    if (payload.following !== undefined) dispatch(setFollowing(payload.following));
-    if (payload.orders !== undefined) dispatch(setOrders(payload.orders));
-    if (payload.notifications !== undefined) dispatch(setNotifications(payload.notifications));
-    if (payload.cart !== undefined) dispatch(setCart(payload.cart));
-
+    const token = localStorage.getItem(TOKEN_KEY) || Cookies.get(TOKEN_KEY);
+    
+    const config = {
+      method,
+      url: endpoint,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    if (method !== "GET" && data) {
+      config.data = data;
+    }
+    
+    const response = method === "GET" 
+      ? await api.get(endpoint, { headers: config.headers })
+      : await api(config);
+    
+    // Dispatch de l'action spécifique avec les données
+    if (action && typeof action === 'function') {
+      dispatch(action(response.data.payload || response.data));
+    }
+    
     dispatch(requestSuccess());
+    return response.data;
+    
   } catch (error) {
-    const message = error.response?.data?.error || "Erreur serveur.";
+    const message = error.response?.data?.error || error.message || "Erreur serveur.";
     dispatch(requestFail(message));
-    console.error(message);
+    console.error(`Erreur API ${endpoint}:`, message);
+    throw error;
   }
 };
 

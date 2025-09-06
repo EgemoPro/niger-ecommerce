@@ -3,7 +3,8 @@ import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
 import { Button } from "../components/ui/button";
 import { Plus, Minus } from "lucide-react";
 import { Separator } from "../components/ui/separator";
-import { Star } from "lucide-react";
+import RenderStars from "./renderStar";
+
 // import { useDispatch } from "react-redux";
 // import { handleBacketAction } from "../redux/method";
 export const sizes = [
@@ -38,37 +39,7 @@ const ProductDetails = ({
     }
   }, [product.colors, colorSelected, setColorSelected]);
 
-  const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const partialStar = rating % 1;
-    const stars = [];
-    // console.log(stars);
 
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push(
-          <Star key={i} className="text-yellow-400" fill="currentColor" />
-        );
-      } else if (i === fullStars && partialStar > 0) {
-        const percentage = partialStar * 100;
-        stars.push(
-          <div key={i} className="relative inline-block">
-            <Star className="text-yellow-400" />
-            <div
-              className="absolute top-0 left-0 overflow-hidden"
-              style={{ width: `${percentage}%` }}
-            >
-              <Star className="text-yellow-400" fill="currentColor" />
-            </div>
-          </div>
-        );
-      } else {
-        stars.push(<Star key={i} className="text-yellow-400" />);
-      }
-    }
-
-    return stars;
-  };
 
   const handleReduceQuantity = () => {
     setQuantity(Math.max(1, quantity - 1));
@@ -98,10 +69,10 @@ const ProductDetails = ({
         {/* les etoiles des produits */}
         <div className="flex items-center w-auto pb-2">
           <div className="flex items-center gap-2 ">
-            {renderStars(product.rating)} ({product.rating})
+            {RenderStars(product.rating)} ({product.rating})
           </div>
         </div>
-        <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
+        <div className="bg-gray-100 p-3 sm:p-4 rounded-lg mt-2 mb-8">
           <p
             className="text-xs sm:text-sm text-gray-700 leading-relaxed cursor-pointer"
             onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
@@ -115,7 +86,7 @@ const ProductDetails = ({
           </p>
         </div>
       </div>
-
+      <Separator/>
       <div className="space-y-4 sm:space-y-6">
         {/* couleurs */}
         {product.colors.length > 0 && (
@@ -149,7 +120,7 @@ const ProductDetails = ({
         {product.sizes.length > 0 && (
           <>
             <div
-              className=""
+              className="p-2 mt-2 space-y-3"
             >
               <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm</h3>:mb-3">
                 Taille

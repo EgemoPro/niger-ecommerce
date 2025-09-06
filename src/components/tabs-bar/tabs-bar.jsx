@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PropTypes from 'prop-types';
-import { LampWallDown, LucideInfo } from "lucide-react";
 
 
 const TabsBar = ({ tabs }) => {
@@ -18,7 +17,7 @@ const TabsBar = ({ tabs }) => {
 
     const getTabClass = (isActive) => {
         return [
-            "flex items-center justify-start font-semibold border-0 border-b-2 gap-2 p-0 m-0 text-gray-700 text-md shadow-none hover:text-gray-900 focus:outline-none focus:ring-0 rounded-none outline-none",
+            "flex items-center justify-start font-semibold  border-0 border-b-2 gap-2 p-0 m-0 text-gray-700 text-md shadow-none hover:text-gray-900 focus:outline-none focus:ring-0 rounded-none outline-none",
             "px-4 py-2 text-sm",
             isActive ? "border-blue-500 " : "border-transparent"
         ].join(" ");
@@ -30,9 +29,9 @@ const TabsBar = ({ tabs }) => {
             <TabsList className="bg-transparent gap-2 rounded-none border-none border-gray-200 duration-150 ">
                 {tabs.map((tab) => (
                     <TabsTrigger
-                        key={tab.value}
-                        value={tab.value}
-                        className={getTabClass(currentTab === tab.value)}
+                    key={tab.value}
+                    value={tab.value}
+                    className={getTabClass(currentTab === tab.value)}
                     >
                         {tab.label}
                     </TabsTrigger>

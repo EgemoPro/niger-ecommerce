@@ -39,7 +39,7 @@ export default function ProductDetail() {
   };
   
   const handleAddToCart = () => {
-    toast.success(`${quantity} × ${product?.name} ajouté au panier`, {
+    toast.success(`${quantity} × ${product?.title} ajouté au panier`, {
       description: "Vous pouvez consulter votre panier pour finaliser votre commande.",
       duration: 3000,
     });

@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Heart } from "lucide-react";
+import { Cross, Heart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Loader from "../../assets/bouncing-squares.svg";
-import ProductRating from "./ProductRating";
+import RenderStar from "../renderStar"
 import ProductPrice from "./ProductPrice";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFavoriteAsync } from "../../redux/Slices/userSlice";
@@ -43,16 +43,29 @@ const ProductCard = ({ product, onOpen }) => {
   }, [dispatch, product.id, user, localIsFavorite]);
   
   return (
-    <Card className="overflow-hidden min-w-[250px] min-h-[300px] ">
-      <CardHeader className="p-0">
-        <CardTitle className="relative">
+    <Card className="overflow-hidden md:min-w-[280px] min-h-[300px] ">
+      <CardHeader className="p-0 relative">
+        <CardTitle className="absolute z-10 right-4 top-3 gap-2 flex flex-col items-center justify-between">
           <Button
             variant="ghost"
             disabled={user == null || isLoading}
-            className="absolute h-8 w-8 top-4 right-4 z-10 flex items-center justify-between p-1 rounded-full bg-slate-50 hover:scale-110 transition-transform duration-300 ease-in-out transform"
+            className=" h-8 w-8 flex items-center justify-between p-1 rounded-full bg-slate-50 hover:scale-110 transition-transform duration-300 ease-in-out transform"
             onClick={handleToggleFavorite}
           >
             <Heart
+              className={`h-6 w-6 ${
+                localIsFavorite ? "text-red-500 fill-current" : "text-gray-500"
+              } ${isLoading ? "opacity-50" : ""} transition-colors duration-300`}
+            />
+          </Button>
+
+          <Button
+            variant="ghost"
+            disabled={user == null || isLoading}
+            className="h-8 w-8 flex items-center justify-between p-1 rounded-full bg-slate-50 hover:scale-110 transition-transform duration-300 ease-in-out transform"
+            onClick={handleToggleFavorite}
+          >
+            <Cross
               className={`h-6 w-6 ${
                 localIsFavorite ? "text-red-500 fill-current" : "text-gray-500"
               } ${isLoading ? "opacity-50" : ""} transition-colors duration-300`}
@@ -72,7 +85,7 @@ const ProductCard = ({ product, onOpen }) => {
         <img
           src={product.images[0].url}
           alt={product.images[0].alt || "Product Image"}
-          className={`w-full h-52 object-cover object-left-top scale-90 hover:scale-100 transition-transform duration-300 ease-in-out ${
+          className={`w-full h-52 object-cover object-left-top scale-100 hover:scale-110 transition-transform duration-300 ease-in-out ${
             imageLoaded ? "" : "hidden"
           }`}
           onLoad={() => setImageLoaded(true)}
@@ -82,7 +95,7 @@ const ProductCard = ({ product, onOpen }) => {
         <h3 className="font-semibold text-lg mb-2 truncate w-full">
           {product.title}
         </h3>
-        <ProductRating rating={product.rating} reviews={product.reviews} />
+        <span className="flex py-2 gap-1">{ RenderStar(product.rating)} ({product.reviews}) </span>
         <ProductPrice
           price={product.price}
           originalPrice={product.originalPrice}

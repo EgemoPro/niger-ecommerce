@@ -3,9 +3,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ProductCard from "./ProductCard";
 // import { useNavigation } from "react-router-dom";
 import Loader from "../loader";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { setProductPage } from "../../redux/Slices/settingsSlice";
+import { 
+  updateScrollMetrics, 
+  setIsScrolling as setIsScrollingAction, 
+  setIsBottom as setIsBottomAction,
+} from "../../redux/Slices/settingsSlice";
+import { set } from "react-hook-form";
 
 const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
   const dispatch = useDispatch();
@@ -17,38 +22,27 @@ const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
 
 
   useEffect(() => {
-    /**
-     * Gère l'événement de défilement pour le conteneur de la liste des produits.
-     * 
-     * Cette fonction :
-     * - Envoie l'état actuel du défilement et la position à Redux via l'action `setProductPage`.
-     * - Met à jour l'état `isBottom` pour indiquer si l'utilisateur est proche du bas du conteneur.
-     *
-     * @param {React.UIEvent<HTMLDivElement>} e - L'objet événement de défilement.
-     *
-     * Effets de bord :
-     * - Déclenche l'action Redux `setProductPage` avec la position de défilement et l'état.
-     * - Met à jour l'état local `isBottom` si l'utilisateur atteint le bas.
-     */
+
     const handleScroll = (e) => {
       const currentRef = e.target;
 
       if (currentRef) {
         const { scrollTop, scrollHeight, clientHeight } = currentRef;
         dispatch(
-          setProductPage({
-            scroll: isOnscroll,
-            option: {
+          updateScrollMetrics({
               scrollTop,
               scrollHeight,
               clientHeight,
               isBottom
-            },
           })
         );
-        if (scrollTop + clientHeight >= scrollHeight - 45)
+        if (scrollTop + clientHeight >= scrollHeight - 45){
           setIsBottom(true);
-        else setIsBottom(false);
+          dispatch(setIsBottomAction(true));
+        }else{
+          setIsBottom(false);
+          dispatch(setIsBottomAction(false));
+        }
       }
     };
 
