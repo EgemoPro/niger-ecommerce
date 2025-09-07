@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import AuthBtn from "../auth/auth-btn";
-import {UserInfo} from "../auth/user-info";
+import { UserInfo } from "../auth/user-info";
 import { checkAuth } from "../../redux/Slices/authSlice";
 
 
@@ -13,17 +13,17 @@ import { checkAuth } from "../../redux/Slices/authSlice";
 const ProductGridHeader = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const {
     productPage: { content },
   } = useSelector((state) => state.settings);
 
-  const {user, isLoading} = useSelector((state) => state.auth);
+  const { user, isLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if(user != null && Object.keys(user.payload).length > 1){
+    if (user != null && Object.keys(user.payload).length > 1) {
       setIsAuthenticated(true)
-    }else{
+    } else {
       setIsAuthenticated(false)
       dispatch(checkAuth())
     }
@@ -34,14 +34,14 @@ const ProductGridHeader = () => {
   /**
    * scrollTop + scrollHeight = clientHeight
   */
- useEffect(() => {
-   
+  useEffect(() => {
+
     if (
       content.scroll.metrics.scrollTop + content.scroll.metrics.clientHeight >=
       content.scroll.metrics.scrollHeight - 45
     ) {
-      // console.log("hello bro", isVisible);
-      setIsVisible(!isVisible)
+      console.log("hello bro", isVisible);
+      setIsVisible(true)
     }
   }, [content, isVisible]);
 
@@ -58,12 +58,12 @@ const ProductGridHeader = () => {
         </Link>
         <div className="flex items-center h-auto p-1 gap-2 max-md:gap-1">
           <Link to={`/shop`} className="flex items-center h-auto p-1 gap-2" >
-            <BotIcon size={29} />  <span  className="max-md:hidden">Assistant</span>
+            <BotIcon size={29} />  <span className="max-md:hidden">Assistant</span>
           </Link>
           <Link to={`/shop`} className="flex items-center h-auto p-1 gap-2" >
             <StoreIcon size={20} /> <span className="max-md:hidden">Boutique</span>
           </Link>
-          {isAuthenticated == false ? <AuthBtn/>: <UserInfo/>}
+          {isAuthenticated == false ? <AuthBtn /> : <UserInfo />}
         </div>
       </CardTitle>
     </CardHeader>

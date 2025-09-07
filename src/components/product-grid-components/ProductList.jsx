@@ -10,7 +10,6 @@ import {
   setIsScrolling as setIsScrollingAction, 
   setIsBottom as setIsBottomAction,
 } from "../../redux/Slices/settingsSlice";
-import { set } from "react-hook-form";
 
 const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
   const dispatch = useDispatch();
@@ -56,7 +55,7 @@ const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
         scrollElement.removeEventListener("scroll", handleScroll);
       }
     };
-  }, []);
+  }, [dispatch, isBottom]);
 
   return isDataLoadig ? (
     <Loader />

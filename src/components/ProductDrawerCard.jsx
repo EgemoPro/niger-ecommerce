@@ -10,12 +10,10 @@ import ImageCarousel from "./ImageCarousel";
 import ProductDetails, { sizes } from "./ProductDetails";
 import ActionButtons from "./ActionButtons";
 import { useDispatch, useSelector } from "react-redux";
-import SharePopover from "./SharePopover";
 import { handleBacketAction } from "../redux/method";
 import { ScrollArea } from "./ui/scroll-area";
 import { toggleFavoriteAsync } from "../redux/Slices/userSlice";
 import TabsBar from "./tabs-bar/tabs-bar";
-import { Button } from "./ui/button";
 
 
 
@@ -70,7 +68,7 @@ const ProductDrawerCard = ({ product, onClose }) => {
 
   useEffect(() => {
     setIsDrawerOpen(true);
-  }, []);
+  }, [isDrawerOpen]);
 
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);

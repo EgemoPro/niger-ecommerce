@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProductGrid from "../../components/product-grid-component.jsx";
 import ProductDrawerCard from "../../components/ProductDrawerCard.jsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchProducts } from "../../redux/Slices/initialData.js";
 
 const ProductsPage = () => {

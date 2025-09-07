@@ -4,17 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import ProductFilters from "./product-grid-components/ProductFilters";
 import ProductGridHeader from "./product-grid-components/ProductGridHeader";
 import ProductList from "./product-grid-components/ProductList";
-import { fetchProducts } from "../redux/Slices/initialData";
 
 const ProductGrid = ({ onOpen }) => {
   const dispatch = useDispatch();
   const { data: products, status, error } = useSelector((state) => state.data);
   
-  // useEffect(() => {
-  //   if (status === "idle") {
-  //     dispatch(fetchProducts({}));
-  //   } 
-  // }, [status, dispatch]);
 
   // Cette fonction calcule et mémorise les valeurs suivantes à partir des produits:
   // - Le prix minimum parmi tous les produits
@@ -23,7 +17,7 @@ const ProductGrid = ({ onOpen }) => {
   // La fonction n'est recalculée que si la liste des produits change
   const { minPrice, maxPrice, categories } = useMemo(() => {
     const prices = products.map((product) => product.price);
-    console.log(prices)
+    console.log(JSON.stringify(products[0]))
     return {
       minPrice: Math.min(...prices),
       maxPrice: Math.max(...prices),
