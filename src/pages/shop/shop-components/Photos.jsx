@@ -19,10 +19,10 @@ export default function ShopPhotos() {
         {Array.from({ length: 9 }).map((_, index) => (
           <div
             key={index}
-            className="aspect-square bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300"
+            className="aspect-square bg-card/80 backdrop-blur-sm rounded-lg border border-border shadow-sm overflow-hidden group hover:shadow-md hover:border-primary/20 transition-all duration-300"
             style={{ animationDelay: `${0.1 * index}s` }}
           >
-            <div className="w-full h-full bg-secondary/10 animate-pulse" />
+            <div className="w-full h-full bg-muted animate-pulse" />
           </div>
         ))}
       </div>

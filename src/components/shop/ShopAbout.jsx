@@ -9,14 +9,14 @@ export const ShopAbout = ({ description, popularProducts }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
       <div className="md:col-span-1 space-y-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
-          <h2 className="text-heading-2 mb-6 flex items-center gap-2">
+        <div className="bg-card/80 backdrop-blur-sm rounded-lg border border-border shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300 p-6">
+          <h2 className="text-2xl mb-6 flex items-center gap-2 font-semibold text-foreground">
             <Store className="w-5 h-5 text-primary" />
             À propos
           </h2>
           <div className="space-y-6">
-            <p className="text-body text-secondary leading-relaxed">{description}</p>
-            <Separator className="bg-secondary/20" />
+            <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+            <Separator className="bg-border" />
             <div className="space-y-4">
               {[
                 { icon: MapPin, text: "15 Rue du Commerce, Paris, France" },
@@ -27,18 +27,18 @@ export const ShopAbout = ({ description, popularProducts }) => {
               ].map(({ icon: Icon, text, isLink }, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 group hover:text-primary transition-colors duration-300"
+                  className="flex items-center gap-3 group hover:text-primary transition-colors duration-300 text-foreground"
                 >
                   <Icon className="w-5 h-5 text-primary group-hover:scale-110 transition-transform duration-300" />
                   {isLink ? (
-                    <a href="#" className="hover:underline">{text}</a>
+                    <a href="#" className="hover:underline text-muted-foreground hover:text-foreground">{text}</a>
                   ) : (
-                    <span>{text}</span>
+                    <span className="text-muted-foreground">{text}</span>
                   )}
                 </div>
               ))}
             </div>
-            <Separator className="bg-secondary/20" />
+            <Separator className="bg-border" />
             <div className="flex gap-3">
               {[Facebook, Instagram].map((Icon, index) => (
                 <Button

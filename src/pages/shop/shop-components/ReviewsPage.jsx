@@ -19,13 +19,13 @@ const ShopReviewsPage = () => {
         {Array.from({ length: 5 }).map((_, index) => (
           <div
             key={index}
-            className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 group hover:shadow-xl transition-all duration-300"
+            className="bg-card/80 backdrop-blur-sm rounded-lg border border-border shadow-sm p-6 group hover:shadow-md hover:border-primary/20 transition-all duration-300"
             style={{ animationDelay: `${0.1 * index}s` }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-secondary/10 animate-pulse" />
+              <div className="w-12 h-12 rounded-full bg-muted animate-pulse" />
               <div>
-                <div className="h-4 bg-secondary/10 rounded-full w-32 mb-2 animate-pulse" />
+                <div className="h-4 bg-muted rounded-full w-32 mb-2 animate-pulse" />
                 <div className="flex gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="w-4 h-4 text-primary fill-primary" />
@@ -34,8 +34,8 @@ const ShopReviewsPage = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <div className="h-4 bg-secondary/10 rounded-full animate-pulse" />
-              <div className="h-4 bg-secondary/10 rounded-full w-3/4 animate-pulse" />
+              <div className="h-4 bg-muted rounded-full animate-pulse" />
+              <div className="h-4 bg-muted rounded-full w-3/4 animate-pulse" />
             </div>
           </div>
         ))}

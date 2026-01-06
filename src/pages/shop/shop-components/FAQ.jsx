@@ -26,14 +26,14 @@ export default function ShopFAQ() {
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300"
+            className="bg-card/80 backdrop-blur-sm rounded-lg border border-border shadow-sm overflow-hidden group hover:shadow-md hover:border-primary/20 transition-all duration-300"
             style={{ animationDelay: `${0.1 * index}s` }}
           >
             <button className="w-full p-6 text-left">
-              <h3 className="font-medium text-lg text-secondary-foreground group-hover:text-primary transition-colors">
+              <h3 className="font-medium text-lg text-foreground group-hover:text-primary transition-colors">
                 {faq.question}
               </h3>
-              <p className="mt-2 text-secondary">{faq.answer}</p>
+              <p className="mt-2 text-muted-foreground">{faq.answer}</p>
             </button>
           </div>
         ))}

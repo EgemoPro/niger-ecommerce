@@ -13,16 +13,16 @@ export default function ShopChat() {
   if (!shop) return null;
 
   return (
-    <div className="animate-fade-in h-[calc(100vh-200px)] flex flex-col">
-      <div className="flex items-center gap-3 p-4 border-b">
-        <div className="w-10 h-10 bg-gradient-to-br from-primary/10 to-purple-100 rounded-lg flex items-center justify-center">
+    <div className="animate-fade-in h-[calc(100vh-200px)] flex flex-col bg-background">
+      <div className="flex items-center gap-3 p-4 border-b border-border bg-card/50">
+        <div className="w-10 h-10 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg flex items-center justify-center border border-border">
           <Store className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <h2 className="text-heading-3 font-semibold text-secondary-foreground tracking-tight">
+          <h2 className="text-lg font-semibold text-foreground tracking-tight">
             {shop.name}
           </h2>
-          <p className="text-small font-medium text-secondary leading-relaxed">
+          <p className="text-sm font-medium text-muted-foreground leading-relaxed">
             En ligne
           </p>
         </div>
@@ -30,37 +30,37 @@ export default function ShopChat() {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="flex justify-start">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl rounded-tl-none px-4 py-2.5 shadow-sm max-w-[80%]">
-            <p className="text-body text-secondary-foreground leading-relaxed">
+          <div className="bg-card/80 backdrop-blur-sm rounded-lg rounded-tl-none px-4 py-2.5 shadow-sm border border-border max-w-[80%]">
+            <p className="text-sm text-foreground leading-relaxed">
               Bonjour ! Comment puis-je vous aider ?
             </p>
-            <span className="text-tiny text-secondary mt-1 block">
+            <span className="text-xs text-muted-foreground mt-1 block">
               10:30
             </span>
           </div>
         </div>
       </div>
 
-      <div className="p-4 bg-white/50 backdrop-blur-sm border-t">
+      <div className="p-4 bg-card/50 backdrop-blur-sm border-t border-border">
         <div className="flex gap-2">
           <Button 
             variant="outline" 
             size="icon" 
-            className="shrink-0 hover:bg-primary/5"
+            className="shrink-0 hover:bg-primary/5 hover:border-primary/20"
           >
             <Paperclip className="w-4 h-4" />
           </Button>
           <Button 
             variant="outline" 
             size="icon" 
-            className="shrink-0 hover:bg-primary/5"
+            className="shrink-0 hover:bg-primary/5 hover:border-primary/20"
           >
             <ImageIcon className="w-4 h-4" />
           </Button>
           <input
             type="text"
             placeholder="Écrivez votre message..."
-            className="flex-1 rounded-full px-4 py-2.5 bg-white border text-body placeholder:text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="flex-1 rounded-full px-4 py-2.5 bg-background border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/20"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
