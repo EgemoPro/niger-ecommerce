@@ -14,11 +14,15 @@ const TOKEN_NAME = 'jwt';
 
 
 (async () => {
-  const healthControll = await api.get(DEFAULT_PATH+"/health")
-  console.log("===socket health===", {
-    ...healthControll.data
-  })
-
+  try {
+    const healthControll = await api.get(DEFAULT_PATH+"/health")
+    console.log("===socket health===", {
+      ...healthControll.data
+    })
+  } catch (error) {
+    console.warn("⚠️ Backend health check failed - backend may not be running:", error.message)
+    console.log("💡 Make sure your backend server is running on http://localhost:8173")
+  }
 })()
 
 
