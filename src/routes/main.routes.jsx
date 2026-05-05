@@ -25,6 +25,8 @@ import ShopFAQPage from "../pages/shop/shop-components/FAQPage";
 import ShopChatPage from "../pages/shop/shop-components/ChatPage";
 import ProductDetailPage from "../pages/shop/shop-components/ProductDetailPage";
 import ChatPage from "../pages/chat/chat-page";
+import MesFavoris from "../pages/favoris/mes-favoris";
+import BoutiquesSuivies from "../pages/favoris/boutiques-suivies";
 
 
 
@@ -151,6 +153,19 @@ const Router = () => {
     {
       path: "/chat",
       element: <ChatPage />,
+    },
+    {
+      path: "/favoris",
+      children: [
+        {
+          path: "",
+          element: <MesFavoris />,
+        },
+        {
+          path: "shops",
+          element: <BoutiquesSuivies />,
+        },
+      ],
     },
     
   ]);

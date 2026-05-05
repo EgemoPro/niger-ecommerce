@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { basketSlice } from './Slices/basketSlice';
 import dataSlice from './Slices/initialData';
 import { favorisSlice } from './Slices/favorisSlice';
+import { followingSlice } from './Slices/followingSlice';
+import conversationsSlice from './Slices/conversationsSlice';
 import authSlice from './Slices/authSlice'
 import userSlice from './Slices/userSlice';
 import profileSlice from './Slices/profileSlice';
@@ -24,6 +26,8 @@ export const store = configureStore({
         basket: basketSlice.reducer,
         data: dataSlice.reducer,
         favoris: favorisSlice.reducer,
+        following: followingSlice.reducer,
+        conversations: conversationsSlice.reducer,
         auth: authSlice.reducer,
         user: userSlice.reducer,
         profile: profileSlice.reducer,
