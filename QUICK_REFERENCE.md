@@ -1,381 +1,138 @@
-# 📊 RÉSUMÉ VISUEL - État du Projet vs Documentation
+# Quick Reference - Niger E-commerce Chat System
 
-**Quick Reference - Imprimer ou garder à côté** 🚀
+## File Paths Summary
 
----
+| Component | Path | Purpose |
+|-----------|------|---------|
+| Redux Slice | `/src/redux/Slices/conversationsSlice.js` | Main conversation state management |
+| Chat Component | `/src/components/chat/EmbeddedChatWindow.jsx` | Main UI component |
+| Socket Hook | `/src/hooks/useConversationSocket.js` | Real-time conversation management |
+| Socket Manager | `/src/Socket.js` | Socket.IO singleton |
+| HTTP Client | `/src/lib/axios.js` | Axios configuration with JWT injection |
+| Middleware | `/src/redux/middleware/socketMiddleware.js` | Socket event → Redux bridge |
+| Store Config | `/src/redux/store.js` | Redux store setup |
+| Environment | `/.env` | Configuration variables |
 
-## 🎯 VUE D'ENSEMBLE
+## Key State Storage (Redux)
 
+### conversations Slice
 ```
-DOCUMENT DE RÉFÉRENCE : FRONTEND_INTEGRATION_GUIDE.md (Avril 2026)
-└── Endpoints à implémenter : 30+
-└── Actions Redux nécessaires : 40+
-└── Pages à créer/adapter : 15+
-└── Temps estimé : 8-12 jours
-
-ÉTAT ACTUEL DU PROJET
-├── Stack OK ✅ (React, Vite, Redux, Axios, Socket.IO)
-├── Pages de base ✅ (Home, Products, User, Chat, Orders)
-├── Auth basique ✅ (Login/Register/Logout)
-├── Endpoints manquants ❌ (70-75% du travail)
-└── Gestion erreurs incomplète ⚠️
-```
-
----
-
-## 📈 COMPLETION CHART
-
-```
-AUTH                 [████████░░░░░░░░░░░░░░░░░░] 30% (gestion 423/429 manquante)
-PROFIL USER          [░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%  (À CONSTRUIRE)
-PRODUITS             [█████░░░░░░░░░░░░░░░░░░░░░] 20% (détail + comments manquent)
-COMMANDES            [░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%  (À CONSTRUIRE)
-PANIER               [██████░░░░░░░░░░░░░░░░░░░░] 25% (slice ok, page manquante)
-CHAT REST            [░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%  (À CONSTRUIRE)
-CHAT SOCKET          [███████░░░░░░░░░░░░░░░░░░░] 35% (events à adapter)
-FAVORIS              [███░░░░░░░░░░░░░░░░░░░░░░░] 15% (slice ok, endpoint incorrect)
-FOLLOWING            [░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%  (À CONSTRUIRE)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-OVERALL              [████░░░░░░░░░░░░░░░░░░░░░░] 25% (COMPLET)
-
-🎯 CIBLE : 100% en 8-12 jours
+state.conversations.messages          // Current conversation messages array
+state.conversations.currentConversation // Active conversation object
+state.conversations.typingUsers[id]   // Users typing in conversation
+state.conversations.unreadCounts[id]  // Unread message count per conversation
 ```
 
----
+## REST API Endpoints
 
-## 🔴 PRIORITÉS (ORDRE DE COMPLÉTUDE)
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/conversations` | List user's conversations |
+| GET | `/conversations/:id` | Get single conversation |
+| GET | `/conversations/:id/messages` | Fetch messages (paginated) |
+| POST | `/conversations` | Create new conversation |
+| POST | `/conversations/:id/messages` | Send message |
+| PUT | `/conversations/:id/messages/read` | Mark messages as read |
 
-### 🔴 HAUTEMENT PRIORITAIRE (Jour 1-4)
-```
-┌─────────────────────────────────────────┐
-│ 1️⃣ AUTH & PAGES LOGIN/REGISTER        │
-│   └─ 2-3 jours                         │
-│   └─ Bloque tous les autres            │
-├─────────────────────────────────────────┤
-│ 2️⃣ PANIER & CHECKOUT & COMMANDES      │
-│   └─ 3 jours                           │
-│   └─ Revenue-critical                  │
-├─────────────────────────────────────────┤
-│ 3️⃣ PROFIL UTILISATEUR                 │
-│   └─ 1 jour                            │
-│   └─ Fondation pour autres features    │
-└─────────────────────────────────────────┘
-```
+## Socket.IO Events
 
-### 🟡 PRIORITÉ MOYENNE (Jour 5-6)
+### Emitted (Client → Server)
 ```
-┌─────────────────────────────────────────┐
-│ 4️⃣ COMMENTAIRES PRODUITS               │
-│   └─ 1 jour                            │
-│   └─ Engagement                        │
-├─────────────────────────────────────────┤
-│ 5️⃣ CHAT REST + SOCKET                 │
-│   └─ 2 jours                           │
-│   └─ Communication client-seller       │
-└─────────────────────────────────────────┘
+joinConversation(conversationId, userId)
+leaveConversation(conversationId, userId)
+sendMessage(text, metadata)
+startTyping(conversationId)
+stopTyping(conversationId)
+markAsRead(messageIds)
 ```
 
-### 🟢 PRIORITÉ BASSE (Jour 7-8)
+### Received (Server → Client)
 ```
-┌─────────────────────────────────────────┐
-│ 6️⃣ FAVORIS & FOLLOWING                │
-│   └─ 1 jour                            │
-│   └─ Engagement                        │
-├─────────────────────────────────────────┤
-│ 7️⃣ POLISH & ERREURS GLOBALES          │
-│   └─ 2-3 jours                         │
-│   └─ UX/DX                             │
-└─────────────────────────────────────────┘
+newMessage(data)                    // New message
+conversationTyping(data)            // User typing
+conversationTypingStopped(data)     // User stopped
+messageRead(data)                   // Messages marked read
+messageDelivered(data)              // Message delivered
 ```
 
----
+## Redux Actions to Use
 
-## 📦 ENDPOINTS - MATRICE COMPLÈTE
+```javascript
+// For fetching
+dispatch(fetchConversations(userId))
+dispatch(fetchMessages(conversationId, page, limit))
+dispatch(createConversation(vendorId, userId))
 
-### AUTHENTIFICATION
-```
-┌─────────────────────────────────────────────────────────────┐
-│ ENDPOINT              │ MÉTHODE │ STATUS │ PRIORITÉ         │
-├─────────────────────────────────────────────────────────────┤
-│ /auth/user/register   │ POST    │ ✅ 80% │ FAIT             │
-│ /auth/user/login      │ POST    │ ✅ 70% │ À améliorer (429)│
-│ /auth/user/logout     │ POST    │ ✅ 100%│ FAIT             │
-│ /auth/user/profile    │ GET     │ ✅ 80% │ À tester         │
-└─────────────────────────────────────────────────────────────┘
-```
+// For real-time (auto-dispatched via socket)
+dispatch(newMessageReceived({...message}))
+dispatch(addTypingUser({conversationId, userId, userName}))
+dispatch(messagesMarkedAsRead({messageIds}))
 
-### PROFIL UTILISATEUR
-```
-┌─────────────────────────────────────────────────────────────┐
-│ /user/profile/:userId    │ GET    │ ❌ 0%  │ JOUR 2           │
-│ /user/profile/:userId    │ PUT    │ ❌ 0%  │ JOUR 2           │
-└─────────────────────────────────────────────────────────────┘
+// For selectors
+useSelector(s => conversationsSelectors.selectMessages(s))
+useSelector(s => conversationsSelectors.selectTypingUsers(s, convId))
 ```
 
-### PRODUITS & COMMENTAIRES
-```
-┌─────────────────────────────────────────────────────────────┐
-│ /products                │ GET    │ ⚠️ 50% │ À tester         │
-│ /products/:id            │ GET    │ ❌ 0%  │ JOUR 3           │
-│ /comments/:productId     │ GET    │ ❌ 0%  │ JOUR 3           │
-│ /comments/new            │ POST   │ ❌ 0%  │ JOUR 3           │
-│ /comments/:id            │ DELETE │ ❌ 0%  │ JOUR 3           │
-└─────────────────────────────────────────────────────────────┘
-```
+## useConversationSocket Hook
 
-### COMMANDES
-```
-┌─────────────────────────────────────────────────────────────┐
-│ /orders                  │ POST   │ ❌ 0%  │ JOUR 4 🔴        │
-│ /orders                  │ GET    │ ❌ 0%  │ JOUR 4 🔴        │
-│ /orders/:id              │ GET    │ ❌ 0%  │ JOUR 4 🔴        │
-│ /orders/:id/payment      │ PATCH  │ ❌ 0%  │ JOUR 4 (optionnel)│
-└─────────────────────────────────────────────────────────────┘
+```javascript
+const {
+  sendMessage,
+  startTyping,
+  stopTyping,
+  markAsRead,
+  typingUsers,
+  isSocketConnected
+} = useConversationSocket(conversationId);
+
+// Usage
+sendMessage('Hello!');
+startTyping();  // Auto-stops after 3s
+markAsRead([msgId1, msgId2]);
 ```
 
-### CHAT (REST API)
-```
-┌─────────────────────────────────────────────────────────────┐
-│ /conversations           │ POST   │ ❌ 0%  │ JOUR 5           │
-│ /conversations           │ GET    │ ❌ 0%  │ JOUR 5           │
-│ /conversations/:id/msg   │ GET    │ ❌ 0%  │ JOUR 5           │
-└─────────────────────────────────────────────────────────────┘
-```
+## Critical Issues to Fix
 
-### FAVORIS & FOLLOWING
-```
-┌─────────────────────────────────────────────────────────────┐
-│ /user/favorites          │ POST   │ ⚠️ 40% │ À corriger (JOUR 6)
-│ /user/following          │ PUT    │ ❌ 0%  │ JOUR 6           │
-└─────────────────────────────────────────────────────────────┘
-```
+1. **Duplicate Actions** - `messageReceived` vs `newMessageReceived`
+2. **Dual Redux Slices** - conversations vs messages (legacy)
+3. **No Token Refresh** - 401 errors just redirect to login
+4. **Race Condition** - joinConversation needs retry on socket connect
+5. **Message ID Inconsistency** - Mix of `_id` and `id` fields
+6. **File Upload TODO** - Not implemented in MessageInput
 
----
+## Debug Checklist
 
-## 🛠️ FICHIERS CLÉS - ÉTAT ACTUEL
+- [ ] Check socket connection: `socketManager.isSocketConnected()`
+- [ ] Enable debug: `VITE_DEBUG_SOCKET=true` in .env
+- [ ] Monitor Redux: Use Redux DevTools browser extension
+- [ ] Check network: Browser DevTools Network tab
+- [ ] Monitor events: Look for socket emit/receive logs in console
+- [ ] Verify auth: Check JWT token in cookies/localStorage
 
-### EXCELLENTS (Utiliser comme base) ✅
-```
-✅ src/lib/axios.js
-   └─ Config OK, ajouter juste interceptor response
-
-✅ src/redux/Slices/authSlice.js
-   └─ Base OK, améliorer gestion erreurs
-
-✅ src/Socket.js
-   └─ Structure OK, adapter events seulement
-
-✅ src/redux/store.js
-   └─ Setup OK, ajouter conversationSlice
-```
-
-### À CORRIGER ⚠️
-```
-⚠️ src/redux/Slices/userSlice.js
-   └─ Renommer actions, ajouter profile, orders, etc.
-
-⚠️ src/pages/chat/chat-page.jsx
-   └─ Ajouter REST API + synchronisation Socket
-```
-
-### À CRÉER (NOUVEAUX) 🆕
-```
-🆕 src/pages/auth/login-page.jsx
-🆕 src/pages/auth/register-page.jsx
-🆕 src/pages/user/user-profile-view.jsx
-🆕 src/pages/user/user-profile-edit.jsx
-🆕 src/pages/favorites/favorites-page.jsx
-🆕 src/pages/following/following-page.jsx
-🆕 src/pages/cart/cart-page.jsx
-🆕 src/pages/checkout/checkout-page.jsx
-🆕 src/pages/orders/order-detail-page.jsx
-🆕 src/components/product/CommentSection.jsx
-🆕 src/services/userService.js
-🆕 src/services/productService.js
-🆕 src/services/orderService.js
-🆕 src/services/conversationService.js
-🆕 src/services/favoriteService.js
-🆕 src/redux/Slices/conversationSlice.js
-```
-
----
-
-## 🚨 RISQUES & GOTCHAS
-
-### ⚠️ RISQUE #1 : BaseURL inconsistent
-```
-CODE ACTUEL:  baseURL: '/api'
-DOCUMENTATION: http://localhost:8000
-SOLUTION: Vérifier vite.config.js proxy
-IMPACT: 🔴 CRITIQUE — Blocage complet si faux
-```
-
-### ⚠️ RISQUE #2 : Format de réponse
-```
-CODE ASSUME:     response.data = {token, user, ...}
-DOCUMENTATION:   response.data = {success, error, payload, token}
-SOLUTION: Adapter tous les slices pour wrapper payload
-IMPACT: 🟡 MOYEN — Requête échoue silencieusement
-```
-
-### ⚠️ RISQUE #3 : Gestion erreurs 423/429
-```
-CODE: Pas de gestion spécifique
-DOCUMENTATION: Codes spécifiques pour lockout/rate-limit
-SOLUTION: Ajouter interceptor response
-IMPACT: 🟡 MOYEN — UX dégradée en cas de blocage
-```
-
-### ⚠️ RISQUE #4 : Socket.IO events
-```
-CODE: Format ancien (roomId, joinRoom, etc.)
-DOCUMENTATION: Format nouveau (conversationId, joinConversation, etc.)
-SOLUTION: Adapter SocketManager
-IMPACT: 🟡 MOYEN — Chat dysfonctionnel
-```
-
-### ⚠️ RISQUE #5 : JWT expiration
-```
-CODE: Pas de vérification
-DOCUMENTATION: Expire après 30 jours
-SOLUTION: Ajouter jwt-decode check
-IMPACT: 🟢 BAS — Utilisateur redirigé seulement au 401
-```
-
----
-
-## 📅 PLANNING RECOMMANDÉ
+## Configuration Variables
 
 ```
-SEMAINE 1
-├─ Lundi     (Jour 1) : Fondations (Axios, Redux, JWT)
-├─ Mardi     (Jour 2) : Auth pages + Profil utilisateur
-├─ Mercredi  (Jour 3) : Produits + Commentaires
-├─ Jeudi     (Jour 4) : Panier + Commandes (PART 1)
-└─ Vendredi  (Jour 5) : Panier + Commandes (PART 2) + Chat REST
-
-SEMAINE 2
-├─ Lundi     (Jour 6) : Chat Socket + Favoris/Following
-├─ Mardi     (Jour 7) : Tests & Bug fixes
-├─ Mercredi  (Jour 8) : Polish & Edge cases
-└─ Jeudi     (Jour 9) : Code review & Documentation
+VITE_SOCKET_SERVICE_HOST = ws://localhost:6000
+VITE_API_URL = http://localhost:8173
+VITE_DEBUG_SOCKET = true|false
+VITE_CHAT_MAX_MESSAGES_PER_ROOM = 500
+VITE_CHAT_TYPING_TIMEOUT = 3000
 ```
 
-**Variance** : ±2 jours selon complexité backend
-
----
-
-## ✅ CHECKLIST DE VÉRIFICATION
-
-### Avant de coder (Jour 0)
-```
-[ ] Backend running on http://localhost:8000
-[ ] Gateway responding to /health
-[ ] Vite proxy configured (/api → backend)
-[ ] JWT cookie being set on login
-[ ] CORS configured on backend
-```
-
-### À la fin de chaque jour
-```
-[ ] Code compiles sans warnings
-[ ] No console errors
-[ ] Redux DevTools showing correct state
-[ ] API calls visible in Network tab
-[ ] Git commit with descriptive message
-```
-
-### À la fin de chaque phase
-```
-[ ] All endpoints in phase working
-[ ] Error handling tested (400, 401, 404, 500)
-[ ] Loading states working
-[ ] No API data leaks in localStorage (sensitive info)
-[ ] Responsive design checked (mobile view)
-```
-
-### Final acceptance (Day 12)
-```
-[ ] Full user flow working (register → login → buy → chat)
-[ ] All 30+ endpoints tested
-[ ] Error messages user-friendly
-[ ] Performance acceptable (< 2s per page load)
-[ ] No memory leaks (DevTools)
-[ ] Documentation updated
-```
-
----
-
-## 💬 COMMUNICATION
-
-**Quand contacter le backend team** :
-```
-❓ "Quel est le format exact de response.data ?"
-   → Confirmer { success, error, payload, token? }
-
-❓ "Le JWT doit-il inclure des custom claims ?"
-   → Vérifier pour userId, email, role, etc.
-
-❓ "Y a-t-il une liste exacte des codes d'erreur ?"
-   → Mapping des 400, 409, 423, 429 par endpoint
-
-❓ "Les sockets events correspondent à la doc ?"
-   → Valider joinConversation, sendMessage, typing, etc.
-
-❓ "Quel est le timeout Axios recommandé ?"
-   → Pour uploads volumineux notamment
-```
-
----
-
-## 📞 RESSOURCES
-
-**Documents existants** :
-- ✅ `FRONTEND_INTEGRATION_GUIDE.md` — Doc complète
-- ✅ `SOCKET_README.md` — Socket.IO specifics
-- ✅ `REDUX_IMPROVEMENTS.md` — Redux patterns
-- ✅ `RAPPORT_ANALYSE_CODE.md` — Code analysis
-- ✅ `progress.yml` — État du projet
-
-**À créer** :
-- 📝 Tests documentation
-- 📝 API response examples
-- 📝 Error codes mapping
-
----
-
-## 🎯 SUCCESS DEFINITION
+## Data Flow Summary
 
 ```
-✅ PROJET TERMINÉ QUAND:
+User Action → MessageInput → EmbeddedChatWindow → useConversationSocket
+    ↓
+Two paths:
+├→ Socket: socketManager.emit() → Server → Broadcast
+└→ HTTP: dispatch(sendMessage()) → axios → REST API → Server
 
-1. TOUS les 30+ endpoints du guide implémentés
-2. TOUS les cas d'erreur gérés (400, 401, 404, 423, 429, 500, 502)
-3. User peut:
-   - Se connecter/déconnecter
-   - Voir son profil
-   - Naviguer produits
-   - Ajouter commentaires
-   - Créer panier & commander
-   - Chatter en temps réel
-   - Ajouter favoris
-   - Suivre boutiques
-4. Pages responsive (mobile, tablet, desktop)
-5. Pas d'erreur console
-6. Pas de memory leaks
-7. Code bien documenté
+Receive:
+Server Event → socketManager listener → useConversationSocket handler
+    ↓
+dispatch(newMessageReceived()) → Redux reducer → State update
+    ↓
+MessageList component re-renders → User sees message
 ```
 
----
-
-**🚀 READY TO CODE!**
-
-*Utiliser ce document comme référence pendant le développement*  
-*Cocher les boxes au fur et à mesure*  
-*Commit à la fin de chaque jour*
-
----
-
-**Version** : 1.0 (Mai 2026)  
-**Dernière mise à jour** : Aujourd'hui  
-**Statut** : ✅ VALIDATED BY ANALYSIS

@@ -19,6 +19,9 @@ const initialState = {
     limit: 50,
     total: 0,
   },
+  // Real-time state
+  typingUsers: {}, // { conversationId: [{ userId, userName }] }
+  unreadCounts: {}, // { conversationId: number }
 };
 
 export const conversationsSlice = createSlice({
@@ -75,7 +78,8 @@ export const conversationsSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Add message to current conversation
+    // ✅ DEPRECATED: Utiliser newMessageReceived à la place
+    // Maintenu pour rétrocompatibilité uniquement
     messageAdded: (state, action) => {
       if (state.messages) {
         state.messages.push(action.payload);
@@ -83,10 +87,11 @@ export const conversationsSlice = createSlice({
       }
     },
 
-    // Update message (for read status, etc)
+    // ✅ DEPRECATED: Utiliser messagesMarkedAsRead à la place
+    // Maintenu pour rétrocompatibilité uniquement
     messageUpdated: (state, action) => {
       const { messageId, updates } = action.payload;
-      const message = state.messages.find((m) => m.id === messageId);
+      const message = state.messages.find((m) => m.id === messageId || m._id === messageId);
       if (message) {
         Object.assign(message, updates);
       }
@@ -122,16 +127,19 @@ export const conversationsSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Real-time updates from Socket.IO
+    // ✅ DEPRECATED: Utiliser newMessageReceived à la place
+    // Maintenu pour rétrocompatibilité uniquement
     messageReceived: (state, action) => {
       const message = action.payload;
       // Check if message already exists (avoid duplicates)
-      if (!state.messages.find((m) => m.id === message.id)) {
+      if (!state.messages.find((m) => m.id === message.id || m._id === message._id)) {
         state.messages.push(message);
         state.totalMessages = state.messages.length;
       }
     },
 
+    // ✅ DEPRECATED: Utiliser addTypingUser/removeTypingUser à la place
+    // Maintenu pour rétrocompatibilité uniquement
     userTyping: (state, action) => {
       // Store typing user info for UI display
       if (!state.currentConversation) return;
@@ -145,7 +153,120 @@ export const conversationsSlice = createSlice({
       state.currentConversation = null;
     },
 
-    clearMessages: (state) => {
+    // ===== REAL-TIME UPDATES FROM SOCKET.IO =====
+
+    /**
+     * Réception d'un nouveau message en temps réel
+     * Normalise les IDs et évite les doublons
+     */
+    newMessageReceived: (state, action) => {
+      const message = action.payload;
+      // Normaliser l'ID du message
+      const messageId = message._id || message.id;
+      
+      // Éviter les doublons
+      if (!state.messages.find((m) => m._id === messageId || m.id === messageId)) {
+        state.messages.push({
+          ...message,
+          _id: messageId,
+          id: messageId,
+          read: message.read || false,
+          delivered: message.delivered !== undefined ? message.delivered : true,
+          createdAt: message.timestamp || message.createdAt || new Date().toISOString()
+        });
+        state.totalMessages = state.messages.length;
+      }
+    },
+
+    /**
+     * Mise à jour du statut de frappe
+     * Affiche qui est en train de taper dans la conversation
+     */
+    conversationTypingUpdate: (state, action) => {
+      const { conversationId, typingUsers } = action.payload;
+      
+      if (state.currentConversation && state.currentConversation._id === conversationId) {
+        state.typingUsers[conversationId] = typingUsers || [];
+      }
+    },
+
+    /**
+     * Arrêt de la frappe
+     */
+    conversationTypingStopped: (state, action) => {
+      const { conversationId, userId } = action.payload;
+      
+      if (state.typingUsers[conversationId]) {
+        state.typingUsers[conversationId] = state.typingUsers[conversationId].filter(
+          (u) => u.userId !== userId
+        );
+      }
+    },
+
+    /**
+     * Mise à jour du statut "lu" des messages
+     */
+    messagesMarkedAsRead: (state, action) => {
+      const { messageIds } = action.payload;
+      
+      state.messages.forEach((message) => {
+        if (messageIds.includes(message._id) || messageIds.includes(message.id)) {
+          message.read = true;
+        }
+      });
+    },
+
+    /**
+     * Mettre à jour le statut de livraison d'un message
+     */
+    messageDelivered: (state, action) => {
+      const { messageId } = action.payload;
+      const message = state.messages.find((m) => m._id === messageId || m.id === messageId);
+      
+      if (message) {
+        message.delivered = true;
+      }
+    },
+
+    /**
+     * Ajouter un utilisateur qui tape
+     */
+    addTypingUser: (state, action) => {
+      const { conversationId, userId, userName } = action.payload;
+      
+      if (!state.typingUsers[conversationId]) {
+        state.typingUsers[conversationId] = [];
+      }
+      
+      // Éviter les doublons
+      if (!state.typingUsers[conversationId].find((u) => u.userId === userId)) {
+        state.typingUsers[conversationId].push({ userId, userName });
+      }
+    },
+
+    /**
+     * Retirer un utilisateur qui tape
+     */
+    removeTypingUser: (state, action) => {
+      const { conversationId, userId } = action.payload;
+      
+      if (state.typingUsers[conversationId]) {
+        state.typingUsers[conversationId] = state.typingUsers[conversationId].filter(
+          (u) => u.userId !== userId
+        );
+      }
+    },
+
+    /**
+     * Définir le nombre de messages non lus
+     */
+    setUnreadCount: (state, action) => {
+      const { conversationId, count } = action.payload;
+      state.unreadCounts[conversationId] = count;
+    },
+
+    // Alias pour clearMessages (doublon corrigé)
+    clearErrors: (state) => {
       state.successMessage = null;
       state.error = null;
     },
@@ -174,6 +295,15 @@ export const {
   messageReceived,
   userTyping,
   clearMessages,
+  clearErrors,
+  newMessageReceived,
+  conversationTypingUpdate,
+  conversationTypingStopped,
+  messagesMarkedAsRead,
+  messageDelivered,
+  addTypingUser,
+  removeTypingUser,
+  setUnreadCount,
 } = conversationsSlice.actions;
 
 // Sélecteurs
@@ -189,6 +319,18 @@ export const conversationsSelectors = {
   selectError: (state) => state.conversations?.error,
   selectSuccessMessage: (state) => state.conversations?.successMessage,
   selectPagination: (state) => state.conversations?.pagination,
+  
+  // Real-time selectors
+  selectTypingUsers: (state, conversationId) => {
+    if (!conversationId) return [];
+    return state.conversations?.typingUsers?.[conversationId] || [];
+  },
+  selectAllTypingUsers: (state) => state.conversations?.typingUsers || {},
+  selectUnreadCount: (state, conversationId) => {
+    if (!conversationId) return 0;
+    return state.conversations?.unreadCounts?.[conversationId] || 0;
+  },
+  selectAllUnreadCounts: (state) => state.conversations?.unreadCounts || {},
 };
 
 // Thunks asynchrones

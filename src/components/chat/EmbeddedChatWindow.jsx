@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageCircle,
@@ -13,7 +14,9 @@ import {
   Circle,
   MoreVertical
 } from 'lucide-react';
-import { useSocket } from '../../hooks/useSocket';
+import { useConversationSocket } from '../../hooks/useConversationSocket';
+import { fetchMessages, sendMessage } from '../../redux/Slices/conversationsSlice';
+import { conversationsSelectors } from '../../redux/Slices/conversationsSlice';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
@@ -22,61 +25,58 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 
 const EmbeddedChatWindow = ({ 
-  roomId, 
+  conversationId,
+  roomId, // Legacy support
   roomType = 'user',
   recipient = null,
   className = ""
 }) => {
+  const dispatch = useDispatch();
+  const actualConversationId = conversationId || roomId;
+  
+  // État depuis Redux
+  const messages = useSelector(conversationsSelectors.selectMessages);
+  const isLoadingMessages = useSelector(conversationsSelectors.selectIsLoadingMessages);
+  const currentUser = useSelector((state) => state.auth?.user);
+  const typingUsers = useSelector((state) =>
+    conversationsSelectors.selectTypingUsers(state, actualConversationId)
+  );
+
+  // Hook Socket.IO pour la conversation
   const {
-    isConnected,
-    connectionStatus,
-    sendMessage,
-    joinRoom,
-    leaveRoom,
-    markRoomMessagesAsRead,
+    sendMessage: sendSocketMessage,
     startTyping,
     stopTyping,
-    getUnreadMessagesCount,
-    messages,
-    getOnlineStatus,
-    isUserTyping,
-    currentUserId
-  } = useSocket();
+    markAsRead,
+    isTyping: isUserTyping,
+    isSocketConnected,
+    typingUsers: socketTypingUsers
+  } = useConversationSocket(actualConversationId);
 
+  // État local
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Messages de la room courante
-  const currentMessages = messages.messagesByRoom[roomId] || [];
-  const unreadCount = getUnreadMessagesCount(roomId);
-  const isRecipientOnline = recipient?.id ? getOnlineStatus(recipient.id) : false;
-  const showTyping = isUserTyping(roomId, recipient?.id);
-
-  // Rejoindre la room lors du montage
+  // Charger les messages au montage
   useEffect(() => {
-    if (roomId && isConnected) {
-      joinRoom(roomId, roomType);
-    }
+    if (!actualConversationId) return;
     
-    return () => {
-      if (roomId) {
-        leaveRoom(roomId);
-      }
-    };
-  }, [roomId, roomType, isConnected, joinRoom, leaveRoom]);
+    setIsLoadingInitial(true);
+    dispatch(fetchMessages(actualConversationId, 1, 50))
+      .then(() => {
+        setIsLoadingInitial(false);
+        // Marquer comme lus après le chargement
+        setTimeout(() => markAsRead(), 500);
+      })
+      .catch(() => setIsLoadingInitial(false));
+  }, [actualConversationId, dispatch, markAsRead]);
 
-  // Marquer les messages comme lus
-  useEffect(() => {
-    if (currentMessages.length > 0) {
-      markRoomMessagesAsRead(roomId);
-    }
-  }, [currentMessages.length, roomId, markRoomMessagesAsRead]);
-
-  // Auto-scroll vers le bas
+  // Auto-scroll vers le bas quand de nouveaux messages arrivent
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentMessages.length]);
+  }, [messages.length]);
 
   // Focus sur l'input lors du montage
   useEffect(() => {
@@ -85,12 +85,14 @@ const EmbeddedChatWindow = ({
     }, 100);
   }, []);
 
-  const handleSendMessage = (message, type = 'text') => {
-    if (!message.trim() || !isConnected) return;
+  const handleSendMessage = (messageText, type = 'text') => {
+    if (!messageText.trim() || !isSocketConnected) return;
 
-    sendMessage(roomId, message, recipient?.id);
+    // Envoyer via Socket.IO pour la synchronisation temps réel
+    sendSocketMessage(messageText);
+    
     setIsTyping(false);
-    stopTyping(roomId);
+    stopTyping();
   };
 
   const handleTyping = (isTypingNow) => {
@@ -98,9 +100,9 @@ const EmbeddedChatWindow = ({
       setIsTyping(isTypingNow);
       
       if (isTypingNow) {
-        startTyping(roomId);
+        startTyping();
       } else {
-        stopTyping(roomId);
+        stopTyping();
       }
     }
   };
@@ -121,26 +123,16 @@ const EmbeddedChatWindow = ({
   };
 
   const getConnectionStatusColor = () => {
-    switch (connectionStatus) {
-      case 'connected': return 'text-green-500';
-      case 'connecting': return 'text-yellow-500';
-      case 'reconnecting': return 'text-orange-500';
-      default: return 'text-red-500';
-    }
+    return isSocketConnected ? 'text-green-500' : 'text-red-500';
   };
 
   const getConnectionStatusText = () => {
-    switch (connectionStatus) {
-      case 'connected': 
-        return isRecipientOnline ? 'En ligne' : 'Hors ligne';
-      case 'connecting': 
-        return 'Connexion...';
-      case 'reconnecting': 
-        return 'Reconnexion...';
-      default: 
-        return 'Déconnecté';
-    }
+    return isSocketConnected ? 'En ligne' : 'Hors ligne';
   };
+
+  // Afficher l'indicateur de frappe si quelqu'un tape
+  const showTypingIndicator = socketTypingUsers && socketTypingUsers.length > 0;
+  const typingUserNames = socketTypingUsers?.map((u) => u.userName).join(', ') || '';
 
   return (
     <div className={`h-full bg-white rounded-lg border border-gray-200 flex flex-col overflow-hidden ${className}`}>
@@ -170,16 +162,6 @@ const EmbeddedChatWindow = ({
               <span>{getConnectionStatusText()}</span>
             </div>
           </div>
-          
-          {unreadCount > 0 && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="bg-red-500 text-white text-sm rounded-full w-6 h-6 flex items-center justify-center font-medium"
-            >
-              {unreadCount}
-            </motion.div>
-          )}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -213,37 +195,38 @@ const EmbeddedChatWindow = ({
       </div>
 
       {/* Zone de statut de connexion */}
-      {connectionStatus !== 'connected' && (
-        <div className={`px-4 py-2 text-sm text-center border-b border-gray-200 ${
-          connectionStatus === 'connecting' ? 'bg-yellow-50 text-yellow-800' :
-          connectionStatus === 'reconnecting' ? 'bg-orange-50 text-orange-800' :
-          'bg-red-50 text-red-800'
-        }`}>
-          {connectionStatus === 'connecting' && '🔄 Connexion au chat...'}
-          {connectionStatus === 'reconnecting' && '🔄 Reconnexion en cours...'}
-          {connectionStatus === 'error' && '❌ Erreur de connexion'}
-          {connectionStatus === 'disconnected' && '⚠️ Déconnecté du chat'}
+      {!isSocketConnected && (
+        <div className="px-4 py-2 text-sm text-center border-b border-gray-200 bg-red-50 text-red-800">
+          ⚠️ Connexion perdue - Tentative de reconnexion...
         </div>
       )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-        <MessageList
-          messages={currentMessages}
-          currentUserId={currentUserId}
-          isLoading={!isConnected}
-        />
-        
-        {/* Indicateur de frappe */}
-        <AnimatePresence>
-          {showTyping && (
-            <TypingIndicator 
-              userName={recipient?.name || 'Quelqu\'un'} 
+        {isLoadingInitial ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-gray-400 text-sm">Chargement des messages...</div>
+          </div>
+        ) : (
+          <>
+            <MessageList
+              messages={messages}
+              currentUserId={currentUser?.id}
+              isLoading={isLoadingMessages}
             />
-          )}
-        </AnimatePresence>
-        
-        <div ref={messagesEndRef} />
+            
+            {/* Indicateur de frappe */}
+            <AnimatePresence>
+              {showTypingIndicator && (
+                <TypingIndicator 
+                  userName={typingUserNames || 'Quelqu\'un'} 
+                />
+              )}
+            </AnimatePresence>
+            
+            <div ref={messagesEndRef} />
+          </>
+        )}
       </div>
 
       {/* Zone de saisie */}
@@ -252,9 +235,9 @@ const EmbeddedChatWindow = ({
           ref={inputRef}
           onSendMessage={handleSendMessage}
           onTyping={handleTyping}
-          disabled={!isConnected}
+          disabled={!isSocketConnected || isLoadingInitial}
           placeholder={
-            isConnected ? 
+            isSocketConnected ? 
             `Écrivez votre message à ${getChatTitle()}...` : 
             'Connexion en cours...'
           }

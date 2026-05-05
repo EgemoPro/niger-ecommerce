@@ -141,6 +141,38 @@ class SocketManager {
       this.notifyLocal('userTyping', data);
     });
 
+    // ===== CONVERSATIONS - Real-time events =====
+    
+    this.socket.on('newMessage', (data) => {
+      // data: { conversationId, messageId, text, sender, senderName, timestamp }
+      console.log('💬 New message received:', data);
+      this.notifyLocal('newMessage', data);
+    });
+
+    this.socket.on('conversationTyping', (data) => {
+      // data: { conversationId, userId, userName }
+      console.log('✏️ User typing in conversation:', data);
+      this.notifyLocal('conversationTyping', data);
+    });
+
+    this.socket.on('conversationTypingStopped', (data) => {
+      // data: { conversationId, userId }
+      console.log('✋ User stopped typing:', data);
+      this.notifyLocal('conversationTypingStopped', data);
+    });
+
+    this.socket.on('messageRead', (data) => {
+      // data: { conversationId, messageIds, readBy, readAt }
+      console.log('👁️ Messages marked as read:', data);
+      this.notifyLocal('messageRead', data);
+    });
+
+    this.socket.on('conversationUpdated', (data) => {
+      // data: { conversationId, updates }
+      console.log('🔄 Conversation updated:', data);
+      this.notifyLocal('conversationUpdated', data);
+    });
+
     // Notifications
     this.socket.on('notification', (data) => {
       console.log('🔔 Notification reçue:', data);
@@ -278,7 +310,8 @@ class SocketManager {
     this.messageQueue = [];
   }
 
-  // Méthodes utilitaires pour les messages
+  // ===== MESSAGES UTILITIES (LEGACY) =====
+  
   sendMessage(roomId, message, recipientId) {
     const payload = {
       roomId,
@@ -292,6 +325,129 @@ class SocketManager {
     // Alias conforme à la doc
     this.emit('chat:send-message', payload);
   }
+
+  // ===== CONVERSATIONS API (NEW - Real-time) =====
+
+  /**
+   * Rejoindre une conversation
+   * Permet de recevoir les messages temps réel pour cette conversation
+   * @param {string} conversationId - ID de la conversation
+   * @param {string} userId - ID de l'utilisateur
+   * @param {number} retries - Nombre de tentatives en cas d'échec
+   */
+  joinConversation(conversationId, userId, retries = 3) {
+    const attemptJoin = (attempt = 0) => {
+      if (!this.socket || !this.isConnected) {
+        if (attempt < retries) {
+          console.warn(`📌 Tentative ${attempt + 1} de rejoindre conversation ${conversationId} (pas encore connecté, réessai dans 500ms)`);
+          setTimeout(() => attemptJoin(attempt + 1), 500);
+        } else {
+          console.error(`❌ Impossible de rejoindre la conversation ${conversationId} après ${retries} tentatives`);
+        }
+        return;
+      }
+
+      const payload = {
+        conversationId,
+        userId,
+        joinedAt: Date.now()
+      };
+      this.emit('joinConversation', payload);
+      console.log('📌 Joined conversation:', conversationId);
+    };
+
+    attemptJoin();
+  }
+
+  /**
+   * Quitter une conversation
+   * Arrête de recevoir les updates temps réel
+   * @param {string} conversationId - ID de la conversation
+   * @param {string} userId - ID de l'utilisateur
+   */
+  leaveConversation(conversationId, userId) {
+    const payload = {
+      conversationId,
+      userId,
+      leftAt: Date.now()
+    };
+    this.emit('leaveConversation', payload);
+    console.log('📌 Left conversation:', conversationId);
+  }
+
+  /**
+   * Envoyer un message dans une conversation
+   * Format moderne pour conversations REST API
+   * @param {string} conversationId - ID de la conversation
+   * @param {string} text - Contenu du message
+   * @param {Object} metadata - Données supplémentaires (optionnel)
+   */
+  sendConversationMessage(conversationId, text, metadata = {}) {
+    const user = this.getCurrentUser();
+    if (!user) {
+      console.warn('Impossible d\'envoyer un message: utilisateur non connecté');
+      return;
+    }
+
+    const payload = {
+      conversationId,
+      text,
+      sender: user.id,
+      senderName: user.username || user.name,
+      timestamp: Date.now(),
+      ...metadata
+    };
+    this.emit('sendMessage', payload);
+  }
+
+  /**
+   * Envoyer l'événement "je suis en train de taper"
+   * @param {string} conversationId - ID de la conversation
+   */
+  startConversationTyping(conversationId) {
+    const user = this.getCurrentUser();
+    if (!user) return;
+
+    const payload = {
+      conversationId,
+      userId: user.id,
+      userName: user.username || user.name,
+      isTyping: true
+    };
+    this.emit('startTyping', payload);
+  }
+
+  /**
+   * Arrêter l'événement "je suis en train de taper"
+   * @param {string} conversationId - ID de la conversation
+   */
+  stopConversationTyping(conversationId) {
+    const user = this.getCurrentUser();
+    if (!user) return;
+
+    const payload = {
+      conversationId,
+      userId: user.id,
+      isTyping: false
+    };
+    this.emit('stopTyping', payload);
+  }
+
+  /**
+   * Marquer les messages comme lus
+   * @param {string} conversationId - ID de la conversation
+   * @param {string[]} messageIds - Liste des IDs des messages
+   */
+  markConversationMessagesAsRead(conversationId, messageIds = []) {
+    const payload = {
+      conversationId,
+      messageIds,
+      readAt: Date.now()
+    };
+    this.emit('markAsRead', payload);
+  }
+
+  // ===== LEGACY CHAT ROOM METHODS (BACKWARDS COMPATIBILITY) =====
 
   joinChatRoom(roomId) {
     // Format interne existant

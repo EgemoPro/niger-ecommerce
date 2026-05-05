@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { alert } from "@/components/ui/sonner";
+//import { alert } from "@/components/ui/sonner";
 
 import { 
   fetchUserProfile, 
