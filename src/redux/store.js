@@ -4,6 +4,9 @@ import dataSlice from './Slices/initialData';
 import { favorisSlice } from './Slices/favorisSlice';
 import authSlice from './Slices/authSlice'
 import userSlice from './Slices/userSlice';
+import profileSlice from './Slices/profileSlice';
+import ordersSlice from './Slices/ordersSlice';
+import commentsSlice from './Slices/commentsSlice';
 import { enableMapSet } from 'immer'
 import SettingSlice from './Slices/settingsSlice';
 import shopReducer from './Slices/shopSlice';
@@ -23,6 +26,9 @@ export const store = configureStore({
         favoris: favorisSlice.reducer,
         auth: authSlice.reducer,
         user: userSlice.reducer,
+        profile: profileSlice.reducer,
+        orders: ordersSlice.reducer,
+        comments: commentsSlice.reducer,
         settings: SettingSlice.reducer,
         shop: shopReducer.reducer,
         product: productReducer.reducer,
@@ -43,7 +49,9 @@ export const store = configureStore({
                 ignoredPaths: [
                     'notifications.notifications.timestamp',
                     'messages.messagesByRoom',
-                    'messages.onlineUsers'
+                    'messages.onlineUsers',
+                    'orders.orders',
+                    'comments.currentProductComments'
                 ]
             }
         })

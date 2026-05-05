@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import api from "../../lib/axios";
+import { NotificationSchema, validatePayload } from "../schemas/index";
+import { calculateUnreadCount, sortNotificationsByDate, cleanupOldNotifications } from "../utils/index";
+import { logger } from "../../services/logger";
 
 const initialState = {
     // Compteurs de notifications
@@ -32,44 +35,97 @@ const notificationSlice = createSlice({
     reducers: {
         // === COMPTEURS ===
         setBasket: (state, action) => {
-            state.basket = action.payload;
+            try {
+                const value = action.payload;
+                if (typeof value !== 'number' || value < 0) {
+                    logger.warn('Invalid basket count', { value });
+                    return;
+                }
+                state.basket = value;
+                logger.debug('Basket count updated', { count: value });
+            } catch (error) {
+                logger.error('Error in setBasket', error);
+            }
         },
         
         setMessage: (state, action) => {
-            state.message = action.payload;
+            try {
+                const value = action.payload;
+                if (typeof value !== 'number' || value < 0) {
+                    logger.warn('Invalid message count', { value });
+                    return;
+                }
+                state.message = value;
+                logger.debug('Message count updated', { count: value });
+            } catch (error) {
+                logger.error('Error in setMessage', error);
+            }
         },
         
         incrementMessage: (state) => {
-            state.message += 1;
+            try {
+                state.message += 1;
+                logger.debug('Message count incremented', { newCount: state.message });
+            } catch (error) {
+                logger.error('Error in incrementMessage', error);
+            }
         },
         
         resetMessageCount: (state) => {
-            state.message = 0;
+            try {
+                state.message = 0;
+                logger.debug('Message count reset');
+            } catch (error) {
+                logger.error('Error in resetMessageCount', error);
+            }
         },
         
         updateTotalUnread: (state) => {
-            state.totalUnread = state.notifications.filter(n => !n.read).length;
+            try {
+                state.totalUnread = calculateUnreadCount(state.notifications);
+                logger.debug('Total unread updated', { count: state.totalUnread });
+            } catch (error) {
+                logger.error('Error in updateTotalUnread', error);
+            }
         },
         
         // === NOTIFICATIONS ===
         addNotification: (state, action) => {
-            const notification = {
-                ...action.payload,
-                id: action.payload.id || Date.now(),
-                timestamp: action.payload.timestamp || new Date().toISOString(),
-                read: false
-            };
-            
-            // Ajouter en début de liste
-            state.notifications.unshift(notification);
-            
-            // Limiter à 100 notifications max
-            if (state.notifications.length > 100) {
-                state.notifications = state.notifications.slice(0, 100);
+            try {
+                const notificationData = action.payload;
+                
+                // Validation de la notification
+                const validation = validatePayload(NotificationSchema, notificationData, 'addNotification');
+                if (!validation.success) {
+                    state.error = 'Notification invalide';
+                    logger.error('Invalid notification in addNotification', validation.error);
+                    return;
+                }
+                
+                const notification = {
+                    ...validation.data,
+                    id: validation.data.id || Date.now(),
+                    timestamp: validation.data.timestamp || new Date().toISOString(),
+                    read: false
+                };
+                
+                // Ajouter en début de liste
+                state.notifications.unshift(notification);
+                logger.logNotificationAdded(notification);
+                
+                // Limiter à 100 notifications max
+                if (state.notifications.length > 100) {
+                    state.notifications = state.notifications.slice(0, 100);
+                    logger.debug('Notifications trimmed to 100');
+                }
+                
+                // Mettre à jour le compteur avec utilitaire
+                state.totalUnread = calculateUnreadCount(state.notifications);
+                state.error = null;
+            } catch (error) {
+                state.error = 'Erreur lors de l\'ajout de la notification';
+                logger.error('Error in addNotification reducer', error);
             }
-            
-            // Mettre à jour le compteur
-            state.totalUnread = state.notifications.filter(n => !n.read).length;
         },
         
         markAsRead: (state, action) => {
@@ -245,7 +301,7 @@ const notificationSlice = createSlice({
     }
 });
 
-export const {
+export const notificationActions = {
     // Compteurs
     setBasket,
     setMessage,
@@ -260,7 +316,7 @@ export const {
     markAllAsRead,
     deleteNotification,
     clearAllNotifications,
-    cleanupOldNotifications,
+    // cleanupOldNotifications,
     
     // Paramètres
     updateSettings,
@@ -277,7 +333,8 @@ export const {
     // Spécialisées
     addOrderNotification,
     addPriceDropNotification,
-    addStockNotification
+    addStockNotification,
+
 } = notificationSlice.actions;
 
 export default notificationSlice;

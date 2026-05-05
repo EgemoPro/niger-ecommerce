@@ -4,6 +4,7 @@ import ProductsPage from "../pages/products/products-page";
 import ProductSweaterPage from "../pages/productSweater/producr-sweater-page";
 import ErrorProductSweater from "../pages/productSweater/errors/ErrorProductSweater";
 import OrderPage from "../pages/orders/order-page";
+import OrderDetailPage from "../pages/orders/order-detail";
 import UserPage from "../pages/user/user-page";
 // import Shop from "../pages/shop/shop-page";
 import EditProfile from "../pages/user/sub-pages/edit-profile";
@@ -53,6 +54,19 @@ const Router = () => {
         {
           path: "orders",
           element: <OrderPage />,
+        },
+      ],
+    },
+    {
+      path: "/orders",
+      children: [
+        {
+          path: "",
+          element: <OrderPage />,
+        },
+        {
+          path: ":id",
+          element: <OrderDetailPage />,
         },
       ],
     },

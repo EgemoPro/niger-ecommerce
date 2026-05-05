@@ -82,20 +82,33 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
   
   try {
     if(endpoint === 'auth/user/logout') {
-      await api.get(endpoint, data);
+      await api.post(endpoint, data);
       dispatch(authLogout());
       return true;
     }
+    
     const response = await api.post(endpoint, data);
-    console.log("auth response", response)
-    const { token, ...user } = response.data;
+    console.log("auth response", response);
+    
+    // Parse response according to API format: { success, error, payload, token }
+    const { payload, token } = response.data;
+    
+    if (!token) {
+      throw new Error('Token manquant dans la réponse');
+    }
+    
     localStorage.setItem(TOKEN_KEY, token);
-    Cookies.set(TOKEN_KEY, token)
-    dispatch(successAction({ user, token }));
+    Cookies.set(TOKEN_KEY, token, { 
+      secure: true, 
+      sameSite: 'Strict',
+      maxAge: 30 * 24 * 60 * 60 // 30 days
+    });
+    
+    dispatch(successAction({ user: payload, token }));
     return true;
   } catch (error) {
-    console.log("auth error", error.response.data)
-    const errorMessage = error.response?.data?.error || 'Une erreur est survenue.';
+    console.error("auth error", error.response?.data || error.message);
+    const errorMessage = error.response?.data?.error || error.message || 'Une erreur est survenue.';
     dispatch(authFailure(errorMessage));
     return false;
   }
@@ -115,19 +128,25 @@ export const logout = () => (dispatch) =>
 export const checkAuth = () => async (dispatch) => {
   dispatch(authRequest());
   const token = Cookies.get(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
+  
   if (!token) {
     dispatch(authFailure('Pas de token trouvé.'));
     return false;
   }
-  console.log(token)
+  
   try {
     const response = await api.get('auth/user/profile', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    dispatch(authSuccess({ user: response.data, token }));
+    
+    // Parse response: { success, error, payload, ... }
+    const user = response.data.payload || response.data;
+    dispatch(authSuccess({ user, token }));
     return true;
   } catch (error) {
+    console.error('Auth check failed:', error.message);
     localStorage.removeItem(TOKEN_KEY);
+    Cookies.remove(TOKEN_KEY);
     dispatch(authFailure('Erreur lors de la vérification de l\'authentification.'));
     return false;
   }
