@@ -15,8 +15,8 @@ const ProductsPage = () => {
   }
 
    useEffect(()=>{
-    dispatch(fetchProducts({}))
-   }, [dispatch])
+     dispatch(fetchProducts({}))
+  }, [dispatch])
 
 
   return (

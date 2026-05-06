@@ -1,5 +1,5 @@
 import socketManager from '../../Socket.js';
-import { setBasket, setMessage } from '../Slices/notificationSlice.js';
+import { notificationActions as notifActions } from '../Slices/notificationSlice.js';
 // import { loginSuccess } from '../Slices/authSlice.js';
 import { toast } from 'sonner';
 
@@ -13,7 +13,7 @@ const messageActions = {
 };
 
 // Actions pour les notifications temps réel
-const notificationActions = {
+const socketNotificationActions = {
   ADD_NOTIFICATION: 'notifications/addNotification',
   UPDATE_NOTIFICATION_COUNT: 'notifications/updateCount',
   MARK_NOTIFICATION_READ: 'notifications/markAsRead'
@@ -140,7 +140,7 @@ function setupSocketListeners(dispatch, getState) {
 
     // Incrémenter le compteur de messages non lus
     const currentCount = getState().notifications?.message || 0;
-    dispatch(setMessage(currentCount + 1));
+    dispatch(notifActions.setMessage(currentCount + 1));
 
     // Notification toast pour les nouveaux messages
     const currentUser = getState().auth?.user;
@@ -200,7 +200,7 @@ function setupSocketListeners(dispatch, getState) {
     };
 
     dispatch({
-      type: notificationActions.ADD_NOTIFICATION,
+      type: socketNotificationActions.ADD_NOTIFICATION,
       payload: notification
     });
 
@@ -226,7 +226,7 @@ function setupSocketListeners(dispatch, getState) {
     console.log('📋 Mise à jour commande:', orderData);
     
     dispatch({
-      type: notificationActions.ADD_NOTIFICATION,
+      type: socketNotificationActions.ADD_NOTIFICATION,
       payload: {
         id: Date.now(),
         type: 'order_update',
@@ -250,7 +250,7 @@ function setupSocketListeners(dispatch, getState) {
     console.log('💰 Alerte baisse de prix:', priceData);
     
     dispatch({
-      type: notificationActions.ADD_NOTIFICATION,
+      type: socketNotificationActions.ADD_NOTIFICATION,
       payload: {
         id: Date.now(),
         type: 'price_drop',
@@ -275,7 +275,7 @@ function setupSocketListeners(dispatch, getState) {
     
     if (productData.type === 'back_in_stock') {
       dispatch({
-        type: notificationActions.ADD_NOTIFICATION,
+        type: socketNotificationActions.ADD_NOTIFICATION,
         payload: {
           id: Date.now(),
           type: 'stock_alert',
@@ -382,5 +382,5 @@ export const socketActions = {
   })
 };
 
-export { messageActions, notificationActions };
+export { messageActions, socketNotificationActions };
 export default socketMiddleware;

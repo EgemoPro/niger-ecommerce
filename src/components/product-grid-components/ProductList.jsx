@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ProductCard from "./ProductCard";
-// import { useNavigation } from "react-router-dom";
 import Loader from "../loader";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -10,8 +9,10 @@ import {
   setIsScrolling as setIsScrollingAction, 
   setIsBottom as setIsBottomAction,
 } from "../../redux/Slices/settingsSlice";
+import { RefreshCw, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
+const ProductList = ({ visibleProducts, onOpen, isDataLoadig, error, onRetry }) => {
   const dispatch = useDispatch();
   const scrollRef = useRef(null);
 
@@ -59,6 +60,34 @@ const ProductList = ({ visibleProducts, onOpen, isDataLoadig }) => {
 
   return isDataLoadig ? (
     <Loader />
+  ) : error ? (
+    <ScrollArea
+      ref={scrollRef}
+      className="h-[calc(100vh-100px)] max-md:h-[calc(100vh-200px)]"
+    >
+      <div className="h-full flex items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-red-100 rounded-full">
+              <AlertCircle className="w-10 h-10 text-red-500" />
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Une erreur est survenue
+          </h3>
+          <p className="text-gray-600 mb-6">
+            {error?.message || error || "Impossible de charger les produits"}
+          </p>
+          <Button 
+            onClick={onRetry}
+            className="flex items-center justify-center gap-2 mx-auto"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Réessayer
+          </Button>
+        </div>
+      </div>
+    </ScrollArea>
   ) : (
     <ScrollArea
       ref={scrollRef}
@@ -86,6 +115,8 @@ ProductList.propTypes = {
   visibleProducts: PropTypes.arrayOf(PropTypes.object).isRequired,
   onOpen: PropTypes.func.isRequired,
   isDataLoadig: PropTypes.bool.isRequired,
+  error: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  onRetry: PropTypes.func,
 };
 
 export default ProductList;

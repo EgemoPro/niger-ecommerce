@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import api from "../../lib/axios";
-import { NotificationSchema, validatePayload } from "../schemas/index";
-import { calculateUnreadCount, sortNotificationsByDate, cleanupOldNotifications } from "../utils/index";
+import { NotificationSchema } from "../schemas/index";
+import { validatePayload, calculateUnreadCount, sortNotificationsByDate, cleanupOldNotifications } from "../utils/index";
 import { logger } from "../../services/logger";
 
 const initialState = {
@@ -301,40 +301,31 @@ const notificationSlice = createSlice({
     }
 });
 
-export const notificationActions = {
-    // Compteurs
-    setBasket,
-    setMessage,
-    incrementMessage,
-    resetMessageCount,
-    updateTotalUnread,
-    
-    // Notifications
-    addNotification,
-    markAsRead,
-    markAsUnread,
-    markAllAsRead,
-    deleteNotification,
-    clearAllNotifications,
-    // cleanupOldNotifications,
-    
-    // Paramètres
-    updateSettings,
-    toggleSetting,
-    
-    // État
-    setLoading,
-    setError,
-    clearError,
-    
-    // Tri
-    sortNotifications,
-    
-    // Spécialisées
-    addOrderNotification,
-    addPriceDropNotification,
-    addStockNotification,
+// Create notificationActions object for backward compatibility
+// Using notificationSlice.actions directly to avoid TDZ
+const notificationActions = notificationSlice.actions;
 
+// Re-export notificationActions for backward compatibility
+export { notificationActions };
+
+// Named exports for hooks
+export const {
+  setBasket,
+  setMessage,
+  incrementMessage,
+  resetMessageCount,
+  updateTotalUnread,
+  addNotification,
+  markAsRead,
+  markAsUnread,
+  markAllAsRead,
+  deleteNotification,
+  clearAllNotifications,
+  updateSettings,
+  toggleSetting,
+  addOrderNotification,
+  addPriceDropNotification,
+  addStockNotification
 } = notificationSlice.actions;
 
 export default notificationSlice;

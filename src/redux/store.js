@@ -16,7 +16,6 @@ import productReducer from './Slices/productSlice';
 import notificationSlice from './Slices/notificationSlice';
 import messageSlice from './Slices/messageSlice';
 import socketMiddleware from './middleware/socketMiddleware';
-import { thunk } from 'redux-thunk'
 
 
 enableMapSet()
@@ -59,7 +58,6 @@ export const store = configureStore({
                 ]
             }
         })
-        .concat(thunk)
         .concat(socketMiddleware),
     devTools: process.env.NODE_ENV !== 'production' && {
         name: 'Niger E-commerce Frontend',

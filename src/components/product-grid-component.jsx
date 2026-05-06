@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../redux/Slices/initialData.js";
 import ProductFilters from "./product-grid-components/ProductFilters";
 import ProductGridHeader from "./product-grid-components/ProductGridHeader";
 import ProductList from "./product-grid-components/ProductList";
@@ -9,6 +10,9 @@ const ProductGrid = ({ onOpen }) => {
   const dispatch = useDispatch();
   const { data: products, status, error } = useSelector((state) => state.data);
   
+  const handleRetry = () => {
+    dispatch(fetchProducts({}))
+  };
 
   // Cette fonction calcule et mémorise les valeurs suivantes à partir des produits:
   // - Le prix minimum parmi tous les produits
@@ -106,6 +110,8 @@ const ProductGrid = ({ onOpen }) => {
           visibleProducts={visibleProducts}
           onOpen={onOpen}
           isDataLoadig={status === "loading"}
+          error={status === "failed" ? error : null}
+          onRetry={handleRetry}
         />
       </CardContent>
     </Card>
