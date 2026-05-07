@@ -34,11 +34,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 import {
   fetchUserOrders,
   ordersSelectors
 } from '@/redux/Slices/ordersSlice';
+import api from '@/lib/axios';
+import { loadFromLocalStorage, clearLocalCart } from '@/redux/Slices/basketSlice';
 
 const statusConfig = {
   pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
@@ -54,6 +57,11 @@ const OrderPage = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   
+  // Produits locaux (depuis localStorage)
+  const [localCartProducts, setLocalCartProducts] = useState([]);
+  const [localCartLoading, setLocalCartLoading] = useState(false);
+  const [localCartError, setLocalCartError] = useState(null);
+  
   const { orders, isLoading, error, pagination } = useSelector((state) => ({
     orders: ordersSelectors.selectOrders(state),
     isLoading: ordersSelectors.selectIsLoading(state),
@@ -65,6 +73,56 @@ const OrderPage = () => {
   const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Charger les produits locaux depuis localStorage au mount
+  useEffect(() => {
+    const loadLocalCart = async () => {
+      const localItems = loadFromLocalStorage();
+      
+      if (localItems.length > 0) {
+        setLocalCartLoading(true);
+        setLocalCartError(null);
+        
+        try {
+          const productIds = localItems.map(item => item.productId).join(',');
+          const response = await api.get(`/products/many-products/${productIds}`);
+          
+          if (response.data.success) {
+            // Mapper les produits avec les quantities depuis localStorage
+            // Note: payload est un tableau direct, pas payload.products
+            const products = Array.isArray(response.data.payload) 
+              ? response.data.payload 
+              : response.data.payload?.products || [];
+            const productsWithQuantity = products.map(product => {
+              const localItem = localItems.find(item => item.productId === product._id);
+              return {
+                ...product,
+                quantity: localItem?.quantity || 1,
+                attributes: localItem?.attributes || {}
+              };
+            });
+            
+            setLocalCartProducts(productsWithQuantity);
+            
+            // NOTE: On NE clear PAS localStorage ici!
+            // Il sera clearé uniquement après POST /orders réussi
+          } else {
+            // Produits non trouvés
+            setLocalCartError(response.data.error || 'Aucun produit trouvé');
+            toast.error('Certains produits ne sont plus disponibles');
+          }
+        } catch (err) {
+          const errorMsg = err.response?.data?.error || 'Erreur lors du chargement du panier';
+          setLocalCartError(errorMsg);
+          toast.error(errorMsg);
+        } finally {
+          setLocalCartLoading(false);
+        }
+      }
+    };
+    
+    loadLocalCart();
+  }, []);
 
   // Fetch orders on mount and when page changes
   useEffect(() => {
@@ -171,6 +229,69 @@ const OrderPage = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Panier Local - Produits depuis localStorage */}
+      {localCartLoading && (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      )}
+
+      {localCartProducts.length > 0 && !localCartLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg border border-blue-200 overflow-hidden"
+        >
+          <div className="p-4 border-b border-blue-200 bg-blue-50">
+            <h3 className="font-semibold text-blue-900 flex items-center gap-2">
+              <ShoppingBasket className="w-5 h-5" />
+              Produits dans votre panier local
+            </h3>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-blue-50">
+                <TableHead>Produit</TableHead>
+                <TableHead>Prix</TableHead>
+                <TableHead>Quantité</TableHead>
+                <TableHead>Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {localCartProducts.map((product) => {
+                const total = product.price * product.quantity;
+                return (
+                  <TableRow key={product._id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        {product.images?.[0] && (
+                          <img
+                            src={product.images[0].url}
+                            alt={product.title}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                        )}
+                        <div>
+                          <p className="font-medium">{product.title}</p>
+                          {product.sku && (
+                            <p className="text-xs text-gray-500">SKU: {product.sku}</p>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{product.price?.toLocaleString('fr-FR')} XOF</TableCell>
+                    <TableCell>{product.quantity}</TableCell>
+                    <TableCell className="font-semibold">
+                      {total.toLocaleString('fr-FR')} XOF
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </motion.div>
+      )}
 
       {/* Orders Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">

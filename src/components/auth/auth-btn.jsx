@@ -84,7 +84,7 @@ const AuthBtn = () => {
   };
   
   useEffect(() => {
-    if ((user != null && Object.keys(user.payload).length == 1) || !token ) {
+    if (!user || Object.keys(user).length === 0 || !token) {
       setIsLogin(true);
     }
   }, [user, token]);

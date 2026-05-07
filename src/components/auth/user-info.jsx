@@ -34,7 +34,7 @@ export function UserInfo() {
   const notifications = useSelector(state => state.notifications)
 
   useEffect(() => {
-    if ((user != null && Object.keys(user.payload).length > 1) && !!token) {
+    if ((user != null && Object.keys(user).length > 0) && !!token) {
       toast.success("Vous êtes connecté", {
         duration: 5000,
         icon: <SquareCheckBig className="h-4 w-4" />,
@@ -63,11 +63,11 @@ export function UserInfo() {
             <>
               <Avatar className="cursor-pointer">
                 <AvatarImage
-                  src={user.payload.imgSrc || "https://github.com/shadcn.png"}
+                  src={user.avatar || user.payload?.imgSrc || "https://github.com/shadcn.png"}
                   alt="@img"
                 />
                 <AvatarFallback>
-                  {user.payload.email.split("@")[0].toUpperCase()}
+                  {user.email?.split("@")[0]?.toUpperCase() || user.payload?.email?.split("@")[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <motion.div
@@ -105,7 +105,7 @@ export function UserInfo() {
                 </Badge>
               </motion.div>
               <p className="hidden md:block text-sm tracking-tight font-semibold text-gray-800">
-                {user.payload.email.slice(0, 3).toUpperCase()}
+                {(user.email || user.payload?.email || '').slice(0, 3).toUpperCase()}
               </p>
             </>
           ) : null}

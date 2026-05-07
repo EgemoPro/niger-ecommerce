@@ -39,11 +39,12 @@ const ProductDrawerCard = ({ product, onClose }) => {
   }, [favorites, product.id]);
 
   const toggleFavorite = useCallback(() => {
-    if (user?.payload?.userId) {
+    const userId = user?._id || user?.payload?.userId;
+    if (userId) {
       // Mise à jour optimiste de l'UI
       setIsFavorite(!isFavorite);
       // Dispatch de l'action Redux
-      dispatch(toggleFavoriteAsync(product.id, user.payload.userId));
+      dispatch(toggleFavoriteAsync(product.id, userId));
     }
   }, [dispatch, product.id, user, isFavorite]);
 
@@ -63,7 +64,12 @@ const ProductDrawerCard = ({ product, onClose }) => {
   };
 
   const handleBasket = () => {
-    dispatch(handleBacketAction("addProduct", { ...product, quantity }));
+    // Passer les attributs sélectionnés (color, size)
+    const attributes = {
+      color: colorSelected,
+      size: selectedSize?.name
+    };
+    dispatch(handleBacketAction("addProduct", { ...product, quantity }, attributes));
   };
 
   useEffect(() => {

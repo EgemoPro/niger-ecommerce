@@ -3,17 +3,30 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ShoppingCart, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 
 export function BasketBtn({ onAddToCart, basketCount }) {
   const [isAdding, setIsAdding] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
+  const navigate = useNavigate()
 
   const handleAddToCart = async () => {
     setIsAdding(true)
     await onAddToCart()
     setIsAdding(false)
     setIsAdded(true)
+    
+    // Toast confirmation (sans Link pour éviter erreur de contexte)
+    toast.success("Produit ajouté au panier", {
+      description: "Voir votre panier pourfinaliser la commande",
+      action: {
+        label: "Voir le panier",
+        onClick: () => navigate("/products/orders")
+      }
+    })
+    
     setTimeout(() => setIsAdded(false), 2000)
   }
 

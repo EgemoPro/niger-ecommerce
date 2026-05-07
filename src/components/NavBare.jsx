@@ -29,7 +29,7 @@ const Logo = () => (
 
 const NavigationItems = ({ user }) => (
   <div className="hidden md:flex items-center gap-6">
-    {user != null && Object.keys(user.payload).length > 1 ? (
+    {user != null && Object.keys(user).length > 0 ? (
       <UserInfo />
     ) : (
       <AuthBtn />
@@ -277,7 +277,7 @@ const Navbar = ({ data }) => {
 
         <div className="md:hidden flex items-center gap-3 ">
           {/* Fonctionnalités de login */}
-          {user != null && Object.keys(user.payload).length >1 ? (
+          {user != null && Object.keys(user).length > 0 ? (
             <UserInfo />
           ) : (
             <AuthBtn />

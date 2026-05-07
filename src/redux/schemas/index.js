@@ -38,14 +38,26 @@ export const ProductSchema = z.object({
   id: z.string().min(1, 'ID produit requis'),
   name: z.string().min(1, 'Nom du produit requis'),
   price: z.number().positive('Le prix doit être positif'),
-  quantity: z.number().int().positive('La quantité doit être positive'),
+  quantity: z.number().int().positive().optional(),  // Rendu optionnel pour l'ajout
   image: z.string().url().optional(),
   description: z.string().optional(),
-  category: z.string().optional()
+  category: z.string().optional(),
+  storeId: z.string().optional(),      // Ajouté
+  sku: z.string().optional(),         // Ajouté
+  attributes: z.record(z.string()).optional()  // Ajouté
 });
 
-export const BasketItemSchema = ProductSchema.extend({
-  quantity: z.number().int().min(1, 'Quantité minimum: 1').max(100, 'Quantité maximum: 100')
+export const BasketItemSchema = z.object({
+  id: z.string().min(1, 'ID produit requis'),
+  name: z.string().min(1, 'Nom du produit requis').optional(),
+  price: z.number().positive().optional(),
+  quantity: z.number().int().min(1).max(100).default(1),
+  image: z.string().optional(),
+  description: z.string().optional(),
+  category: z.string().optional(),
+  storeId: z.string().optional(),
+  sku: z.string().optional(),
+  attributes: z.record(z.string()).optional()
 });
 
 export const BasketStateSchema = z.object({

@@ -91,12 +91,14 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
     console.log("auth response", response);
     
     // Parse response according to API format: { success, error, payload, token }
-    const { payload, token } = response.data;
+    const { payload, token, error: apiError } = response.data;
     
+    // Le token est au niveau racine dans la réponse API
     if (!token) {
-      throw new Error('Token manquant dans la réponse');
+      throw new Error(apiError || 'Token manquant dans la réponse');
     }
     
+    // Stocker le token
     localStorage.setItem(TOKEN_KEY, token);
     Cookies.set(TOKEN_KEY, token, { 
       secure: true, 
@@ -104,6 +106,7 @@ const handleAuthRequest = async (dispatch, endpoint, data, successAction) => {
       maxAge: 30 * 24 * 60 * 60 // 30 days
     });
     
+    // Payload contient l'utilisateur
     dispatch(successAction({ user: payload, token }));
     return true;
   } catch (error) {

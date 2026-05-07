@@ -34,11 +34,12 @@ const ProductCard = ({ product, onOpen }) => {
 
   // Fonction pour basculer le statut de favori
   const handleToggleFavorite = useCallback(() => {
-    if (user?.payload?.userId) {
+    const userId = user?._id || user?.payload?.userId;
+    if (userId) {
       // Mise à jour optimiste de l'UI
       setLocalIsFavorite(!localIsFavorite);
       // Dispatch de l'action Redux
-      dispatch(toggleFavoriteAsync(product.id, user.payload.userId));
+      dispatch(toggleFavoriteAsync(product.id, userId));
     }
   }, [dispatch, product.id, user, localIsFavorite]);
   

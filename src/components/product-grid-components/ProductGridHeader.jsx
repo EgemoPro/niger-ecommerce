@@ -21,7 +21,7 @@ const ProductGridHeader = () => {
   const { user, isLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user != null && Object.keys(user.payload).length > 1) {
+    if (user != null && Object.keys(user).length > 0) {
       setIsAuthenticated(true)
     } else {
       setIsAuthenticated(false)

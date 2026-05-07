@@ -3,7 +3,62 @@ import { BasketItemSchema, BasketStateSchema } from "../schemas/index";
 import { calculateCartTotals, validatePayload } from "../utils/index";
 import { logger } from "../../services/logger";
 
-// État initial avec structure plus robuste
+// ============================================
+// CONSTANTES LOCALSTORAGE
+// ============================================
+
+const LOCALSTORAGE_KEY = 'quickcart_products';
+
+/**
+ * Sauvegarde le panier dans localStorage
+ * @param {Array} items - Items du panier Redux
+ */
+const saveToLocalStorage = (items) => {
+    try {
+        const data = items.map(item => ({
+            productId: item.id,
+            quantity: item.quantity,
+            attributes: item.attributes || {}
+        }));
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
+        logger.debug('Basket saved to localStorage', { count: items.length });
+    } catch (error) {
+        logger.error('Error saving basket to localStorage', error);
+    }
+};
+
+/**
+ * Charge le panier depuis localStorage
+ * @returns {Array} Items chargés depuis localStorage
+ */
+const loadFromLocalStorage = () => {
+    try {
+        const data = localStorage.getItem(LOCALSTORAGE_KEY);
+        if (!data) return [];
+        return JSON.parse(data);
+    } catch (error) {
+        logger.error('Error loading basket from localStorage', error);
+        return [];
+    }
+};
+
+/**
+ * Efface le panier de localStorage
+ */
+const clearLocalCart = () => {
+    try {
+        localStorage.removeItem(LOCALSTORAGE_KEY);
+        logger.debug('Basket cleared from localStorage');
+    } catch (error) {
+        logger.error('Error clearing localStorage', error);
+    }
+};
+
+// ============================================
+// INITIAL STATE
+// ============================================
+
+// État initial avec structure plus rigide
 const initialState = {
     items: [],
     totalItems: 0,
@@ -29,8 +84,12 @@ export const basketSlice = createSlice({
                 }
                 
                 const validatedProduct = validation.data;
+                
+                // Rechercher produit existant avec même ID et même attributes
                 const existingProduct = state.items.find(
-                    (item) => item.id === validatedProduct.id
+                    (item) => 
+                        item.id === validatedProduct.id && 
+                        JSON.stringify(item.attributes) === JSON.stringify(validatedProduct.attributes)
                 );
                 
                 if (existingProduct) {
@@ -39,9 +98,16 @@ export const basketSlice = createSlice({
                         newQuantity: existingProduct.quantity 
                     });
                 } else {
+                    // Stocker les infos nécessaires pour l'API order
                     state.items.push({ 
-                        ...validatedProduct, 
-                        quantity: validatedProduct.quantity || 1 
+                        id: validatedProduct.id,
+                        name: validatedProduct.name,
+                        price: validatedProduct.price,
+                        quantity: validatedProduct.quantity || 1,
+                        image: validatedProduct.image,
+                        storeId: validatedProduct.storeId,   // Pour grouper par boutique
+                        sku: validatedProduct.sku,          // Code produit
+                        attributes: validatedProduct.attributes  // { color, size }
                     });
                     logger.logAddToCart(validatedProduct.id, validatedProduct.quantity || 1);
                 }
@@ -51,6 +117,9 @@ export const basketSlice = createSlice({
                 state.totalItems = totals.totalItems;
                 state.totalPrice = totals.totalPrice;
                 state.error = null;
+                
+                // Sauvegarder dans localStorage après modification
+                saveToLocalStorage(state.items);
                 
                 logger.logCartUpdate(totals);
             } catch (error) {
@@ -93,6 +162,9 @@ export const basketSlice = createSlice({
                     state.totalPrice = totals.totalPrice;
                     state.error = null;
                     
+                    // Sauvegarder dans localStorage après modification
+                    saveToLocalStorage(state.items);
+                    
                     logger.logCartUpdate(totals);
                 } else {
                     state.error = 'Produit non trouvé dans le panier';
@@ -127,6 +199,9 @@ export const basketSlice = createSlice({
                     state.totalPrice = totals.totalPrice;
                     state.error = null;
                     
+                    // Sauvegarder dans localStorage après modification
+                    saveToLocalStorage(state.items);
+                    
                     logger.logCartUpdate(totals);
                 } else {
                     state.error = 'Produit non trouvé dans le panier';
@@ -144,6 +219,10 @@ export const basketSlice = createSlice({
                 state.totalItems = 0;
                 state.totalPrice = 0;
                 state.error = null;
+                
+                // Effacer localStorage aussi
+                clearLocalCart();
+                
                 logger.debug('Basket reset');
             } catch (error) {
                 logger.error('Error in reset reducer', error);
@@ -163,9 +242,94 @@ export const basketSlice = createSlice({
         clearError: (state) => {
             state.error = null;
             logger.debug('Basket error cleared');
+        },
+        
+        // Sync depuis localStorage (sans validation stricte)
+        setItems: (state, action) => {
+            const { items, totalItems, totalPrice } = action.payload;
+            state.items = items;
+            state.totalItems = totalItems;
+            state.totalPrice = totalPrice;
+            logger.debug('Basket items synced from localStorage', { count: items.length });
         }
     }
 });
+
+// ============================================
+// ASYNC THUNKS - SYNC AVEC LOCALSTORAGE
+// ============================================
+
+/**
+ * Charge le panier depuis localStorage et met à jour Redux
+ * Note: On ne fait que sauvegarder les IDs - les détails seront fetch depuis l'API quand l'utilisateur va sur /orders
+ */
+export const loadBasketFromStorage = () => (dispatch, getState) => {
+    try {
+        const localItems = loadFromLocalStorage();
+        const currentItems = getState().basket.items;
+        
+        if (localItems.length > 0) {
+            // Créer une nouvelle liste pour éviter l'immutabilité
+            const newItems = [...currentItems];
+            
+            // Fusionner les items locaux avec l'état actuel (sans validation stricte)
+            localItems.forEach(item => {
+                // Chercher si le produit existe déjà
+                const existingIndex = newItems.findIndex(
+                    i => i.id === item.productId && 
+                    JSON.stringify(i.attributes) === JSON.stringify(item.attributes || {})
+                );
+                
+                if (existingIndex >= 0) {
+                    // Mettre à jour la quantité
+                    newItems[existingIndex].quantity += item.quantity || 1;
+                } else {
+                    // Ajouter nouveau (sera complété lors du fetch API)
+                    newItems.push({
+                        id: item.productId,
+                        name: '',
+                        price: 0,
+                        quantity: item.quantity || 1,
+                        image: '',
+                        storeId: '',
+                        sku: '',
+                        attributes: item.attributes || {}
+                    });
+                }
+            });
+            
+            // Recalculer les totaux
+            const totals = calculateCartTotals(newItems);
+            
+            // Dispatcher l'action setItems
+            dispatch(setItems({ 
+                items: newItems,
+                totalItems: totals.totalItems,
+                totalPrice: totals.totalPrice
+            }));
+            
+            logger.info('Basket synced from localStorage', { count: localItems.length });
+        }
+    } catch (error) {
+        logger.error('Error in loadBasketFromStorage thunk', error);
+    }
+};
+
+/**
+ * Synchronise le panier Redux vers localStorage
+ */
+export const syncBasketToStorage = () => (dispatch, getState) => {
+    try {
+        const items = getState().basket.items;
+        saveToLocalStorage(items);
+    } catch (error) {
+        logger.error('Error in syncBasketToStorage thunk', error);
+    }
+};
+
+// ============================================
+// EXPORTS
+// ============================================
 
 // Exports des actions
 export const { 
@@ -175,8 +339,16 @@ export const {
     reset, 
     setLoading, 
     setError, 
-    clearError 
+    clearError,
+    setItems
 } = basketSlice.actions;
+
+// Exports utilitaires localStorage (pour usage externe)
+export { 
+    saveToLocalStorage, 
+    loadFromLocalStorage, 
+    clearLocalCart 
+};
 
 // Sélecteurs
 export const basketSelectors = {

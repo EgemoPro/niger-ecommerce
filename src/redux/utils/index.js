@@ -226,6 +226,88 @@ export const transformProductForCart = (product, quantity = 1) => {
 };
 
 // ============================================
+// UTILITAIRES - PANIER → COMMANDE API
+// ============================================
+
+/**
+ * Transforme les items du panier pour l'API orders
+ * @param {Array} basketItems - Items du panier Redux
+ * @returns {Array} Items au format API
+ */
+export const transformBasketItemsForOrder = (basketItems) => {
+  return basketItems.map(item => ({
+    productId: item.id,
+    title: item.name,
+    sku: item.sku || '',
+    image: item.image || '',
+    price: item.price,
+    quantity: item.quantity,
+    attributes: item.attributes || {}
+  }));
+};
+
+/**
+ * Groupe les items du panier par storeId (une commande par boutique)
+ * @param {Array} basketItems - Items du panier
+ * @returns {Object} { storeId: [items] }
+ */
+export const groupBasketItemsByStore = (basketItems) => {
+  const grouped = {};
+  
+  basketItems.forEach(item => {
+    const storeId = item.storeId || 'default';
+    if (!grouped[storeId]) {
+      grouped[storeId] = [];
+    }
+    grouped[storeId].push(item);
+  });
+  
+  return grouped;
+};
+
+/**
+ * Prépare les données pour une commande API
+ * @param {Array} basketItems - Items du panier
+ * @param {Object} shippingAddress - Adresse de livraison
+ * @param {string} paymentMethod - cash | mobile_money | stripe
+ * @param {Object} options - { customerNote, shippingCost, tax, discount }
+ * @returns {Object} Données prêtes pour POST /orders
+ */
+export const prepareOrderData = (basketItems, shippingAddress, paymentMethod, options = {}) => {
+  const {
+    customerNote = '',
+    shippingCost = 0,
+    tax = 0,
+    discount = 0
+  } = options;
+  
+  // Grouper par boutique (une commande par store)
+  const groupedByStore = groupBasketItemsByStore(basketItems);
+  
+  // Prendre le premier store (pour l'instant on fait une seule commande)
+  const storeIds = Object.keys(groupedByStore);
+  const storeId = storeIds[0] || 'default';
+  const items = transformBasketItemsForOrder(groupedByStore[storeId]);
+  
+  // Calculer les totaux
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const total = subtotal + shippingCost + tax - discount;
+  
+  return {
+    storeId,
+    items,
+    shippingAddress,
+    paymentMethod,
+    customerNote,
+    shippingCost,
+    tax,
+    discount,
+    subtotal,
+    total
+  };
+};
+
+// ============================================
 // UTILITAIRES DE COMPARAISON
 // ============================================
 

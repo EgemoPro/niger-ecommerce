@@ -98,7 +98,7 @@ const ProductDetails = ({
               <div className="flex flex-wrap gap-2 sm:gap-3 p-2">
                 {product.colors.map((color, index) => (
                   <Button
-                    key={index}
+                    key={`color-${index}`}
                     variant="outline"
                     size="icon"
                     className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg border-2 transition-all duration-200 ease-in-out hover:scale-110 ${

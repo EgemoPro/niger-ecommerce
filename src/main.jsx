@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { store } from "./redux/store.js";
 import { createRoot } from "react-dom/client";
 import { checkAuth } from "./redux/Slices/authSlice.js";
+import { loadBasketFromStorage } from "./redux/Slices/basketSlice.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 
@@ -19,9 +20,13 @@ const App = () => {
 
 
   useEffect(() => {
+    // Vérifier authentification
     if (!!localStorage.getItem("jwt")) {
       dispatch(checkAuth());
     }
+    
+    // Synchroniser le panier depuis localStorage
+    dispatch(loadBasketFromStorage());
 
   }, [dispatch]);
 

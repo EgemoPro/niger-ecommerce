@@ -123,7 +123,7 @@ const UserPage = () => {
           {/* Header Section */}
           <div className="flex-shrink-0 bg-white border-b border-gray-200">
             <CustomHeader
-              name={user.payload.username}
+              name={user?.payload?.username || user?.username || "Mon compte"}
               path={path.name || "Profile"}
             />
           </div>
